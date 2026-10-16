@@ -10,6 +10,7 @@ spec <- stress_spec(mmrm::fev_data, response = "FEV1", subject = "USUBJID", visi
                     contrast_visit = "VIS4", covariance = "us",
                     method = "Kenward-Roger", vcov = "Kenward-Roger-Linear")   # SAS DDFM=KR
 stress_fit(spec)                                   # the pre-specified analysis, one row
+# or from a fitted model / an ADaM BDS: stress_spec_mmrm(fit, reference = "PBO"); stress_spec_adam(adeff, "PARAM1")
 
 cen <- stress_census(spec,
   stress_covariance(spec),                         # us, ar1h, ar1, cs, csh, toep, toeph
@@ -33,7 +34,15 @@ tipping_point(tp)     # interpolated crossing of alpha
 plot_pcurve(tp)       # p-value curve over the shift, anchor and crossing marked
 # any continuous data perturbation: stress_curve(spec, values, modify = function(data, value) ...)
 
-# pre-specify, run and report in one go
+# the recommended set, pre-specified, run and reported in one go
+plan <- standard_plan(spec, site = "SITE", strata = "SITE", baseline = "BASE", deltas = seq(0, -10, -2))
+res <- run_plan(plan, cores = 6)
+stress_report(res, dir = "stress")    # Markdown + figures
+stress_tables(res, dir = "stress")    # CSV, Word, RTF
+stress_html(res, "stress/report.html") # interactive
+stress_log(res, "stress/log.json")    # audit trail with the plan hash
+
+# or build your own plan
 plan <- stress_plan(spec, loo = list(list(), list(by = "SITE")), tipping = list(deltas = seq(0, -10, -2)),
                     estimator = list(random = "SITE", baseline = "BASE"))
 plan                                  # SAP-ready text
