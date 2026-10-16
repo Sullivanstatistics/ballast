@@ -1,0 +1,24 @@
+# Authors and Citation
+
+## Authors
+
+- **Adam Sullivan**. Author, maintainer.
+
+- **Capricor Therapeutics**. Funder.
+
+## Citation
+
+Source:
+[`DESCRIPTION`](https://github.com/Sullivanstatistics/ballast/blob/main/DESCRIPTION)
+
+Sullivan A (2026). *ballast: Stress-Test a Pre-Specified Mixed Model for
+Repeated Measures*. R package version 0.4.0,
+<https://github.com/Sullivanstatistics/ballast>.
+
+    @Manual{,
+      title = {ballast: Stress-Test a Pre-Specified Mixed Model for Repeated Measures},
+      author = {Adam Sullivan},
+      year = {2026},
+      note = {R package version 0.4.0},
+      url = {https://github.com/Sullivanstatistics/ballast},
+    }

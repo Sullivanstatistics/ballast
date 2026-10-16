@@ -1,0 +1,46 @@
+# For SAS users: reproducing PROC MIXED and PROC MI conventions
+
+The package was built by porting a SAS robustness package and validating
+every cell against it. The conventions below are what it took to agree
+with `PROC MIXED` and `PROC MI` to the sixth decimal.
+
+| SAS | ballast setting | Note |
+|----|----|----|
+| `REPEATED visit / SUBJECT=id TYPE=UN` | `covariance = "us"` | `ARH(1)` is `"ar1h"`, `AR(1)` `"ar1"`, `CS` `"cs"`, `CSH` `"csh"`, `TOEP` `"toep"`, `TOEPH` `"toeph"` |
+| `DDFM=SATTERTHWAITE` | `method = "Satterthwaite", vcov = "Asymptotic"` |  |
+| `DDFM=KR` (the default KR, not KR2) | `method = "Kenward-Roger", vcov = "Kenward-Roger-Linear"` | mmrm’s full Kenward-Roger vcov gives a smaller standard error than SAS |
+| `EMPIRICAL` with any `DDFM` | `method = "Between-Within", vcov = "Empirical"` | SAS cannot combine the sandwich with Satterthwaite or KR and falls back to between-within degrees of freedom; with `sas_conventions = TRUE` the df is computed as observations minus subjects minus the rank of the within-subject design columns |
+| `LSMEANS trt*visit / DIFF` | `weights = "equal"` | class covariates at equal weights over their levels, continuous covariates at their means |
+| `LSMEANS ... OBSMARGINS` | `weights = "observed"` | the design averaged over the analysis rows |
+| `LSMEANS ... AT x = value` | `stress_fit(spec, at = list(x = value))` |  |
+| AICC in the fit statistics | the `aicc` column | the SAS REML definition: `-2 res. log lik + 2 d n* / (n* - d - 1)`, d covariance parameters, n\* = N minus the rank of X |
+| a `CLASS` variable with one level in a subset | dropped with a note | PROC MIXED zeroes the column; R refuses a one-level factor |
+| `PROC MI ... FCS REG` | [`stress_tipping()`](https://sullivanstatistics.github.io/ballast/reference/stress_tipping.md) | the regression method with a preliminary monotone fill and burn-in iterations |
+| `MNAR ADJUST(... SHIFT=delta ADJUSTOBS=(trt='active'))` under FCS | `stress_tipping(deltas = ..., shift_every = TRUE)` | SAS adds the shift at every draw, so it propagates through later imputed visits; applying it only to the final draw gives a curve that declines markedly more slowly |
+| `PROC MIANALYZE` without `EDF=` | Rubin’s rules in `mi_pool` | the pooled degrees of freedom can run into the hundreds of thousands when the between-imputation variance is tiny |
+| `MODELOBS=` (copy reference as a monotone regression) | `stress_reference(methods = "CR")` | the package uses the multivariate-normal formulation of Carpenter, Roger and Kenward, validated against rbmi |
+
+## A spec in SAS terms
+
+``` r
+
+library(ballast)
+# PROC MIXED; CLASS usubjid avisitn trtpn cohort site; MODEL pchg = base avisitn trtpn trtpn*avisitn cohort site / DDFM=SATTERTHWAITE;
+# REPEATED avisitn / SUBJECT=usubjid TYPE=ARH(1); LSMEANS trtpn*avisitn / DIFF;
+spec <- stress_spec(adeff, response = "pchg", subject = "usubjid", visit = "avisitn", treatment = "trtpn",
+                    reference = "1", covariates = ~ base + cohort + site, contrast_visit = "7",
+                    covariance = "ar1h", method = "Satterthwaite", vcov = "Asymptotic")
+```
+
+Visit as a factor must carry the visit order in its levels;
+[`stress_spec_adam()`](https://sullivanstatistics.github.io/ballast/reference/stress_spec_adam.md)
+orders by `AVISITN`.
+
+## Things that do not reproduce exactly
+
+Random-number-based methods (multiple imputation, re-randomisation
+tests, MM-type robust regression) agree with SAS within Monte Carlo
+error only; the package reports the Monte Carlo standard error in the
+row’s `note`. A spatial power covariance over days needs the time
+variable rescaled (days divided by 100, say) before mmrm converges; it
+is not among the structures the spec accepts.
