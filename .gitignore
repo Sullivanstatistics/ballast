@@ -1,0 +1,5 @@
+docs/
+.Rproj.user/
+*.Rproj
+check_log.txt
+.Rhistory

@@ -1,0 +1,82 @@
+---
+title: "Interpreting the verdict"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Interpreting the verdict}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+## Definitions
+
+Every counted refit is scored against the pre-specified result:
+
+* **percent of the pre-specified estimate** and the **shift in pre-specified standard errors**;
+* whether it lies **inside the pre-specified 95% confidence interval**;
+* whether it keeps the **direction** of effect;
+* whether it is **significant** at alpha, and whether that **differs** from the pre-specified analysis.
+
+The verdict then reads:
+
+* **fragile**: some counted alternative reverses the direction or lands outside the pre-specified interval;
+* **sensitive**: no alternative does that, but some alternative crosses alpha;
+* **robust**: no alternative crosses alpha.
+
+**Marginal** is a separate flag on the pre-specified p-value: it is set when p lies within a band around alpha
+(the default band is alpha/2 to 2 alpha). A marginal result is expected to be sensitive, because a p-value near 0.05
+crosses 0.05 under small perturbations whatever the true effect. That is the point of keeping the two apart: "sensitive
+and marginal" says the trial was sized so that its p-value landed near alpha, "fragile" says the conclusion depends on
+a decision.
+
+## Sensitivity versus supplementary
+
+ICH E9(R1) distinguishes sensitivity analyses, which keep the estimand and vary an assumption or a modelling choice,
+from supplementary analyses, which target a different estimand. Every row carries a `role`. Model families (covariance,
+inference, covariates, weighting, estimator class), deletions, re-randomisation and the imputation families are
+sensitivity analyses; alternative data sets, populations, other visits and intercurrent-event strategies default to
+supplementary. The verdict is reported over all counted rows and over the sensitivity rows alone.
+
+## The counting rule
+
+Rows that reproduce the pre-specified analysis exactly are not counted. A specification reached by two families (the
+unstructured covariance appears in the covariance panel and in a grid, say) is counted once. Tipping-point grids are
+searches, not alternatives; the delta-zero multiple-imputation row is an alternative. Deletions are counted but
+summarised separately from alternative analyses, because their number is a property of the sample size, not of the
+analyst's choices.
+
+## What the simulation shows
+
+`stress_calibrate()` simulates trials from a planned design and runs a light stress test on each. The pattern it
+produces, and which the methods paper reports in full, is:
+
+* under the null, a significant result is nearly always classed sensitive or fragile, because its p-value sits near
+  alpha by construction;
+* at high power, significant results are mostly robust, and the few sensitive ones are those whose p-value happened
+  to land near alpha;
+* "fragile" is rare under a true effect of the planned size and common under the null.
+
+A small run (the vignette keeps it to a few trials) looks like this:
+
+```{r calib}
+library(mmrmstress)
+stress_calibrate(n_per_arm = 30, power = c(0, 0.8), n_trials = 3, seed = 1)
+```
+
+## The deletion search
+
+`stress_fragility()` is a greedy forward search for the smallest set of subjects whose removal changes significance,
+leaves the pre-specified interval, or reverses the direction. The number of steps is an analogue of the fragility index
+for a continuous longitudinal endpoint, with two differences: the unit is a participant, not an event, and the target
+can be the interval or the direction, which separates "loses significance" from "changes conclusion". Because the
+search is greedy the count is an upper bound on the true minimum, and the subjects it names are a diagnostic, not a
+verdict on them.
+
+## Explaining a crossing
+
+`stress_explain()` takes one row of the census and attributes the difference between its estimate and the
+pre-specified estimate to subjects, by comparing each subject's leave-one-out influence under the two specifications.
+Use it on the rows that crossed alpha before writing the interpretation.

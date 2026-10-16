@@ -1,0 +1,77 @@
+---
+title: "Quickstart: stress-testing a pre-specified MMRM"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Quickstart: stress-testing a pre-specified MMRM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 8, fig.height = 4)
+```
+
+A confirmatory trial has one pre-specified mixed model for repeated measures (MMRM). mmrmstress refits it under
+families of perturbations of the modelling decisions and the data, judges every refit against the pre-specified
+estimate, confidence interval and significance level, and classifies the result as robust, sensitive or fragile.
+
+## The pre-specified analysis
+
+Describe the analysis once. The example uses the `fev_data` set that ships with mmrm, restricted to 100 subjects so the
+vignette builds quickly.
+
+```{r spec}
+library(mmrmstress)
+dat <- mmrm::fev_data[mmrm::fev_data$USUBJID %in% paste0("PT", 1:100), ]
+spec <- stress_spec(dat, response = "FEV1", subject = "USUBJID", visit = "AVISIT",
+                    treatment = "ARMCD", reference = "PBO", covariates = ~ RACE + SEX + FEV1_BL,
+                    contrast_visit = "VIS4", covariance = "us",
+                    method = "Satterthwaite", vcov = "Asymptotic")
+spec
+stress_fit(spec)
+```
+
+If you already have an `mmrm` fit, `stress_spec_mmrm(fit, reference = "PBO")` builds the same object; from an ADaM BDS
+data set, `stress_spec_adam()` does.
+
+## Families
+
+Each family function returns rows in one schema. A few of them:
+
+```{r families}
+stress_covariance(spec, c("us", "cs", "ar1h"))[, c("label", "estimate", "stderr", "p", "is_base")]
+stress_inference(spec)[, c("label", "estimate", "stderr", "df", "p")]
+stress_covariates(spec)[, c("label", "estimate", "p")]
+```
+
+Deletions, re-randomisation, reference-based and delta-adjusted multiple imputation, other estimators, a greedy
+search for the smallest set of subjects that changes the conclusion, intercurrent-event strategies and continuous
+perturbation curves are the other families; see the reference index.
+
+## Census, verdict and figures
+
+```{r census}
+cen <- stress_census(spec, stress_covariance(spec, c("us", "cs", "ar1h")), stress_inference(spec),
+                     stress_covariates(spec), stress_loo(spec, by = "RACE"))
+summary(cen)
+stress_verdict(cen)
+plot_swarm(cen)
+```
+
+## Pre-specify and run in one call
+
+A plan fixes the families and their settings before unblinding; printing it gives the text a statistical analysis plan
+can carry. `standard_plan()` is the recommended set.
+
+```{r plan}
+plan <- stress_plan(spec, covariance = list(structures = c("us", "cs", "ar1h")), inference = list(),
+                    covariates = list(), weights = TRUE, loo = list(by = "RACE"), permute = list(n = 99),
+                    reference = NULL, estimator = list(estimators = c("complete_cases", "ancova")),
+                    fragility = list(max_k = 2))
+plan
+res <- run_plan(plan, seed = 1)
+res
+```
+
+`stress_report()` writes a Markdown report with the figures, `stress_tables()` the Word or RTF tables and the census
+as CSV, `stress_html()` an interactive page, and `stress_log()` the audit trail with the plan's hash.

@@ -1,0 +1,62 @@
+---
+title: "Missing data: reference-based and delta-adjusted imputation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Missing data: reference-based and delta-adjusted imputation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4)
+```
+
+An MMRM assumes the missing responses are missing at random. The two standard ways to test that assumption are
+reference-based imputation, which replaces the assumption with a clinically stated one, and delta adjustment, which
+asks how much worse the imputed values would have to be before the conclusion changes.
+
+```{r spec}
+library(mmrmstress)
+dat <- mmrm::fev_data[mmrm::fev_data$USUBJID %in% paste0("PT", 1:100), ]
+spec <- stress_spec(dat, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL,
+                    covariance = "us", method = "Satterthwaite", vcov = "Asymptotic")
+stress_fit(spec)[, c("estimate", "stderr", "p", "n_subj")]
+```
+
+## Reference-based imputation
+
+`stress_reference()` fits a multivariate-normal imputation model (treatment by visit, the subject-level covariates,
+unstructured covariance) and draws the missing values under four assumptions: missing at random, jump to reference,
+copy reference, and copy increments in reference. Parameter uncertainty comes from bootstrap refits of the imputation
+model, one per imputation. The vignette uses few imputations; use 25 or more in practice.
+
+```{r ref}
+ref <- stress_reference(spec, m = 5, seed = 1)
+ref[, c("label", "estimate", "stderr", "p", "note")]
+```
+
+The package's implementation was checked against rbmi on the antidepressant data that rbmi ships: with the same
+imputation model, the same number of bootstrap draws and the same analysis model applied to both engines' completed
+data sets, all four assumptions agree within Monte Carlo error. One caution for rbmi users: `rbmi::set_vars()` adds
+only the main effects of group and visit, so the treatment-by-visit interaction has to be named in its `covariates`.
+
+## Delta adjustment
+
+`stress_tipping()` imputes by fully conditional specification (the regression method of SAS PROC MI), adds a shift to
+the active arm's imputed values, refits and pools. `delta = 0` is the missing-at-random multiple-imputation analysis
+and is counted as an alternative; the other deltas are searches. `tipping_point()` interpolates the crossing and
+`plot_pcurve()` draws the curve.
+
+```{r tip}
+tp <- stress_tipping(spec, deltas = c(0, -5, -10, -15), m = 5, seed = 1)
+tp[, c("label", "estimate", "p", "kind")]
+tipping_point(tp)
+plot_pcurve(tp, xlab = "Shift applied to imputed active-arm values")
+```
+
+## Intercurrent events
+
+When an intercurrent event is the reason for the missing data, `stress_estimand()` derives the analysis data sets
+implied by each handling strategy (treatment policy, hypothetical, while on treatment, composite) and refits each. A
+hypothetical strategy sets the post-event responses to missing; the reference-based family can then be run on that
+derived data set with `spec_update(spec, data = ...)`.

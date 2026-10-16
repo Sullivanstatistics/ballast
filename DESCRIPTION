@@ -1,0 +1,46 @@
+Package: mmrmstress
+Title: Stress-Test a Pre-Specified Mixed Model for Repeated Measures
+Version: 0.4.0
+Authors@R: c(
+    person("Adam", "Sullivan", email = "asullivan@capricor.com",
+           role = c("aut", "cre")),
+    person("Capricor Therapeutics", role = "fnd"))
+Description: Refits one pre-specified mixed model for repeated measures (MMRM)
+    under families of data and analytic perturbations (covariance structure,
+    degrees-of-freedom method and variance estimator, covariate set, analysis
+    population, alternative analysis datasets, leave-one-out deletions, crossed
+    specification grids, re-randomisation tests and delta-adjusted multiple
+    imputation) and judges every refit against the pre-specified estimate,
+    confidence interval and p-value. Classifies the result as robust, sensitive
+    or fragile, with a separate flag for marginal significance. Fitting uses
+    'mmrm' with SAS 'PROC MIXED' conventions for the least-squares-mean
+    contrast, Kenward-Roger adjustment and the corrected Akaike criterion.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Language: en-GB
+Roxygen: list(markdown = TRUE)
+Depends: R (>= 4.1.0)
+Imports:
+    mmrm (>= 0.3.0),
+    stats,
+    utils,
+    parallel
+Suggests:
+    ggplot2,
+    emmeans,
+    nlme,
+    MASS,
+    flextable,
+    officer,
+    plotly,
+    htmlwidgets,
+    htmltools,
+    jsonlite,
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+URL: https://github.com/Sullivanstatistics/mmrmstress
+BugReports: https://github.com/Sullivanstatistics/mmrmstress/issues
+Config/roxygen2/version: 8.0.0
