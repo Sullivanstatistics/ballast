@@ -11,6 +11,7 @@
 #' @param name File stem.
 #' @param formats Any of `"csv"`, `"docx"`, `"rtf"`.
 #' @param digits Decimal places in the formatted tables.
+#' @param mask_ids Replace subject identifiers with sequence numbers.
 #' @return The paths written, invisibly.
 #' @examples
 #' \donttest{
@@ -23,11 +24,12 @@
 #' stress_tables(run_plan(plan), dir = tempdir(), formats = "csv")
 #' }
 #' @export
-stress_tables <- function(result, dir = ".", name = "stress", formats = c("csv", "docx", "rtf"), digits = 3) {
+stress_tables <- function(result, dir = ".", name = "stress", formats = c("csv", "docx", "rtf"), digits = 3, mask_ids = FALSE) {
   if (!inherits(result, "stress_result")) stop("result must be a stress_result")
   formats <- match.arg(formats, c("csv", "docx", "rtf"), several.ok = TRUE)
   dir.create(dir, showWarnings = FALSE, recursive = TRUE)
   cen <- result$census; v <- result$verdict; b <- result$base
+  if (mask_ids) { cen <- ballast::mask_ids(cen, result$plan$spec); v <- stress_verdict(cen) }
   fmt <- function(x, d = digits) ifelse(is.na(x), "", formatC(x, digits = d, format = "f"))
   fp <- function(p) ifelse(is.na(p), "", ifelse(p < 0.001, "<0.001", formatC(p, digits = 3, format = "f")))
   s <- as.data.frame(summary(cen))
@@ -41,12 +43,13 @@ stress_tables <- function(result, dir = ".", name = "stress", formats = c("csv",
                    "95% CI" = ci_txt(cr$lcl, cr$ucl), "p" = fp(cr$p), "% of pre-specified" = round(cr$pct_of_base), check.names = FALSE, stringsAsFactors = FALSE)
   if (!nrow(t2)) t2 <- data.frame("Family" = "None", "Analysis" = "No counted analysis crossed alpha, left the interval or reversed direction", "Role" = "", "Estimate" = "", "SE" = "", "95% CI" = "", "p" = "", "% of pre-specified" = NA, check.names = FALSE, stringsAsFactors = FALSE)
   t3 <- NULL; fr <- result$rows$fragility
+  if (!is.null(fr) && mask_ids) fr <- ballast::mask_ids(fr, result$plan$spec)
   if (!is.null(fr)) { a <- attr(fr, "fragility")
     t3 <- data.frame("Removed" = fr$param, "Subject added" = sub("step [0-9]+ removed ", "", fr$note), "Estimate" = fmt(fr$estimate), "95% CI" = ci_txt(fr$lcl, fr$ucl), "p" = fp(fr$p), check.names = FALSE, stringsAsFactors = FALSE) }
   census_out <- as.data.frame(cen); census_out$pct_of_base <- round(census_out$pct_of_base, 1)
-  header <- sprintf("Pre-specified analysis: %s minus %s at %s: estimate %s (SE %s), 95%% CI %s to %s, p %s. Verdict: %s (sensitivity analyses: %s)%s.",
+  header <- sprintf("Pre-specified analysis: %s minus %s at %s: estimate %s (SE %s), 95%% CI %s to %s, p %s. Verdict: %s (sensitivity analyses: %s)%s.%s",
                     result$plan$spec$active, result$plan$spec$reference, result$plan$spec$contrast_visit, fmt(b$estimate), fmt(b$stderr), fmt(b$lcl), fmt(b$ucl), fp(b$p),
-                    v$stability, v$stability_sensitivity, if (v$marginal) "; marginal" else "")
+                    v$stability, v$stability_sensitivity, if (v$marginal) "; marginal" else "", if (v$n_failed > 0) sprintf(" %d of %d refits did not converge and are not counted.", v$n_failed, v$n_rows) else "")
   footer <- "Counting rule: rows reproducing the pre-specified analysis and duplicate specifications are not counted; tipping-point grids are searches. Shift in SE: |estimate minus pre-specified| / pre-specified SE."
   paths <- character()
   if ("csv" %in% formats) {

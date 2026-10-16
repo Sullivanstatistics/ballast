@@ -9,7 +9,8 @@ stress_tables(
   dir = ".",
   name = "stress",
   formats = c("csv", "docx", "rtf"),
-  digits = 3
+  digits = 3,
+  mask_ids = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ stress_tables(
 \item{formats}{Any of \code{"csv"}, \code{"docx"}, \code{"rtf"}.}
 
 \item{digits}{Decimal places in the formatted tables.}
+
+\item{mask_ids}{Replace subject identifiers with sequence numbers.}
 }
 \value{
 The paths written, invisibly.

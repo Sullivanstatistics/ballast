@@ -10,7 +10,8 @@ stress_report(
   name = "stress_report",
   width = 9,
   height = 5,
-  dpi = 150
+  dpi = 150,
+  mask_ids = FALSE
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ stress_report(
 \item{name}{File stem for the report and figures.}
 
 \item{width, height, dpi}{Figure size in inches and resolution.}
+
+\item{mask_ids}{Replace subject identifiers with sequence numbers.}
 }
 \value{
 The path of the Markdown file, invisibly.

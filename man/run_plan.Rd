@@ -9,7 +9,8 @@ run_plan(plan, cores = 1L, seed = 1)
 \arguments{
 \item{plan}{A \code{stress_plan}.}
 
-\item{cores}{Worker processes passed to every family.}
+\item{cores}{Worker processes; the cluster is started once and shared by
+every family.}
 
 \item{seed}{Seed passed to the families that take one, unless the plan
 sets it.}

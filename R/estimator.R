@@ -174,7 +174,7 @@ est_clda <- function(spec, fam, baseline) {
   grid <- expand.grid(grid_list, stringsAsFactors = FALSE)
   for (v in cl) grid[[v]] <- factor(grid[[v]], levels = levels(x[[v]])); grid$.tv <- factor(grid$.tv, levels = levels(x$.tv))
   for (v in co) grid[[v]] <- mean(x[[v]], na.rm = TRUE)
-  X <- stats::model.matrix(tt, grid, contrasts.arg = fit$contrasts)[, names(stats::coef(fit, complete = FALSE)), drop = FALSE]
+  X <- stats::model.matrix(tt, grid)[, names(stats::coef(fit, complete = FALSE)), drop = FALSE]
   L <- colMeans(X[grid$.tv == cells[2], , drop = FALSE]) - colMeans(X[grid$.tv == cells[1], , drop = FALSE])
   z <- tryCatch(mmrm::df_1d(fit, L), error = function(e) NULL)
   if (is.null(z)) return(est_row(spec, lab, fam, NA, NA, NA, NA, NA, "cLDA contrast failed"))

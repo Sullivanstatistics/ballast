@@ -1,9 +1,11 @@
 Package: ballast
 Title: Stress-Test a Pre-Specified Mixed Model for Repeated Measures
-Version: 0.4.0
+Version: 0.5.0
 Authors@R: c(
     person("Adam", "Sullivan", email = "asullivan@capricor.com",
            role = c("aut", "cre")),
+    person("Nathan", "Hogan", role = "ctb",
+           comment = "validation of the SAS reference results"),
     person("Capricor Therapeutics", role = "fnd"))
 Description: Refits one pre-specified mixed model for repeated measures (MMRM)
     under families of data and analytic perturbations (covariance structure,

@@ -10,6 +10,8 @@
 #' @param result A `stress_result` from [run_plan()].
 #' @param file Path of the HTML file to write.
 #' @param digits Rounding used to group estimates into bubbles.
+#' @param mask_ids Replace subject identifiers with sequence numbers (on by
+#'   default: the page is the deliverable most likely to leave the organisation).
 #' @return The file path, invisibly.
 #' @examples
 #' \donttest{
@@ -23,10 +25,11 @@
 #'   stress_html(run_plan(plan), file.path(tempdir(), "stress.html"))
 #' }
 #' @export
-stress_html <- function(result, file = "stress_report.html", digits = 2) {
+stress_html <- function(result, file = "stress_report.html", digits = 2, mask_ids = TRUE) {
   if (!inherits(result, "stress_result")) stop("result must be a stress_result")
   if (!requireNamespace("plotly", quietly = TRUE) || !requireNamespace("htmlwidgets", quietly = TRUE)) stop("plotly and htmlwidgets are needed")
   cen <- result$census; b <- result$base; v <- result$verdict
+  if (mask_ids) cen <- ballast::mask_ids(cen, result$plan$spec)
   d <- as.data.frame(cen)[cen$counted & !is.na(cen$estimate), , drop = FALSE]
   alt <- d[d$kind == "alternative", , drop = FALSE]; del <- d[d$kind == "deletion", , drop = FALSE]
   pct <- function(e) 100 * e / b$estimate

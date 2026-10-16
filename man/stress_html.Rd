@@ -4,7 +4,7 @@
 \alias{stress_html}
 \title{Interactive HTML report}
 \usage{
-stress_html(result, file = "stress_report.html", digits = 2)
+stress_html(result, file = "stress_report.html", digits = 2, mask_ids = TRUE)
 }
 \arguments{
 \item{result}{A \code{stress_result} from \code{\link[=run_plan]{run_plan()}}.}
@@ -12,6 +12,9 @@ stress_html(result, file = "stress_report.html", digits = 2)
 \item{file}{Path of the HTML file to write.}
 
 \item{digits}{Rounding used to group estimates into bubbles.}
+
+\item{mask_ids}{Replace subject identifiers with sequence numbers (on by
+default: the page is the deliverable most likely to leave the organisation).}
 }
 \value{
 The file path, invisibly.

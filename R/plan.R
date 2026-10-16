@@ -84,7 +84,8 @@ print.stress_plan <- function(x, ...) { cat(plan_lines(x), sep = "\n"); invisibl
 #' verdict, and keeps the rows by family.
 #'
 #' @param plan A `stress_plan`.
-#' @param cores Worker processes passed to every family.
+#' @param cores Worker processes; the cluster is started once and shared by
+#'   every family.
 #' @param seed Seed passed to the families that take one, unless the plan
 #'   sets it.
 #' @return An object of class `stress_result`: `plan`, `rows` (a list of
@@ -103,6 +104,10 @@ print.stress_plan <- function(x, ...) { cat(plan_lines(x), sep = "\n"); invisibl
 run_plan <- function(plan, cores = 1L, seed = 1) {
   if (!inherits(plan, "stress_plan")) stop("plan must be a stress_plan")
   t0 <- Sys.time(); spec <- plan$spec; rows <- list()
+  if (is.numeric(cores) && cores > 1L) {   # one cluster for the whole plan
+    cl <- parallel::makeCluster(as.integer(cores)); on.exit(parallel::stopCluster(cl), add = TRUE)
+    parallel::clusterEvalQ(cl, { requireNamespace("ballast", quietly = TRUE); NULL }); cores <- cl
+  }
   for (nm in names(plan$families)) {
     x <- plan$families[[nm]]; fun <- get(FAMILY_FUN[[nm]], envir = asNamespace("ballast"))
     calls <- if (nm == "loo" && length(x) && is.list(x[[1]])) x else list(x)
@@ -138,6 +143,7 @@ print.stress_result <- function(x, ...) {
 #' @param dir Directory to write into (created if needed).
 #' @param name File stem for the report and figures.
 #' @param width,height,dpi Figure size in inches and resolution.
+#' @param mask_ids Replace subject identifiers with sequence numbers.
 #' @return The path of the Markdown file, invisibly.
 #' @examples
 #' \donttest{
@@ -150,10 +156,12 @@ print.stress_result <- function(x, ...) {
 #' stress_report(run_plan(plan), dir = tempdir())
 #' }
 #' @export
-stress_report <- function(result, dir = ".", name = "stress_report", width = 9, height = 5, dpi = 150) {
+stress_report <- function(result, dir = ".", name = "stress_report", width = 9, height = 5, dpi = 150, mask_ids = FALSE) {
   if (!inherits(result, "stress_result")) stop("result must be a stress_result")
   dir.create(dir, showWarnings = FALSE, recursive = TRUE)
-  b <- result$base; v <- result$verdict; cen <- result$census; s <- summary(cen)
+  b <- result$base; v <- result$verdict; cen <- result$census
+  if (mask_ids) { cen <- ballast::mask_ids(cen, result$plan$spec); v <- stress_verdict(cen) }
+  s <- summary(cen)
   md_table <- function(df) { df[] <- lapply(df, function(col) if (is.numeric(col)) format(round(col, 3), trim = TRUE) else as.character(col))
     c(paste("|", paste(names(df), collapse = " | "), "|"), paste("|", paste(rep("---", ncol(df)), collapse = " | "), "|"), apply(df, 1, function(r) paste("|", paste(r, collapse = " | "), "|"))) }
   figs <- character()

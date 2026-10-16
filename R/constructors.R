@@ -19,9 +19,13 @@
 stress_spec_mmrm <- function(fit, treatment = NULL, reference = NULL, active = NULL, contrast_visit = NULL, alpha = 0.05,
                              weights = "equal", label = "pre-specified", sas_conventions = TRUE) {
   if (!inherits(fit, "mmrm")) stop("fit must be an mmrm model")
-  fp <- fit$formula_parts; d <- fit$data
-  response <- as.character(fp$full_formula[[2]]); subject <- fp$subject_var; visit <- fp$visit_var
-  labs <- attr(stats::terms(fp$model_formula), "term.labels")
+  d <- fit$data; ff <- stats::formula(fit)
+  response <- as.character(ff[[2]]); subject <- mmrm::component(fit, "subject_var"); cov_type <- mmrm::component(fit, "cov_type")
+  labs_all <- attr(stats::terms(ff), "term.labels")
+  cov_term <- labs_all[grepl("|", labs_all, fixed = TRUE)]; if (length(cov_term) != 1L) stop("cannot find the covariance term in the model formula")
+  inner <- substr(cov_term, regexpr("(", cov_term, fixed = TRUE) + 1L, nchar(cov_term) - 1L)
+  visit <- all.vars(stats::reformulate(trimws(strsplit(inner, "|", fixed = TRUE)[[1]][1])))[1]
+  labs <- labs_all[!grepl("|", labs_all, fixed = TRUE)]
   if (is.null(treatment)) {
     inter <- labs[grepl(":", labs, fixed = TRUE)]
     cand <- unique(unlist(lapply(strsplit(inter, ":", fixed = TRUE), function(p) if (visit %in% p) setdiff(p, visit))))
@@ -32,8 +36,8 @@ stress_spec_mmrm <- function(fit, treatment = NULL, reference = NULL, active = N
   drop <- labs %in% c(treatment, visit) | vapply(strsplit(labs, ":", fixed = TRUE), function(p) setequal(p, c(treatment, visit)), TRUE)
   covariates <- labs[!drop]
   cov_map <- c(us = "us", ar1 = "ar1", ar1h = "ar1h", cs = "cs", csh = "csh", toep = "toep", toeph = "toeph", ad = "ad", adh = "adh")
-  covariance <- cov_map[fp$cov_type]; if (is.na(covariance)) stop("covariance structure ", fp$cov_type, " is not supported by stress_spec")
-  if (!is.null(fp$group_var)) message("the fit has a grouped covariance (by ", fp$group_var, "); the spec uses the ungrouped structure")
+  covariance <- cov_map[cov_type]; if (is.na(covariance)) stop("covariance structure ", cov_type, " is not supported by stress_spec")
+  if (grepl("/", cov_term, fixed = TRUE)) message("the fit has a grouped covariance; the spec uses the ungrouped structure")
   method <- fit$method; vcov <- fit$vcov
   if (!method %in% DF_METHODS) method <- "Satterthwaite"
   if (!vcov %in% VCOV_TYPES) vcov <- "Asymptotic"

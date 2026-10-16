@@ -32,6 +32,8 @@
 #'   the imputation model; if `FALSE` each arm has its own, and the reference
 #'   arm's is used for the reference-based draws.
 #' @param max_tries Bootstrap refits attempted per imputation before giving up.
+#' @details Imputation `i` uses seed `seed + i` on whichever worker draws it, so
+#'   the result is the same for any number of `cores`.
 #' @return A `stress_rows` data frame, one counted row per method
 #'   (`role = "sensitivity"`), with the number of imputations and the Monte
 #'   Carlo standard error in `note`.
@@ -68,7 +70,6 @@ stress_reference <- function(spec, methods = c("MAR", "J2R", "CR", "CIR"), m = 2
   g_own <- grid_for(as.character(w[[trt]])[rep(seq_len(nrow(w)), each = nv)]); g_ref <- grid_for(ref)
   last_obs <- apply(!miss, 1, function(o) if (any(o)) max(which(o)) else 0L)
   is_active <- w[[trt]] == arm
-  set.seed(seed)
   subj_arm <- as.character(w[[trt]])
   draw_params <- function() {
     for (try in seq_len(max_tries)) {
@@ -81,8 +82,9 @@ stress_reference <- function(spec, methods = c("MAR", "J2R", "CR", "CIR"), m = 2
     NULL
   }
   sigma_of <- function(fit, arm_value) { S <- mmrm::VarCorr(fit); if (is.list(S) && !is.matrix(S)) S <- S[[arm_value]]; S[visits, visits, drop = FALSE] }
-  means_of <- function(fit, grid) { X <- stats::model.matrix(tt, grid, contrasts.arg = fit$contrasts); b <- stats::coef(fit, complete = FALSE); matrix(as.vector(X[, names(b), drop = FALSE] %*% b), ncol = nv, byrow = TRUE) }
+  means_of <- function(fit, grid) { X <- stats::model.matrix(tt, grid); b <- stats::coef(fit, complete = FALSE); matrix(as.vector(X[, names(b), drop = FALSE] %*% b), ncol = nv, byrow = TRUE) }
   draws <- stress_map(seq_len(m), function(i) {
+    set.seed(seed + i)   # one seed per imputation, set on the worker, so results do not depend on the number of cores
     fb <- draw_params(); if (is.null(fb)) return(NULL)
     mu_own <- means_of(fb, g_own); mu_ref <- means_of(fb, g_ref)
     S_own <- lapply(stats::setNames(spec$treatment_levels, spec$treatment_levels), function(a) sigma_of(fb, a))

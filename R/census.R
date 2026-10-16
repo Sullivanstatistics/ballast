@@ -108,6 +108,7 @@ stress_verdict <- function(census, marginal_band = c(0.5, 2)) {
   stability_sensitivity <- if (any(!xs$inside_ci | !xs$same_direction, na.rm = TRUE)) "fragile" else if (any(xs$crossed, na.rm = TRUE)) "sensitive" else "robust"
   marginal <- b$p >= alpha * marginal_band[1] & b$p <= alpha * marginal_band[2]
   structure(list(stability = stability, stability_sensitivity = stability_sensitivity, marginal = marginal, base = b, alpha = alpha,
+                 n_failed = sum(!census$converged), n_rows = nrow(census),
                  n_sensitivity = nrow(xs), n_supplementary = nrow(x) - nrow(xs),
                  n_alternatives = sum(x$kind == "alternative"), n_deletions = sum(x$kind == "deletion"),
                  n_significant = sum(x$significant, na.rm = TRUE), n_crossed = nrow(crossed_rows),
@@ -121,11 +122,42 @@ print.stress_verdict <- function(x, digits = 3, ...) {
   b <- x$base
   cat(sprintf("Base: estimate %s, 95%% CI %s to %s, p = %s (alpha %s)\n", format(b$estimate, digits = digits), format(b$lcl, digits = digits),
               format(b$ucl, digits = digits), format(b$p, digits = digits), format(x$alpha)))
-  cat(sprintf("Counted: %d alternative analyses, %d deletions; %d significant, %d crossed alpha\n", x$n_alternatives, x$n_deletions, x$n_significant, x$n_crossed))
+  cat(sprintf("Counted: %d alternative analyses, %d deletions; %d significant, %d crossed alpha%s\n", x$n_alternatives, x$n_deletions, x$n_significant, x$n_crossed,
+              if (isTRUE(x$n_failed > 0)) sprintf("; %d of %d refits did not converge and are not counted", x$n_failed, x$n_rows) else ""))
   cat(sprintf("Outside base CI: %d; direction reversed: %d; largest shift: %s base SE\n", x$n_outside_ci, x$n_reversed, format(x$max_shift_se, digits = digits)))
   cat(sprintf("Verdict: %s over all counted rows; %s over the %d sensitivity analyses (same estimand; %d supplementary rows)%s\n",
               toupper(x$stability), toupper(x$stability_sensitivity), x$n_sensitivity, x$n_supplementary, if (x$marginal) "; marginal: base p near alpha" else ""))
   if (nrow(x$fragile_rows)) { cat("Rows outside the CI or reversed:\n"); print(x$fragile_rows[, c("family", "label", "estimate", "p")], row.names = FALSE, digits = digits) }
   else if (nrow(x$crossed_rows)) { cat("Rows that crossed alpha:\n"); print(utils::head(x$crossed_rows[, c("family", "label", "estimate", "p")], 10), row.names = FALSE, digits = digits) }
   invisible(x)
+}
+
+#' Mask subject identifiers in a census
+#'
+#' Replaces subject identifiers in the labels of the leave-one-subject-out and
+#' deletion-search rows with sequence numbers (`S001`, `S002`, ...) in the
+#' order of the spec's subject levels, so that a census, report or page can
+#' leave the organisation without participant identifiers. The mapping is
+#' returned as `attr(, "id_map")`.
+#'
+#' @param census A `stress_census` (or `stress_rows`).
+#' @param spec The [stress_spec()] the census was built from.
+#' @return The same object with masked labels.
+#' @examples
+#' small <- mmrm::fev_data[mmrm::fev_data$USUBJID %in% paste0("PT", 1:40), ]
+#' spec <- stress_spec(small, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL,
+#'                     covariance = "cs", method = "Satterthwaite", vcov = "Asymptotic")
+#' cen <- stress_census(spec, stress_loo(spec))
+#' head(mask_ids(cen, spec)$label)
+#' @export
+mask_ids <- function(census, spec) {
+  check_spec(spec)
+  ids <- levels(spec$data[[spec$subject]]); map <- stats::setNames(sprintf("S%03d", seq_along(ids)), ids)
+  sub_one <- function(lab) { parts <- trimws(strsplit(lab, ",", fixed = TRUE)[[1]]); hit <- parts %in% names(map)
+    if (!any(hit)) return(lab); parts[hit] <- map[parts[hit]]; paste(parts, collapse = ", ") }
+  k <- census$family %in% c("leave-one-out: subject", "greedy deletion search") | grepl("^leave-one-out: ", census$family) & census$label %in% names(map)
+  census$label[k] <- vapply(census$label[k], sub_one, "")
+  if ("note" %in% names(census)) { k2 <- grepl("^step [0-9]+ removed ", census$note); census$note[k2] <- vapply(census$note[k2], function(n) { id <- sub("^step [0-9]+ removed ", "", n); if (id %in% names(map)) sub(id, map[[id]], n, fixed = TRUE) else n }, "") }
+  attr(census, "id_map") <- map
+  census
 }

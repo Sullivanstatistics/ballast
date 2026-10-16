@@ -1,4 +1,14 @@
-# ballast 0.4.0 (development, 16 October 2026)
+# ballast 0.5.0 (development, 16 October 2026)
+
+* Reference-based imputation seeds each draw on the worker, so results no longer depend on the number of cores.
+* The fitter reads the model matrix and covariance parameters through mmrm's public accessors.
+* Verdicts, reports and tables state how many refits did not converge.
+* `mask_ids()` replaces subject identifiers with sequence numbers; on by default in `stress_html()`.
+* `run_plan()` starts one worker cluster and shares it across families.
+* `stress_sap()` and the installed template give the statistical-analysis-plan text for a pre-specified stress test.
+* Validation vignette; CITATION; Nathan Hogan credited for the SAS reference validation.
+
+# ballast 0.4.0
 
 * Specs from an `mmrm` fit (`stress_spec_mmrm()`) and from an ADaM BDS data set (`stress_spec_adam()`).
 * Three or more arms: `active` chooses the comparison; `stress_visits()` gives the contrast at every visit;

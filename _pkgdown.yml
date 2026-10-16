@@ -9,11 +9,11 @@ reference:
 - title: Census and verdict
   contents: [stress_census, summary.stress_census, stress_verdict, tipping_point, stress_explain]
 - title: Pre-specify, run, report
-  contents: [stress_plan, standard_plan, run_plan, run_plans, stress_report, stress_tables, stress_log, stress_html]
+  contents: [stress_plan, standard_plan, run_plan, run_plans, stress_report, stress_tables, stress_log, stress_html, stress_sap, mask_ids]
 - title: Figures
   contents: [plot.stress_census, plot_swarm, plot_pcurve, plot_pstrip]
 - title: Calibration
   contents: [simulate_trial, stress_calibrate]
 articles:
 - title: Guides
-  contents: [quickstart, interpreting, missing-data, sas-users]
+  contents: [quickstart, interpreting, missing-data, sas-users, validation]

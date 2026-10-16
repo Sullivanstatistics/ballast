@@ -74,12 +74,13 @@ stress_fit <- function(spec, data = NULL, label = spec$label, family = "base", k
   fit <- tryCatch(mmrm::mmrm(f, data = d, reml = TRUE, control = mmrm::mmrm_control(method = method, vcov = vcov)),
                   error = function(e) e)
   if (inherits(fit, "error")) { row$note <- trimws(paste(note, "[did not converge:", substr(conditionMessage(fit), 1, 60), "]")); return(row) }
-  L <- lsmean_L(stats::delete.response(stats::terms(fit$formula_parts$model_formula)), d, spec, names(stats::coef(fit, complete = FALSE)), fit$contrasts, at, weights)
+  tt <- stats::delete.response(stats::terms(stats::reformulate(c(covariates, spec$treatment, spec$visit, paste0(spec$treatment, ":", spec$visit)))))
+  L <- lsmean_L(tt, d, spec, names(stats::coef(fit, complete = FALSE)), NULL, at, weights)
   z <- tryCatch(mmrm::df_1d(fit, L), error = function(e) e)
   if (inherits(z, "error")) { row$note <- trimws(paste(note, "[contrast failed:", substr(conditionMessage(z), 1, 60), "]")); return(row) }
   if (method == "Between-Within" && isTRUE(spec$sas_conventions)) {
     # PROC MIXED between-within df for a within-subject contrast: N - subjects - rank of the within-subject columns of X.
-    X <- fit$tmb_data$x_matrix; subj <- d[[spec$subject]]
+    X <- mmrm::component(fit, "x_matrix"); subj <- d[[spec$subject]]
     within <- vapply(seq_len(ncol(X)), function(j) any(tapply(X[, j], subj, function(v) length(unique(v)) > 1L)), TRUE)
     df_bw <- nrow(X) - nlevels(subj) - sum(within)
     if (abs(z$df - df_bw) > 0.5) {
@@ -93,7 +94,7 @@ stress_fit <- function(spec, data = NULL, label = spec$label, family = "base", k
   row$lcl <- z$est - q * z$se; row$ucl <- z$est + q * z$se; row$p <- z$p_val
   row$n_subj <- nlevels(d[[spec$subject]]); row$n_obs <- nrow(d)
   # SAS AICC for REML: -2 res.loglik + 2 d n* / (n* - d - 1), d = covariance parameters, n* = N - rank(X)
-  dpar <- length(fit$theta_est); nstar <- nrow(d) - length(stats::coef(fit, complete = FALSE))
+  dpar <- length(mmrm::component(fit, "theta_est")); nstar <- nrow(d) - length(stats::coef(fit, complete = FALSE))
   row$aicc <- -2 * as.numeric(stats::logLik(fit)) + 2 * dpar * nstar / (nstar - dpar - 1)
   row$covariates <- paste(covariates, collapse = " + ")
   row
@@ -133,6 +134,7 @@ bind_rows_ <- function(x) {
 
 # Map a fitting function over items, optionally on a PSOCK cluster (the installed package is loaded on the workers).
 stress_map <- function(items, fun, cores = 1L) {
+  if (inherits(cores, "cluster")) return(parallel::parLapplyLB(cores, items, fun))   # a cluster made once by run_plan() and reused
   if (cores <= 1L || length(items) < 2L) return(lapply(items, fun))
   cl <- parallel::makeCluster(min(cores, length(items))); on.exit(parallel::stopCluster(cl), add = TRUE)
   parallel::clusterEvalQ(cl, { requireNamespace("ballast", quietly = TRUE); NULL })

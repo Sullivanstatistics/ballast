@@ -76,6 +76,9 @@ refitted on a bootstrap sample of subjects (stratified by arm) and its
 fixed effects and covariance are used to draw the missing values from the
 conditional normal distribution given the subject's observed values.
 An optional \code{delta} is added to every imputed value of the active arm.
+
+Imputation \code{i} uses seed \code{seed + i} on whichever worker draws it, so
+the result is the same for any number of \code{cores}.
 }
 \examples{
 small <- mmrm::fev_data[mmrm::fev_data$USUBJID \%in\% paste0("PT", 1:100), ]
