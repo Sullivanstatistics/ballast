@@ -163,7 +163,9 @@ stress_report <- function(result, dir = ".", name = "stress_report", width = 9, 
     save_fig(plot(cen), "families")
     if (any(cen$counted & cen$kind == "alternative")) save_fig(plot_swarm(stats::setNames(list(cen), result$plan$spec$label)), "swarm", h = height)
     if (any(cen$counted & cen$kind == "deletion")) save_fig(plot_pstrip(cen), "pstrip", h = max(3, 1 + 0.8 * length(unique(cen$family[cen$kind == "deletion"]))))
-    if (any(!is.na(cen$param) & cen$kind == "search")) save_fig(plot_pcurve(cen[cen$kind == "search" | (!is.na(cen$param) & cen$kind == "alternative"), ]), "pcurve")
+    crv <- cen[!is.na(cen$param) & cen$family != "greedy deletion search", , drop = FALSE]   # the deletion search has its own x (subjects removed)
+    if (any(crv$kind == "search")) { g <- plot_pcurve(crv, xlab = "Shift applied to imputed values of the active arm")
+      if (length(unique(crv$family)) > 1L) g <- g + ggplot2::facet_wrap(~ family, scales = "free_x"); save_fig(g, "pcurve") }
   }
   fr <- lapply(result$rows, function(r) attr(r, "fragility")); fr <- fr[!vapply(fr, is.null, TRUE)]
   lines <- c(paste("#", result$plan$title), "", sprintf("Generated %s with ballast %s.", format(Sys.time(), "%Y-%m-%d %H:%M"), as.character(utils::packageVersion("ballast"))), "",
