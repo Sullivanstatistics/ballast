@@ -1,4 +1,4 @@
-# ballast
+# ballast <img src="man/figures/logo.png" align="right" height="139" alt="ballast hex sticker" />
 
 ballast keeps a result steady under load. It stress-tests a pre-specified mixed model for repeated measures (MMRM):
 the model is refitted under families of data and analytic perturbations, and every refit is judged against the
