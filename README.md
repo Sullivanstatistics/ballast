@@ -1,5 +1,8 @@
 # ballast <img src="man/figures/logo.png" align="right" height="139" alt="ballast hex sticker" />
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23427834.svg)](https://doi.org/10.5281/zenodo.23427834)
+[![R-CMD-check](https://github.com/Sullivanstatistics/ballast/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Sullivanstatistics/ballast/actions/workflows/R-CMD-check.yaml)
+
 ballast keeps a result steady under load. It stress-tests a pre-specified mixed model for repeated measures (MMRM):
 the model is refitted under families of data and analytic perturbations, and every refit is judged against the
 pre-specified estimate, confidence interval and p-value.
@@ -87,3 +90,8 @@ Version 0.5.0. The engine is a generic rewrite of a program-by-program validated
 reproduces that package cell by cell (six validation gates, about 1,200 cells, deterministic quantities to 1e-6, Monte
 Carlo quantities within Monte Carlo error); reference-based imputation agrees with rbmi on its public antidepressant
 data. See the validation vignette. `R CMD check --as-cran` runs on Windows, macOS and Linux on every push.
+
+## Citation
+
+Sullivan A (2026). ballast: Stress-Test a Pre-Specified Mixed Model for Repeated Measures. R package version 0.5.0.
+doi:10.5281/zenodo.23427834. `citation("ballast")` gives the BibTeX entry.
