@@ -145,18 +145,17 @@ plan
 res <- run_plan(plan, seed = 1)
 res
 #> Pre-specified stress test
-#> 8 families, 22 rows, 18 counted; 0.2 min
+#> 8 families, 22 rows, 17 counted; 0.2 min
 #> Base: estimate 3.87, 95% CI -0.255 to 8, p = 0.0655 (alpha 0.05)
-#> Counted: 14 alternative analyses, 4 deletions; 5 significant, 5 crossed alpha
+#> Counted: 14 alternative analyses, 3 deletions; 4 significant, 4 crossed alpha
 #> Outside base CI: 0; direction reversed: 0; largest shift: 1.74 base SE
-#> Verdict: SENSITIVE over all counted rows; SENSITIVE over the 18 sensitivity analyses (same estimand; 0 supplementary rows); marginal: base p near alpha
+#> Verdict: SENSITIVE over all counted rows; SENSITIVE over the 17 sensitivity analyses (same estimand; 0 supplementary rows); marginal: base p near alpha
 #> Rows that crossed alpha:
-#>                  family           label estimate      p
-#>    covariance structure              cs     3.53 0.0187
-#>           covariate set    without RACE     4.71 0.0296
-#>           covariate set   no covariates     4.83 0.0303
-#>   re-randomisation test 99 permutations     3.87 0.0300
-#>  greedy deletion search             PT1     4.66 0.0179
+#>                 family           label estimate      p
+#>   covariance structure              cs     3.53 0.0187
+#>          covariate set    without RACE     4.71 0.0296
+#>          covariate set   no covariates     4.83 0.0303
+#>  re-randomisation test 99 permutations     3.87 0.0300
 ```
 
 [`stress_report()`](https://sullivanstatistics.github.io/ballast/reference/stress_report.md)

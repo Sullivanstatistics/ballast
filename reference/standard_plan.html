@@ -52,6 +52,7 @@ and mean one thing. It contains, in order:</p>
 <span>  strata <span class="op">=</span> <span class="va">site</span>,</span>
 <span>  baseline <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  deltas <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  shift_visits <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ice <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  m <span class="op">=</span> <span class="fl">25</span>,</span>
 <span>  n_perm <span class="op">=</span> <span class="fl">2000</span>,</span>
@@ -82,6 +83,11 @@ re-randomisation strata unless <code>strata</code> is given).</p></dd>
 
 <dt id="arg-deltas">deltas<a class="anchor" aria-label="anchor" href="#arg-deltas"></a></dt>
 <dd><p>Optional shifts for the tipping-point family.</p></dd>
+
+
+<dt id="arg-shift-visits">shift_visits<a class="anchor" aria-label="anchor" href="#arg-shift-visits"></a></dt>
+<dd><p>Visits whose imputed values the tipping family shifts;
+<code>NULL</code> shifts every visit.</p></dd>
 
 
 <dt id="arg-ice">ice<a class="anchor" aria-label="anchor" href="#arg-ice"></a></dt>

@@ -49,10 +49,12 @@ stress_fragility(
 
 ## Value
 
-A `stress_rows` data frame with one row per step (`kind = "deletion"`,
-`param` = number removed, `label` = the subjects removed so far).
-`attr(, "fragility")` is a list with `target`, `k` (the step at which
-the target was reached, `NA` if never), `subjects` and `reached`.
+A `stress_rows` data frame with one row per step (`kind = "search"`, so
+the rows are not counted in a census, since the search crosses the
+target by construction; `param` = number removed, `label` = the subjects
+removed so far). `attr(, "fragility")` is a list with `target`, `k` (the
+step at which the target was reached, `NA` if never), `subjects` and
+`reached`.
 
 ## Examples
 

@@ -42,12 +42,9 @@ plan <- stress_plan(spec, covariance = list(structures = c("cs", "ar1h")),
 res <- run_plan(plan)
 res
 #> Pre-specified stress test
-#> 5 families, 8 rows, 7 counted; 0.0 min
+#> 5 families, 8 rows, 6 counted; 0.0 min
 #> Base: estimate 3.48, 95% CI -0.796 to 7.75, p = 0.11 (alpha 0.05)
-#> Counted: 3 alternative analyses, 4 deletions; 1 significant, 1 crossed alpha
-#> Outside base CI: 0; direction reversed: 0; largest shift: 0.556 base SE
-#> Verdict: SENSITIVE over all counted rows; SENSITIVE over the 7 sensitivity analyses (same estimand; 0 supplementary rows)
-#> Rows that crossed alpha:
-#>                  family label estimate      p
-#>  greedy deletion search   PT1     4.68 0.0251
+#> Counted: 3 alternative analyses, 3 deletions; 0 significant, 0 crossed alpha
+#> Outside base CI: 0; direction reversed: 0; largest shift: 0.474 base SE
+#> Verdict: ROBUST over all counted rows; ROBUST over the 6 sensitivity analyses (same estimand; 0 supplementary rows)
 ```

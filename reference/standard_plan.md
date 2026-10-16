@@ -13,6 +13,7 @@ standard_plan(
   strata = site,
   baseline = NULL,
   deltas = NULL,
+  shift_visits = NULL,
   ice = NULL,
   m = 25,
   n_perm = 2000,
@@ -43,6 +44,11 @@ standard_plan(
 - deltas:
 
   Optional shifts for the tipping-point family.
+
+- shift_visits:
+
+  Visits whose imputed values the tipping family shifts; `NULL` shifts
+  every visit.
 
 - ice:
 

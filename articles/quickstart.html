@@ -193,18 +193,17 @@ printing it gives the text a statistical analysis plan can carry.
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_plan.html">run_plan</a></span><span class="op">(</span><span class="va">plan</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">res</span></span>
 <span><span class="co">#&gt; Pre-specified stress test</span></span>
-<span><span class="co">#&gt; 8 families, 22 rows, 18 counted; 0.2 min</span></span>
+<span><span class="co">#&gt; 8 families, 22 rows, 17 counted; 0.2 min</span></span>
 <span><span class="co">#&gt; Base: estimate 3.87, 95% CI -0.255 to 8, p = 0.0655 (alpha 0.05)</span></span>
-<span><span class="co">#&gt; Counted: 14 alternative analyses, 4 deletions; 5 significant, 5 crossed alpha</span></span>
+<span><span class="co">#&gt; Counted: 14 alternative analyses, 3 deletions; 4 significant, 4 crossed alpha</span></span>
 <span><span class="co">#&gt; Outside base CI: 0; direction reversed: 0; largest shift: 1.74 base SE</span></span>
-<span><span class="co">#&gt; Verdict: SENSITIVE over all counted rows; SENSITIVE over the 18 sensitivity analyses (same estimand; 0 supplementary rows); marginal: base p near alpha</span></span>
+<span><span class="co">#&gt; Verdict: SENSITIVE over all counted rows; SENSITIVE over the 17 sensitivity analyses (same estimand; 0 supplementary rows); marginal: base p near alpha</span></span>
 <span><span class="co">#&gt; Rows that crossed alpha:</span></span>
-<span><span class="co">#&gt;                  family           label estimate      p</span></span>
-<span><span class="co">#&gt;    covariance structure              cs     3.53 0.0187</span></span>
-<span><span class="co">#&gt;           covariate set    without RACE     4.71 0.0296</span></span>
-<span><span class="co">#&gt;           covariate set   no covariates     4.83 0.0303</span></span>
-<span><span class="co">#&gt;   re-randomisation test 99 permutations     3.87 0.0300</span></span>
-<span><span class="co">#&gt;  greedy deletion search             PT1     4.66 0.0179</span></span></code></pre></div>
+<span><span class="co">#&gt;                 family           label estimate      p</span></span>
+<span><span class="co">#&gt;   covariance structure              cs     3.53 0.0187</span></span>
+<span><span class="co">#&gt;          covariate set    without RACE     4.71 0.0296</span></span>
+<span><span class="co">#&gt;          covariate set   no covariates     4.83 0.0303</span></span>
+<span><span class="co">#&gt;  re-randomisation test 99 permutations     3.87 0.0300</span></span></code></pre></div>
 <p><code><a href="../reference/stress_report.html">stress_report()</a></code> writes a Markdown report with the
 figures, <code><a href="../reference/stress_tables.html">stress_tables()</a></code> the Word or RTF tables and the
 census as CSV, <code><a href="../reference/stress_html.html">stress_html()</a></code> an interactive page, and

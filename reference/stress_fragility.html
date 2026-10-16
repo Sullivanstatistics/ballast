@@ -98,8 +98,9 @@ restrict the search to (one arm, say).</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A <code>stress_rows</code> data frame with one row per step
-(<code>kind = "deletion"</code>, <code>param</code> = number removed, <code>label</code> = the subjects
-removed so far). <code>attr(, "fragility")</code> is a list with <code>target</code>, <code>k</code> (the
+(<code>kind = "search"</code>, so the rows are not counted in a census, since the
+search crosses the target by construction; <code>param</code> = number removed,
+<code>label</code> = the subjects removed so far). <code>attr(, "fragility")</code> is a list with <code>target</code>, <code>k</code> (the
 step at which the target was reached, <code>NA</code> if never), <code>subjects</code> and
 <code>reached</code>.</p>
     </div>
