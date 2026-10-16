@@ -6,11 +6,13 @@
 <url><loc>https://sullivanstatistics.github.io/ballast/articles/missing-data.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/articles/quickstart.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/articles/sas-users.html</loc></url>
+<url><loc>https://sullivanstatistics.github.io/ballast/articles/validation.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/authors.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/index.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/news/index.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/default_inference.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/index.html</loc></url>
+<url><loc>https://sullivanstatistics.github.io/ballast/reference/mask_ids.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/plot.stress_census.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/plot_pcurve.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/plot_pstrip.html</loc></url>
@@ -41,6 +43,7 @@
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_population.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_reference.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_report.html</loc></url>
+<url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_sap.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_spec.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_spec_adam.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_spec_mmrm.html</loc></url>

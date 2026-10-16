@@ -14,7 +14,8 @@ stress_report(
   name = "stress_report",
   width = 9,
   height = 5,
-  dpi = 150
+  dpi = 150,
+  mask_ids = FALSE
 )
 ```
 
@@ -36,6 +37,10 @@ stress_report(
 - width, height, dpi:
 
   Figure size in inches and resolution.
+
+- mask_ids:
+
+  Replace subject identifiers with sequence numbers.
 
 ## Value
 

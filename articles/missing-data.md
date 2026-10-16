@@ -32,15 +32,15 @@ The vignette uses few imputations; use 25 or more in practice.
 ref <- stress_reference(spec, m = 5, seed = 1)
 ref[, c("label", "estimate", "stderr", "p", "note")]
 #>   label estimate   stderr          p
-#> 1   MAR 3.400033 2.394229 0.16953281
-#> 2   J2R 3.256714 2.069343 0.11962627
-#> 3    CR 3.961617 1.842585 0.03184678
-#> 4   CIR 4.933177 2.272936 0.03772876
+#> 1   MAR 4.589312 2.132649 0.03504009
+#> 2   J2R 3.642409 1.933720 0.06151019
+#> 3    CR 3.742395 1.951151 0.05660463
+#> 4   CIR 4.158507 2.121805 0.05546734
 #>                                                                                                      note
-#> 1 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.638
-#> 2 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.403
-#> 3 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.199
-#> 4 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.556
+#> 1 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.431
+#> 2 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.317
+#> 3 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.303
+#> 4 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.458
 ```
 
 The package’s implementation was checked against rbmi on the

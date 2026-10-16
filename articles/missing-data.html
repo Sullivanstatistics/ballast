@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ballast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,15 +86,15 @@ use 25 or more in practice.</p>
 <code class="sourceCode R"><span><span class="va">ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/stress_reference.html">stress_reference</a></span><span class="op">(</span><span class="va">spec</span>, m <span class="op">=</span> <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">ref</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"label"</span>, <span class="st">"estimate"</span>, <span class="st">"stderr"</span>, <span class="st">"p"</span>, <span class="st">"note"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;   label estimate   stderr          p</span></span>
-<span><span class="co">#&gt; 1   MAR 3.400033 2.394229 0.16953281</span></span>
-<span><span class="co">#&gt; 2   J2R 3.256714 2.069343 0.11962627</span></span>
-<span><span class="co">#&gt; 3    CR 3.961617 1.842585 0.03184678</span></span>
-<span><span class="co">#&gt; 4   CIR 4.933177 2.272936 0.03772876</span></span>
+<span><span class="co">#&gt; 1   MAR 4.589312 2.132649 0.03504009</span></span>
+<span><span class="co">#&gt; 2   J2R 3.642409 1.933720 0.06151019</span></span>
+<span><span class="co">#&gt; 3    CR 3.742395 1.951151 0.05660463</span></span>
+<span><span class="co">#&gt; 4   CIR 4.158507 2.121805 0.05546734</span></span>
 <span><span class="co">#&gt;                                                                                                      note</span></span>
-<span><span class="co">#&gt; 1 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.638</span></span>
-<span><span class="co">#&gt; 2 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.403</span></span>
-<span><span class="co">#&gt; 3 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.199</span></span>
-<span><span class="co">#&gt; 4 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.556</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.431</span></span>
+<span><span class="co">#&gt; 2 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.317</span></span>
+<span><span class="co">#&gt; 3 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.303</span></span>
+<span><span class="co">#&gt; 4 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.458</span></span></code></pre></div>
 <p>The package’s implementation was checked against rbmi on the
 antidepressant data that rbmi ships: with the same imputation model, the
 same number of bootstrap draws and the same analysis model applied to

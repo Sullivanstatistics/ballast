@@ -10,7 +10,7 @@ refit's estimate and p-value. Needs `plotly` and `htmlwidgets`.
 ## Usage
 
 ``` r
-stress_html(result, file = "stress_report.html", digits = 2)
+stress_html(result, file = "stress_report.html", digits = 2, mask_ids = TRUE)
 ```
 
 ## Arguments
@@ -27,6 +27,11 @@ stress_html(result, file = "stress_report.html", digits = 2)
 - digits:
 
   Rounding used to group estimates into bubbles.
+
+- mask_ids:
+
+  Replace subject identifiers with sequence numbers (on by default: the
+  page is the deliverable most likely to leave the organisation).
 
 ## Value
 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ballast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,20 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.4.0" id="ballast-040-development-16-october-2026">ballast 0.4.0 (development, 16 October 2026)<a class="anchor" aria-label="anchor" href="#ballast-040-development-16-october-2026"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.5.0" id="ballast-050-development-16-october-2026">ballast 0.5.0 (development, 16 October 2026)<a class="anchor" aria-label="anchor" href="#ballast-050-development-16-october-2026"></a></h2>
+<ul><li>Reference-based imputation seeds each draw on the worker, so results no longer depend on the number of cores.</li>
+<li>The fitter reads the model matrix and covariance parameters through mmrm’s public accessors.</li>
+<li>Verdicts, reports and tables state how many refits did not converge.</li>
+<li>
+<code><a href="../reference/mask_ids.html">mask_ids()</a></code> replaces subject identifiers with sequence numbers; on by default in <code><a href="../reference/stress_html.html">stress_html()</a></code>.</li>
+<li>
+<code><a href="../reference/run_plan.html">run_plan()</a></code> starts one worker cluster and shares it across families.</li>
+<li>
+<code><a href="../reference/stress_sap.html">stress_sap()</a></code> and the installed template give the statistical-analysis-plan text for a pre-specified stress test.</li>
+<li>Validation vignette; CITATION; Nathan Hogan credited for the SAS reference validation.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.0" id="ballast-040">ballast 0.4.0<a class="anchor" aria-label="anchor" href="#ballast-040"></a></h2>
 <ul><li>Specs from an <code>mmrm</code> fit (<code><a href="../reference/stress_spec_mmrm.html">stress_spec_mmrm()</a></code>) and from an ADaM BDS data set (<code><a href="../reference/stress_spec_adam.html">stress_spec_adam()</a></code>).</li>
 <li>Three or more arms: <code>active</code> chooses the comparison; <code><a href="../reference/stress_visits.html">stress_visits()</a></code> gives the contrast at every visit; <code><a href="../reference/run_plans.html">run_plans()</a></code> runs several endpoints or comparisons and summarises them together.</li>
 <li>

@@ -18,7 +18,8 @@ run_plan(plan, cores = 1L, seed = 1)
 
 - cores:
 
-  Worker processes passed to every family.
+  Worker processes; the cluster is started once and shared by every
+  family.
 
 - seed:
 

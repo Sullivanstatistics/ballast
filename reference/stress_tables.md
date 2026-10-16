@@ -14,7 +14,8 @@ stress_tables(
   dir = ".",
   name = "stress",
   formats = c("csv", "docx", "rtf"),
-  digits = 3
+  digits = 3,
+  mask_ids = FALSE
 )
 ```
 
@@ -40,6 +41,10 @@ stress_tables(
 - digits:
 
   Decimal places in the formatted tables.
+
+- mask_ids:
+
+  Replace subject identifiers with sequence numbers.
 
 ## Value
 

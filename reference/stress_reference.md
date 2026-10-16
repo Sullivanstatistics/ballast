@@ -101,6 +101,9 @@ fixed effects and covariance are used to draw the missing values from
 the conditional normal distribution given the subject's observed values.
 An optional `delta` is added to every imputed value of the active arm.
 
+Imputation `i` uses seed `seed + i` on whichever worker draws it, so the
+result is the same for any number of `cores`.
+
 ## References
 
 Carpenter JR, Roger JH, Kenward MG (2013). Analysis of longitudinal
@@ -122,11 +125,11 @@ stress_reference(spec, methods = c("MAR", "J2R"), m = 3)
 #> 1      TRUE
 #> 2      TRUE
 #>                                                                                                      note
-#> 1 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 3 of 3 converged; MC SE of estimate 0.309
-#> 2 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 3 of 3 converged; MC SE of estimate 0.128
-#>   estimate   stderr        df      lcl      ucl            p n_subj n_obs aicc
-#> 1 4.977511 1.482302   66.1174 2.018098 7.936924 0.0013060267    100   400   NA
-#> 2 4.605988 1.383959 1724.1336 1.891572 7.320404 0.0008927355    100   400   NA
+#> 1 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 3 of 3 converged; MC SE of estimate 0.669
+#> 2 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 3 of 3 converged; MC SE of estimate 0.523
+#>   estimate   stderr        df       lcl      ucl          p n_subj n_obs aicc
+#> 1 4.793579 1.907971  8.257192 0.4175297 9.169627 0.03537227    100   400   NA
+#> 2 3.757438 1.700744 13.967595 0.1089108 7.405965 0.04436303    100   400   NA
 #>   param covariance        method       vcov covariates alpha
 #> 1    NA         cs Satterthwaite Asymptotic    FEV1_BL  0.05
 #> 2    NA         cs Satterthwaite Asymptotic    FEV1_BL  0.05

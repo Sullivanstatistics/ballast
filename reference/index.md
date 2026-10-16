@@ -102,6 +102,10 @@
   : Write the run log for an audit trail
 - [`stress_html()`](https://sullivanstatistics.github.io/ballast/reference/stress_html.md)
   : Interactive HTML report
+- [`stress_sap()`](https://sullivanstatistics.github.io/ballast/reference/stress_sap.md)
+  : Statistical-analysis-plan text for a stress test
+- [`mask_ids()`](https://sullivanstatistics.github.io/ballast/reference/mask_ids.md)
+  : Mask subject identifiers in a census
 
 ## Figures
 

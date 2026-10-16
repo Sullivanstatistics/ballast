@@ -206,6 +206,10 @@ generic version is validated against that port’s anchor analyses locally
   : Write the run log for an audit trail
 - [`stress_html()`](https://sullivanstatistics.github.io/ballast/reference/stress_html.md)
   : Interactive HTML report
+- [`stress_sap()`](https://sullivanstatistics.github.io/ballast/reference/stress_sap.md)
+  : Statistical-analysis-plan text for a stress test
+- [`mask_ids()`](https://sullivanstatistics.github.io/ballast/reference/mask_ids.md)
+  : Mask subject identifiers in a census
 
 ## Figures
 
@@ -237,3 +241,5 @@ generic version is validated against that port’s anchor analyses locally
   imputation](https://sullivanstatistics.github.io/ballast/articles/missing-data.md):
 - [For SAS users: reproducing PROC MIXED and PROC MI
   conventions](https://sullivanstatistics.github.io/ballast/articles/sas-users.md):
+- [Validation
+  summary](https://sullivanstatistics.github.io/ballast/articles/validation.md):
