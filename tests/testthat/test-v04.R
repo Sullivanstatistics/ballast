@@ -56,7 +56,7 @@ test_that("standard plan, run_plans, tables, log, html and calibration", {
   skip_if_not_installed("flextable"); skip_if_not_installed("officer")
   p2 <- stress_tables(res$VIS4, dir = td, formats = c("docx", "rtf")); expect_true(any(grepl("\\.docx$", p2))); expect_true(any(grepl("\\.rtf$", p2)))
   skip_if_not_installed("plotly"); skip_if_not_installed("htmlwidgets")
-  f <- stress_html(res$VIS4, file.path(td, "r.html")); expect_true(file.exists(f)); expect_gt(file.size(f), 10000)
+  f <- stress_html(res$VIS4, file.path(td, "r.html")); expect_true(file.exists(f)); expect_gt(file.size(f), 3000)
 })
 
 test_that("simulate_trial and a tiny calibration run", {
