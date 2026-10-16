@@ -95,15 +95,12 @@ reproduces SAS `DDFM=KR`; `method = "Between-Within"` with
 definition. The multiple imputation follows PROC MI (FCS regression
 method, `MNAR ADJUST` applied at every draw) and PROC MIANALYZE.
 
-## Status and validation
+## Status
 
-Version 0.5.0. The engine is a generic rewrite of a program-by-program
-validated R port of a SAS robustness package and reproduces that package
-cell by cell (six validation gates, about 1,200 cells, deterministic
-quantities to 1e-6, Monte Carlo quantities within Monte Carlo error);
-reference-based imputation agrees with rbmi on its public antidepressant
-data. See the validation vignette. `R CMD check --as-cran` runs on
-Windows, macOS and Linux on every push.
+Development skeleton, 16 Oct 2026. The engine is a generic rewrite of a
+program-by-program validated R port of a SAS robustness package; the
+generic version is validated against that port’s anchor analyses locally
+(not shipped).
 
 # Package index
 

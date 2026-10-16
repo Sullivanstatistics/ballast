@@ -41,7 +41,7 @@ under the alternative. Subjects are ranked by the absolute difference."><meta pr
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Explain why an alternative analysis moved</h1>
-      <small class="dont-index">Source: <a href="https://github.com/Sullivanstatistics/ballast/blob/main/R/explain.R" class="external-link"><code>R/explain.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Sullivanstatistics/ballast/blob/v0.5.0/R/explain.R" class="external-link"><code>R/explain.R</code></a></small>
       <div class="d-none name"><code>stress_explain.Rd</code></div>
     </div>
 
@@ -100,20 +100,25 @@ data, pass that data as <code>data</code>.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">small</span> <span class="op">&lt;-</span> <span class="fu">mmrm</span><span class="fu">::</span><span class="va"><a href="https://openpharma.github.io/mmrm/latest-tag/reference/fev_data.html" class="external-link">fev_data</a></span><span class="op">[</span><span class="fu">mmrm</span><span class="fu">::</span><span class="va"><a href="https://openpharma.github.io/mmrm/latest-tag/reference/fev_data.html" class="external-link">fev_data</a></span><span class="op">$</span><span class="va">USUBJID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"PT"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">30</span><span class="op">)</span>, <span class="op">]</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">small</span> <span class="op">&lt;-</span> <span class="fu">mmrm</span><span class="fu">::</span><span class="va"><a href="https://openpharma.github.io/mmrm/latest-tag/reference/fev_data.html" class="external-link">fev_data</a></span><span class="op">[</span><span class="fu">mmrm</span><span class="fu">::</span><span class="va"><a href="https://openpharma.github.io/mmrm/latest-tag/reference/fev_data.html" class="external-link">fev_data</a></span><span class="op">$</span><span class="va">USUBJID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"PT"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">60</span><span class="op">)</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">spec</span> <span class="op">&lt;-</span> <span class="fu"><a href="stress_spec.html">stress_spec</a></span><span class="op">(</span><span class="va">small</span>, <span class="st">"FEV1"</span>, <span class="st">"USUBJID"</span>, <span class="st">"AVISIT"</span>, <span class="st">"ARMCD"</span>, <span class="st">"PBO"</span>, covariates <span class="op">=</span> <span class="op">~</span> <span class="va">FEV1_BL</span>,</span></span>
 <span class="r-in"><span>                    covariance <span class="op">=</span> <span class="st">"cs"</span>, method <span class="op">=</span> <span class="st">"Satterthwaite"</span>, vcov <span class="op">=</span> <span class="st">"Asymptotic"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cen</span> <span class="op">&lt;-</span> <span class="fu"><a href="stress_census.html">stress_census</a></span><span class="op">(</span><span class="va">spec</span>, <span class="fu"><a href="stress_covariates.html">stress_covariates</a></span><span class="op">(</span><span class="va">spec</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">stress_explain</span><span class="op">(</span><span class="va">spec</span>, <span class="va">cen</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span>, top <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">stress_explain</span><span class="op">(</span><span class="va">spec</span>, <span class="va">cen</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Alternative: covariate set / without FEV1_BL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Estimate 5.735 (pre-specified) -&gt; 7.913 (alternative); shift 2.18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Estimate 3.478 (pre-specified) -&gt; 4.637 (alternative); shift 1.16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Subjects whose influence changes most (influence = estimate minus estimate without the subject):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  subject arm n_visits infl_base infl_alt difference</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     PT15 PBO        2   0.00533    0.690      0.684</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     PT17 PBO        2  -0.18286    0.467      0.650</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     PT16 PBO        2   0.05930   -0.370     -0.429</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      PT2 PBO        3  -0.25015   -0.678     -0.427</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      PT3 PBO        2   1.52624    1.113     -0.413</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     PT15 PBO        2    0.0976   0.4461      0.349</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     PT17 PBO        2   -0.0137   0.3073      0.321</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     PT34 PBO        4    0.2571   0.0238     -0.233</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     PT36 TRT        2   -0.2737  -0.4586     -0.185</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     PT16 PBO        2    0.1192  -0.0640     -0.183</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      PT2 PBO        3   -0.0666  -0.2385     -0.172</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      PT8 PBO        4   -0.2690  -0.4361     -0.167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     PT21 TRT        3    0.1439   0.3058      0.162</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      PT7 PBO        3   -0.2920  -0.1411      0.151</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     PT33 TRT        3   -0.2377  -0.3882     -0.150</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

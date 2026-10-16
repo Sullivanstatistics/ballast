@@ -1,6 +1,6 @@
 # Changelog
 
-## ballast 0.5.0
+## ballast 0.5.0 (development, 16 October 2026)
 
 - Reference-based imputation seeds each draw on the worker, so results
   no longer depend on the number of cores.
