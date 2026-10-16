@@ -1,7 +1,8 @@
 #' Interactive HTML report
 #'
-#' Writes a self-contained HTML page with the verdict, the summary table and
-#' two interactive figures built with `plotly`: the bubble swarm, where
+#' Writes an HTML page (its JavaScript dependencies in a `lib` folder beside
+#' it) with the verdict, the summary table and two interactive figures built
+#' with `plotly`: the bubble swarm, where
 #' hovering a bubble lists the specifications that give that estimate, and
 #' the deletion strip, where hovering a dot names the subject removed and
 #' shows the refit's estimate and p-value. Needs `plotly` and `htmlwidgets`.

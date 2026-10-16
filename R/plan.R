@@ -161,7 +161,7 @@ stress_report <- function(result, dir = ".", name = "stress_report", width = 9, 
     save_fig <- function(g, stem, w = width, h = height) { f <- file.path(dir, paste0(name, "_", stem, ".png"))
       ok <- tryCatch({ ggplot2::ggsave(f, g, width = w, height = h, dpi = dpi, bg = "white"); TRUE }, error = function(e) FALSE); if (ok) figs[[stem]] <<- basename(f) }
     save_fig(plot(cen), "families")
-    if (any(cen$counted & cen$kind == "alternative")) save_fig(plot_swarm(cen), "swarm", h = height)
+    if (any(cen$counted & cen$kind == "alternative")) save_fig(plot_swarm(stats::setNames(list(cen), result$plan$spec$label)), "swarm", h = height)
     if (any(cen$counted & cen$kind == "deletion")) save_fig(plot_pstrip(cen), "pstrip", h = max(3, 1 + 0.8 * length(unique(cen$family[cen$kind == "deletion"]))))
     if (any(!is.na(cen$param) & cen$kind == "search")) save_fig(plot_pcurve(cen[cen$kind == "search" | (!is.na(cen$param) & cen$kind == "alternative"), ]), "pcurve")
   }
