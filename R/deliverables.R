@@ -36,11 +36,13 @@ stress_tables <- function(result, dir = ".", name = "stress", formats = c("csv",
                    "Largest shift (SE)" = fmt(s$max_shift_se, 2), check.names = FALSE, stringsAsFactors = FALSE)
   x <- as.data.frame(cen)[cen$counted & !is.na(cen$estimate), , drop = FALSE]
   cr <- x[(!is.na(x$crossed) & x$crossed) | !x$inside_ci | !x$same_direction, , drop = FALSE]
+  ci_txt <- function(l, u) if (length(l)) paste0(fmt(l), " to ", fmt(u)) else character()
   t2 <- data.frame("Family" = cr$family, "Analysis" = cr$label, "Role" = cr$role, "Estimate" = fmt(cr$estimate), "SE" = fmt(cr$stderr),
-                   "95% CI" = paste0(fmt(cr$lcl), " to ", fmt(cr$ucl)), "p" = fp(cr$p), "% of pre-specified" = round(cr$pct_of_base), check.names = FALSE, stringsAsFactors = FALSE)
+                   "95% CI" = ci_txt(cr$lcl, cr$ucl), "p" = fp(cr$p), "% of pre-specified" = round(cr$pct_of_base), check.names = FALSE, stringsAsFactors = FALSE)
+  if (!nrow(t2)) t2 <- data.frame("Family" = "None", "Analysis" = "No counted analysis crossed alpha, left the interval or reversed direction", "Role" = "", "Estimate" = "", "SE" = "", "95% CI" = "", "p" = "", "% of pre-specified" = NA, check.names = FALSE, stringsAsFactors = FALSE)
   t3 <- NULL; fr <- result$rows$fragility
   if (!is.null(fr)) { a <- attr(fr, "fragility")
-    t3 <- data.frame("Removed" = fr$param, "Subject added" = sub("step [0-9]+ removed ", "", fr$note), "Estimate" = fmt(fr$estimate), "95% CI" = paste0(fmt(fr$lcl), " to ", fmt(fr$ucl)), "p" = fp(fr$p), check.names = FALSE, stringsAsFactors = FALSE) }
+    t3 <- data.frame("Removed" = fr$param, "Subject added" = sub("step [0-9]+ removed ", "", fr$note), "Estimate" = fmt(fr$estimate), "95% CI" = ci_txt(fr$lcl, fr$ucl), "p" = fp(fr$p), check.names = FALSE, stringsAsFactors = FALSE) }
   census_out <- as.data.frame(cen); census_out$pct_of_base <- round(census_out$pct_of_base, 1)
   header <- sprintf("Pre-specified analysis: %s minus %s at %s: estimate %s (SE %s), 95%% CI %s to %s, p %s. Verdict: %s (sensitivity analyses: %s)%s.",
                     result$plan$spec$active, result$plan$spec$reference, result$plan$spec$contrast_visit, fmt(b$estimate), fmt(b$stderr), fmt(b$lcl), fmt(b$ucl), fp(b$p),

@@ -63,7 +63,7 @@ spec <- stress_spec(small, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariat
                     covariance = "cs", method = "Satterthwaite", vcov = "Asymptotic")
 ice <- data.frame(USUBJID = c("PT2", "PT5", "PT9"), AVISIT = c("VIS3", "VIS2", "VIS4"),
                   type = c("discontinuation", "discontinuation", "rescue"))
-stress_estimand(spec, ice, strategies = list(discontinuation = c("treatment_policy", "hypothetical"),
-                                              rescue = c("treatment_policy", "composite")),
-                composite_value = 20)
+strat <- list(discontinuation = c("treatment_policy", "hypothetical"),
+              rescue = c("treatment_policy", "composite"))
+stress_estimand(spec, ice, strategies = strat, composite_value = 20)
 }

@@ -17,8 +17,9 @@ stress_html(result, file = "stress_report.html", digits = 2)
 The file path, invisibly.
 }
 \description{
-Writes a self-contained HTML page with the verdict, the summary table and
-two interactive figures built with \code{plotly}: the bubble swarm, where
+Writes an HTML page (its JavaScript dependencies in a \code{lib} folder beside
+it) with the verdict, the summary table and two interactive figures built
+with \code{plotly}: the bubble swarm, where
 hovering a bubble lists the specifications that give that estimate, and
 the deletion strip, where hovering a dot names the subject removed and
 shows the refit's estimate and p-value. Needs \code{plotly} and \code{htmlwidgets}.

@@ -58,5 +58,5 @@ would be classed robust, sensitive or fragile at each power, and how often
 the marginal flag would be set.
 }
 \examples{
-\donttest{stress_calibrate(n_per_arm = 30, power = c(0, 0.8), n_trials = 4)}
+\donttest{stress_calibrate(n_per_arm = 20, power = c(0, 0.8), n_trials = 2)}
 }
