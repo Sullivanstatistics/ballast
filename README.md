@@ -1,7 +1,8 @@
 # ballast
 
-ballast keeps a result steady under load: it stress-tests a pre-specified mixed model for repeated measures (MMRM): refit it under families of data and analytic
-perturbations and judge every refit against the pre-specified estimate, confidence interval and p-value.
+ballast keeps a result steady under load. It stress-tests a pre-specified mixed model for repeated measures (MMRM):
+the model is refitted under families of data and analytic perturbations, and every refit is judged against the
+pre-specified estimate, confidence interval and p-value.
 
 ```r
 library(ballast)
