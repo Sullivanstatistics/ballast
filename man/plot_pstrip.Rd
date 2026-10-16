@@ -4,19 +4,24 @@
 \alias{plot_pstrip}
 \title{Strip plot of p-values after each deletion}
 \usage{
-plot_pstrip(x, alpha = NULL)
+plot_pstrip(x, alpha = NULL, log_p = FALSE, xmax = NULL)
 }
 \arguments{
 \item{x}{A \code{stress_census}, or a named list of them (one strip each).}
 
 \item{alpha}{Significance level; defaults to the census's own.}
+
+\item{log_p}{Draw the p-value axis on a log scale (spreads out the small
+p-values; harder to read for most audiences).}
+
+\item{xmax}{Upper limit of the linear p-value axis; \code{NULL} fits the data.}
 }
 \value{
 A \code{ggplot} object.
 }
 \description{
-Each dot is one refit with one unit removed, on a log p-value axis, one
-strip per leave-one-out family; the diamond is the pre-specified analysis
+Each dot is one refit with one unit removed, on a p-value axis (linear by
+default, log on request), one strip per leave-one-out family; the diamond is the pre-specified analysis
 with nothing removed and the dashed line is alpha. Counts of deletions
 below alpha label each strip.
 }

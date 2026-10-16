@@ -50,13 +50,16 @@ plot_pcurve <- function(rows, alpha = NULL, xlab = "Perturbation", ylab = "p-val
 
 #' Strip plot of p-values after each deletion
 #'
-#' Each dot is one refit with one unit removed, on a log p-value axis, one
-#' strip per leave-one-out family; the diamond is the pre-specified analysis
+#' Each dot is one refit with one unit removed, on a p-value axis (linear by
+#' default, log on request), one strip per leave-one-out family; the diamond is the pre-specified analysis
 #' with nothing removed and the dashed line is alpha. Counts of deletions
 #' below alpha label each strip.
 #'
 #' @param x A `stress_census`, or a named list of them (one strip each).
 #' @param alpha Significance level; defaults to the census's own.
+#' @param log_p Draw the p-value axis on a log scale (spreads out the small
+#'   p-values; harder to read for most audiences).
+#' @param xmax Upper limit of the linear p-value axis; `NULL` fits the data.
 #' @return A `ggplot` object.
 #' @examples
 #' small <- mmrm::fev_data[mmrm::fev_data$USUBJID %in% paste0("PT", 1:60), ]
@@ -65,7 +68,7 @@ plot_pcurve <- function(rows, alpha = NULL, xlab = "Perturbation", ylab = "p-val
 #' cen <- stress_census(spec, stress_loo(spec, by = "RACE"), stress_loo(spec, by = "SEX"))
 #' if (requireNamespace("ggplot2", quietly = TRUE)) plot_pstrip(cen)
 #' @export
-plot_pstrip <- function(x, alpha = NULL) {
+plot_pstrip <- function(x, alpha = NULL, log_p = FALSE, xmax = NULL) {
   need_ggplot()
   cens <- if (inherits(x, "stress_census")) list(x) else x
   if (is.null(names(cens))) names(cens) <- paste("Row", seq_along(cens))
@@ -83,10 +86,10 @@ plot_pstrip <- function(x, alpha = NULL) {
     ggplot2::geom_vline(xintercept = alpha, colour = PAL[["ink2"]], linetype = "22") +
     ggplot2::geom_jitter(colour = PAL[["blue"]], alpha = 0.6, size = 1.8, height = 0.2, width = 0) +
     ggplot2::geom_point(data = lab, ggplot2::aes(x = base_p, y = strip), shape = 23, fill = PAL[["orange"]], colour = PAL[["ink"]], size = 4) +
-    ggplot2::scale_x_log10() +
+    { if (log_p) ggplot2::scale_x_log10() else ggplot2::scale_x_continuous(limits = c(0, if (is.null(xmax)) max(c(d$p, alpha * 1.5)) * 1.05 else xmax), expand = ggplot2::expansion(mult = c(0, 0.02))) } +
     ggplot2::scale_y_discrete(labels = stats::setNames(lab$text, as.character(lab$strip))) +
     ggplot2::annotate("text", x = alpha, y = 0.4, label = paste("p =", alpha), colour = PAL[["ink2"]], hjust = -0.1, size = 3.2) +
-    ggplot2::labs(x = "Two-sided p-value after deleting one unit and refitting (log scale)", y = NULL) +
+    ggplot2::labs(x = paste0("Two-sided p-value after deleting one unit and refitting", if (log_p) " (log scale)" else ""), y = NULL) +
     ggplot2::theme_minimal(base_size = 11) + ggplot2::theme(panel.grid.minor = ggplot2::element_blank())
 }
 
