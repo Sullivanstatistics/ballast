@@ -10,6 +10,7 @@ standard_plan(
   strata = site,
   baseline = NULL,
   deltas = NULL,
+  shift_visits = NULL,
   ice = NULL,
   m = 25,
   n_perm = 2000,
@@ -27,6 +28,9 @@ re-randomisation strata unless \code{strata} is given).}
 \item{baseline}{Optional baseline column for cLDA.}
 
 \item{deltas}{Optional shifts for the tipping-point family.}
+
+\item{shift_visits}{Visits whose imputed values the tipping family shifts;
+\code{NULL} shifts every visit.}
 
 \item{ice}{Optional intercurrent-event table for \code{\link[=stress_estimand]{stress_estimand()}}.}
 

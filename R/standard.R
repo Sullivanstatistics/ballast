@@ -26,6 +26,8 @@
 #' @param strata Optional stratification column for the re-randomisation test.
 #' @param baseline Optional baseline column for cLDA.
 #' @param deltas Optional shifts for the tipping-point family.
+#' @param shift_visits Visits whose imputed values the tipping family shifts;
+#'   `NULL` shifts every visit.
 #' @param ice Optional intercurrent-event table for [stress_estimand()].
 #' @param m Imputations for the multiple-imputation families.
 #' @param n_perm Permutations for the re-randomisation test.
@@ -36,7 +38,7 @@
 #'                     covariates = ~ RACE + SEX + FEV1_BL)
 #' standard_plan(spec, site = "RACE", baseline = "FEV1_BL")
 #' @export
-standard_plan <- function(spec, site = NULL, strata = site, baseline = NULL, deltas = NULL, ice = NULL, m = 25, n_perm = 2000, max_k = 5) {
+standard_plan <- function(spec, site = NULL, strata = site, baseline = NULL, deltas = NULL, shift_visits = NULL, ice = NULL, m = 25, n_perm = 2000, max_k = 5) {
   check_spec(spec)
   loo <- list(list()); if (!is.null(site)) loo[[2]] <- list(by = site)
   est <- list(estimators = c("complete_cases", "gee_independence", "ancova", "robust_ancova", if (!is.null(site)) "random_intercept", if (!is.null(baseline)) "clda"),
@@ -44,7 +46,7 @@ standard_plan <- function(spec, site = NULL, strata = site, baseline = NULL, del
   est <- est[!vapply(est, is.null, TRUE)]
   plan <- stress_plan(spec, covariance = list(structures = c("us", "ar1h", "ar1", "cs", "csh", "toep", "toeph")), inference = list(),
                       covariates = list(), weights = TRUE, loo = loo, permute = c(list(n = n_perm), if (!is.null(strata)) list(strata = strata)),
-                      tipping = if (!is.null(deltas)) list(deltas = deltas, m = m), reference = list(m = m), estimator = est,
+                      tipping = if (!is.null(deltas)) c(list(deltas = deltas, m = m), if (!is.null(shift_visits)) list(shift_visits = shift_visits)), reference = list(m = m), estimator = est,
                       fragility = list(target = "significance", max_k = max_k),
                       title = sprintf("Standard stress test (ballast %s)", as.character(utils::packageVersion("ballast"))))
   if (!is.null(ice)) plan$families$estimand <- list(ice = ice, strategies = c("treatment_policy", "hypothetical", "while_on_treatment"))

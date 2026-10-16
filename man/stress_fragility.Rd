@@ -29,8 +29,9 @@ restrict the search to (one arm, say).}
 }
 \value{
 A \code{stress_rows} data frame with one row per step
-(\code{kind = "deletion"}, \code{param} = number removed, \code{label} = the subjects
-removed so far). \code{attr(, "fragility")} is a list with \code{target}, \code{k} (the
+(\code{kind = "search"}, so the rows are not counted in a census, since the
+search crosses the target by construction; \code{param} = number removed,
+\code{label} = the subjects removed so far). \code{attr(, "fragility")} is a list with \code{target}, \code{k} (the
 step at which the target was reached, \code{NA} if never), \code{subjects} and
 \code{reached}.
 }

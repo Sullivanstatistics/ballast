@@ -30,7 +30,7 @@ test_that("greedy fragility search removes subjects until the target is reached"
   fr <- stress_fragility(cs_100, target = "significance", max_k = 3)
   a <- attr(fr, "fragility")
   expect_equal(a$target, "significance"); expect_true(nrow(fr) >= 1L && nrow(fr) <= 3L)
-  expect_equal(fr$param, seq_len(nrow(fr))); expect_true(all(fr$kind == "deletion"))
+  expect_equal(fr$param, seq_len(nrow(fr))); expect_true(all(fr$kind == "search"))
   expect_equal(length(a$subjects), nrow(fr))
   if (a$reached) expect_true((fr$p[nrow(fr)] < 0.05) != (a$base_p < 0.05))
   fr2 <- stress_fragility(cs_small, target = "direction", max_k = 1, candidates = c("PT1", "PT2", "PT3"))

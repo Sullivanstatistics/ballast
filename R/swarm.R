@@ -87,7 +87,7 @@ plot_swarm <- function(x, scale = c("percent", "estimate"), digits = 2, r0 = 0.0
     if (length(p$del_x)) dels[[k]] <- data.frame(x = p$del_x, y = y0 - p$amp - 0.75 * LH + stats::runif(length(p$del_x), -0.2 * LH, 0.2 * LH))
     if (nrow(agg) >= 2) { q <- stats::quantile(agg$x, c(0.025, 0.975)); bands[[k]] <- data.frame(xmin = q[1], xmax = q[2], ymin = y0 - p$amp - 0.15 * LH, ymax = y0 + p$amp + 0.15 * LH) }
     if (nrow(agg)) {
-      lf <- agg[if (p$base$estimate >= 0) which.min(agg$x) else which.max(agg$x), ]
+      lf <- agg[if (scale == "percent" || p$base$estimate >= 0) which.min(agg$x) else which.max(agg$x), ]
       notes[[k]] <- data.frame(x = lf$x - lf$r - 0.8 * R0, y = y0, lab = sprintf("Least favourable: %s%s", format(lf$val, nsmall = digits), if (scale == "percent") sprintf(" (%d%%)", round(lf$x)) else ""))
     }
     segs[[k]] <- data.frame(y = y0 - p$below, yend = y0 + p$amp + 0.35 * LH)

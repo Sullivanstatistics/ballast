@@ -17,8 +17,9 @@
 #' @param candidates Optional character vector of subject identifiers to
 #'   restrict the search to (one arm, say).
 #' @return A `stress_rows` data frame with one row per step
-#'   (`kind = "deletion"`, `param` = number removed, `label` = the subjects
-#'   removed so far). `attr(, "fragility")` is a list with `target`, `k` (the
+#'   (`kind = "search"`, so the rows are not counted in a census, since the
+#'   search crosses the target by construction; `param` = number removed,
+#'   `label` = the subjects removed so far). `attr(, "fragility")` is a list with `target`, `k` (the
 #'   step at which the target was reached, `NA` if never), `subjects` and
 #'   `reached`.
 #' @examples
@@ -51,7 +52,7 @@ stress_fragility <- function(spec, target = c("significance", "ci", "direction")
     sc <- vapply(fits, score, 0); best <- which.max(sc)
     if (!is.finite(sc[best])) break
     removed <- c(removed, rem[best]); r <- fits[[best]]
-    r$family <- "greedy deletion search"; r$label <- paste(removed, collapse = ", "); r$kind <- "deletion"; r$is_base <- FALSE
+    r$family <- "greedy deletion search"; r$label <- paste(removed, collapse = ", "); r$kind <- "search"; r$is_base <- FALSE
     r$param <- k; r$note <- sprintf("step %d removed %s", k, rem[best]); rows[[k]] <- r
     if (reached(r)) { hit <- k; break }
   }
