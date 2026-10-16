@@ -51,6 +51,7 @@ test_that("specification grid crosses the choices and flags the base cell", {
 })
 
 test_that("re-randomisation test returns a permutation p and a null distribution", {
+  skip_on_cran()
   r <- stress_permute(spec_small, n = 19, seed = 7)
   expect_equal(nrow(r), 1L); expect_true(r$p >= 1 / 20 && r$p <= 1)
   expect_length(attr(r, "null"), 19L); expect_true(is.na(r$lcl))
@@ -60,6 +61,7 @@ test_that("re-randomisation test returns a permutation p and a null distribution
 })
 
 test_that("delta-adjusted MI tipping lowers the estimate as delta falls", {
+  skip_on_cran()
   r <- stress_tipping(spec_small, deltas = c(0, -8), m = 3, seed = 3, nbiter = 3)
   expect_equal(nrow(r), 2L); expect_equal(r$kind, c("alternative", "search"))
   expect_true(all(r$converged)); expect_lt(r$estimate[2], r$estimate[1])

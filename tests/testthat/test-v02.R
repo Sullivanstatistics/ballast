@@ -15,6 +15,7 @@ test_that("role is carried on rows and reported by the census", {
 })
 
 test_that("reference-based imputation runs under every assumption and orders as expected", {
+  skip_on_cran()
   r <- stress_reference(cs_100, methods = c("MAR", "J2R", "CR", "CIR"), m = 3, seed = 4)
   expect_equal(nrow(r), 4L); expect_true(all(r$converged)); expect_equal(r$role, rep("sensitivity", 4))
   expect_equal(r$kind, rep("alternative", 4)); expect_match(r$note[1], "m = 3 of 3")
@@ -27,6 +28,7 @@ test_that("reference-based imputation runs under every assumption and orders as 
 })
 
 test_that("greedy fragility search removes subjects until the target is reached", {
+  skip_on_cran()
   fr <- stress_fragility(cs_100, target = "significance", max_k = 3)
   a <- attr(fr, "fragility")
   expect_equal(a$target, "significance"); expect_true(nrow(fr) >= 1L && nrow(fr) <= 3L)

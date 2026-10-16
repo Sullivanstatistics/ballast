@@ -43,6 +43,7 @@ test_that("stress_explain attributes a shift to subjects", {
 })
 
 test_that("standard plan, run_plans, tables, log, html and calibration", {
+  skip_on_cran()
   sp <- standard_plan(spec_full, site = "RACE", baseline = "FEV1_BL", deltas = c(0, -5))
   expect_s3_class(sp, "stress_plan"); expect_true(all(c("covariance", "loo", "permute", "reference", "tipping", "estimator", "fragility") %in% names(sp$families)))
   expect_output(print(sp), "Standard stress test")
@@ -60,6 +61,7 @@ test_that("standard plan, run_plans, tables, log, html and calibration", {
 })
 
 test_that("simulate_trial and a tiny calibration run", {
+  skip_on_cran()
   d <- simulate_trial(20, delta = 5, seed = 2); expect_true(all(c("id", "arm", "base", "visit", "y") %in% names(d))); expect_true(nrow(d) <= 160)
   cal <- stress_calibrate(n_per_arm = 25, power = c(0, 0.8), n_trials = 2, seed = 5)
   expect_s3_class(cal, "stress_calibration"); expect_equal(nrow(cal), 2L); expect_output(print(cal), "calibration")

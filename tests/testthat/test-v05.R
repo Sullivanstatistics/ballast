@@ -3,6 +3,7 @@ cs_100 <- stress_spec(fev[fev$USUBJID %in% paste0("PT", 1:100), ], "FEV1", "USUB
 cs_small <- spec_update(spec_small, covariance = "cs")
 
 test_that("reference-based imputation is reproducible and independent of the worker count", {
+  skip_on_cran()
   a <- stress_reference(cs_100, methods = c("MAR", "J2R"), m = 3, seed = 11)
   b <- stress_reference(cs_100, methods = c("MAR", "J2R"), m = 3, seed = 11)
   expect_equal(a$estimate, b$estimate); expect_equal(a$stderr, b$stderr)
@@ -35,6 +36,7 @@ test_that("non-convergence is reported and masking replaces identifiers", {
 })
 
 test_that("run_plan shares one cluster, and stress_sap writes the plan text", {
+  skip_on_cran()
   plan <- stress_plan(cs_small, covariance = list(structures = c("cs", "ar1h")), inference = NULL, covariates = NULL, weights = FALSE,
                       loo = list(by = "RACE"), permute = NULL, reference = NULL, estimator = NULL, fragility = list(max_k = 1), title = "Cluster test")
   res <- run_plan(plan, cores = 2L)

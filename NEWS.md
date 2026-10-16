@@ -1,4 +1,4 @@
-# ballast 0.5.0 (development, 16 October 2026)
+# ballast 0.5.0
 
 * Reference-based imputation seeds each draw on the worker, so results no longer depend on the number of cores.
 * The fitter reads the model matrix and covariance parameters through mmrm's public accessors.

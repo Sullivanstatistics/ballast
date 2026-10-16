@@ -16,6 +16,7 @@ test_that("cLDA runs and reports the baseline-constrained contrast", {
 })
 
 test_that("a plan prints, runs and reports", {
+  skip_on_cran()
   plan <- stress_plan(cs_small, covariance = list(structures = c("cs", "ar1h")), inference = NULL, covariates = NULL, weights = FALSE,
                       loo = list(list(by = "RACE"), list(by = "SEX")), permute = list(n = 9), reference = list(m = 2, methods = c("MAR", "J2R")),
                       estimator = list(estimators = "ancova"), fragility = list(max_k = 1), title = "Test plan")

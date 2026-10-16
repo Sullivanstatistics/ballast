@@ -15,8 +15,12 @@ Description: Refits one pre-specified mixed model for repeated measures (MMRM)
     imputation) and judges every refit against the pre-specified estimate,
     confidence interval and p-value. Classifies the result as robust, sensitive
     or fragile, with a separate flag for marginal significance. Fitting uses
-    'mmrm' with SAS 'PROC MIXED' conventions for the least-squares-mean
-    contrast, Kenward-Roger adjustment and the corrected Akaike criterion.
+    'mmrm' (Sabanes Bove et al., 2024, <https://openpharma.github.io/mmrm/>) with
+    SAS 'PROC MIXED' conventions for the least-squares-mean contrast,
+    Kenward-Roger adjustment and the corrected Akaike criterion. Reference-based
+    multiple imputation follows Carpenter, Roger and Kenward (2013)
+    <doi:10.1080/10543406.2013.834911> and was checked against 'rbmi'
+    (Gower-Page, Noci and Wolbers, 2022) <doi:10.21105/joss.04251>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-GB

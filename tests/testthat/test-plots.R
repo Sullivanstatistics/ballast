@@ -12,6 +12,7 @@ test_that("stress_curve carries the parameter and tipping_point interpolates the
 })
 
 test_that("stress_tipping sets param and plot_pcurve draws it", {
+  skip_on_cran()
   skip_if_not_installed("ggplot2")
   tp <- stress_tipping(cs_small, deltas = c(0, -6), m = 2, seed = 2, nbiter = 2)
   expect_equal(tp$param, c(0, -6))

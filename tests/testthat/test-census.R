@@ -1,4 +1,5 @@
 test_that("census scores rows against the base and applies the counting rule", {
+  skip_on_cran()
   cov <- stress_covariance(spec_small, c("us", "cs", "ar1h"))
   tip <- stress_tipping(spec_small, deltas = c(0, -5), m = 2, seed = 1, nbiter = 2)
   loo <- stress_loo(spec_small, by = "RACE")
