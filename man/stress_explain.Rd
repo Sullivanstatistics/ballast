@@ -38,9 +38,9 @@ The alternative's model settings are read from the row (\code{covariance},
 data, pass that data as \code{data}.
 }
 \examples{
-small <- mmrm::fev_data[mmrm::fev_data$USUBJID \%in\% paste0("PT", 1:60), ]
+small <- mmrm::fev_data[mmrm::fev_data$USUBJID \%in\% paste0("PT", 1:30), ]
 spec <- stress_spec(small, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL,
                     covariance = "cs", method = "Satterthwaite", vcov = "Asymptotic")
 cen <- stress_census(spec, stress_covariates(spec))
-stress_explain(spec, cen[1, ])
+stress_explain(spec, cen[1, ], top = 5)
 }

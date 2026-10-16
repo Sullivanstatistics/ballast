@@ -21,11 +21,11 @@
 #'   `difference`, sorted by absolute difference; the row explained is
 #'   `attr(, "row")` and the two full-data estimates are `attr(, "estimates")`.
 #' @examples
-#' small <- mmrm::fev_data[mmrm::fev_data$USUBJID %in% paste0("PT", 1:60), ]
+#' small <- mmrm::fev_data[mmrm::fev_data$USUBJID %in% paste0("PT", 1:30), ]
 #' spec <- stress_spec(small, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL,
 #'                     covariance = "cs", method = "Satterthwaite", vcov = "Asymptotic")
 #' cen <- stress_census(spec, stress_covariates(spec))
-#' stress_explain(spec, cen[1, ])
+#' stress_explain(spec, cen[1, ], top = 5)
 #' @export
 stress_explain <- function(spec, row, data = NULL, top = 10, cores = 1L) {
   check_spec(spec); force_args()
