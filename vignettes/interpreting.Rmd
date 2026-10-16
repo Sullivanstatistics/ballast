@@ -62,7 +62,7 @@ produces, and which the methods paper reports in full, is:
 A small run (the vignette keeps it to a few trials) looks like this:
 
 ```{r calib}
-library(mmrmstress)
+library(ballast)
 stress_calibrate(n_per_arm = 30, power = c(0, 0.8), n_trials = 3, seed = 1)
 ```
 

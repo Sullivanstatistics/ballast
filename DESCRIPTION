@@ -1,4 +1,4 @@
-Package: mmrmstress
+Package: ballast
 Title: Stress-Test a Pre-Specified Mixed Model for Repeated Measures
 Version: 0.4.0
 Authors@R: c(
@@ -41,6 +41,6 @@ Suggests:
     rmarkdown
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-URL: https://github.com/Sullivanstatistics/mmrmstress
-BugReports: https://github.com/Sullivanstatistics/mmrmstress/issues
+URL: https://github.com/Sullivanstatistics/ballast
+BugReports: https://github.com/Sullivanstatistics/ballast/issues
 Config/roxygen2/version: 8.0.0

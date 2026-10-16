@@ -3,7 +3,7 @@ test_that("spec records the design and builds the model formula", {
   expect_equal(spec_full$treatment_levels, c("PBO", "TRT"))
   expect_equal(spec_full$contrast_visit, "VIS4")
   expect_equal(spec_full$covariates, c("RACE", "SEX", "FEV1_BL"))
-  f <- mmrmstress:::build_formula(spec_full)
+  f <- ballast:::build_formula(spec_full)
   expect_equal(deparse1(f), "FEV1 ~ RACE + SEX + FEV1_BL + ARMCD + AVISIT + ARMCD:AVISIT + us(AVISIT | USUBJID)")
   expect_error(stress_spec(fev[fev$ARMCD == "PBO", ], "FEV1", "USUBJID", "AVISIT", "ARMCD"), "two levels")
   expect_error(stress_spec(fev, "FEV1", "USUBJID", "AVISIT", "ARMCD", contrast_visit = "VIS9"), "not a level")

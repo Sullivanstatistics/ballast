@@ -14,7 +14,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 The package was built by porting a SAS robustness package and validating every cell against it. The conventions below
 are what it took to agree with `PROC MIXED` and `PROC MI` to the sixth decimal.
 
-| SAS | mmrmstress setting | Note |
+| SAS | ballast setting | Note |
 |---|---|---|
 | `REPEATED visit / SUBJECT=id TYPE=UN` | `covariance = "us"` | `ARH(1)` is `"ar1h"`, `AR(1)` `"ar1"`, `CS` `"cs"`, `CSH` `"csh"`, `TOEP` `"toep"`, `TOEPH` `"toeph"` |
 | `DDFM=SATTERTHWAITE` | `method = "Satterthwaite", vcov = "Asymptotic"` | |
@@ -33,7 +33,7 @@ are what it took to agree with `PROC MIXED` and `PROC MI` to the sixth decimal.
 ## A spec in SAS terms
 
 ```{r spec, eval = FALSE}
-library(mmrmstress)
+library(ballast)
 # PROC MIXED; CLASS usubjid avisitn trtpn cohort site; MODEL pchg = base avisitn trtpn trtpn*avisitn cohort site / DDFM=SATTERTHWAITE;
 # REPEATED avisitn / SUBJECT=usubjid TYPE=ARH(1); LSMEANS trtpn*avisitn / DIFF;
 spec <- stress_spec(adeff, response = "pchg", subject = "usubjid", visit = "avisitn", treatment = "trtpn",

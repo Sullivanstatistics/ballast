@@ -22,7 +22,7 @@ test_that("stress_tipping sets param and plot_pcurve draws it", {
 test_that("swarm packing never overlaps and plot_swarm draws one or several censuses", {
   skip_if_not_installed("ggplot2")
   x <- c(0, 0.5, 1, 1.2, 1.3, 5); r <- c(1, 1, 1.5, 1, 1, 1)
-  y <- mmrmstress:::swarm_pack(x, r)
+  y <- ballast:::swarm_pack(x, r)
   for (i in 1:5) for (j in (i + 1):6) expect_gte(sqrt((x[i] - x[j])^2 + (y[i] - y[j])^2), r[i] + r[j] - 1e-6)
   cen <- stress_census(cs_small, stress_covariance(cs_small, c("us", "cs", "ar1h", "toep")), stress_covariates(cs_small), stress_loo(cs_small, by = "RACE"))
   expect_s3_class(plot_swarm(cen), "ggplot")

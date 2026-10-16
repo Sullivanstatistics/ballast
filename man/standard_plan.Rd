@@ -41,7 +41,7 @@ A \code{stress_plan}.
 }
 \description{
 A recommended, citable set of families with fixed settings, so that a
-statistical analysis plan can say "the standard stress test of mmrmstress"
+statistical analysis plan can say "the standard stress test of ballast"
 and mean one thing. It contains, in order:
 }
 \details{

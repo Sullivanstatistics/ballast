@@ -1,7 +1,7 @@
 #' The standard stress test
 #'
 #' A recommended, citable set of families with fixed settings, so that a
-#' statistical analysis plan can say "the standard stress test of mmrmstress"
+#' statistical analysis plan can say "the standard stress test of ballast"
 #' and mean one thing. It contains, in order:
 #'
 #' 1. covariance structure: `us`, `ar1h`, `ar1`, `cs`, `csh`, `toep`, `toeph`;
@@ -46,7 +46,7 @@ standard_plan <- function(spec, site = NULL, strata = site, baseline = NULL, del
                       covariates = list(), weights = TRUE, loo = loo, permute = c(list(n = n_perm), if (!is.null(strata)) list(strata = strata)),
                       tipping = if (!is.null(deltas)) list(deltas = deltas, m = m), reference = list(m = m), estimator = est,
                       fragility = list(target = "significance", max_k = max_k),
-                      title = sprintf("Standard stress test (mmrmstress %s)", as.character(utils::packageVersion("mmrmstress"))))
+                      title = sprintf("Standard stress test (ballast %s)", as.character(utils::packageVersion("ballast"))))
   if (!is.null(ice)) plan$families$estimand <- list(ice = ice, strategies = c("treatment_policy", "hypothetical", "while_on_treatment"))
   plan
 }

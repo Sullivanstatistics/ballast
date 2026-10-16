@@ -135,7 +135,7 @@ bind_rows_ <- function(x) {
 stress_map <- function(items, fun, cores = 1L) {
   if (cores <= 1L || length(items) < 2L) return(lapply(items, fun))
   cl <- parallel::makeCluster(min(cores, length(items))); on.exit(parallel::stopCluster(cl), add = TRUE)
-  parallel::clusterEvalQ(cl, { requireNamespace("mmrmstress", quietly = TRUE); NULL })
+  parallel::clusterEvalQ(cl, { requireNamespace("ballast", quietly = TRUE); NULL })
   parallel::parLapplyLB(cl, items, fun)
 }
 

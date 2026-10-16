@@ -11,7 +11,7 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 8, fig.height = 4)
 ```
 
-A confirmatory trial has one pre-specified mixed model for repeated measures (MMRM). mmrmstress refits it under
+A confirmatory trial has one pre-specified mixed model for repeated measures (MMRM). ballast refits it under
 families of perturbations of the modelling decisions and the data, judges every refit against the pre-specified
 estimate, confidence interval and significance level, and classifies the result as robust, sensitive or fragile.
 
@@ -21,7 +21,7 @@ Describe the analysis once. The example uses the `fev_data` set that ships with 
 vignette builds quickly.
 
 ```{r spec}
-library(mmrmstress)
+library(ballast)
 dat <- mmrm::fev_data[mmrm::fev_data$USUBJID %in% paste0("PT", 1:100), ]
 spec <- stress_spec(dat, response = "FEV1", subject = "USUBJID", visit = "AVISIT",
                     treatment = "ARMCD", reference = "PBO", covariates = ~ RACE + SEX + FEV1_BL,

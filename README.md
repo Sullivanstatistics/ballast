@@ -1,10 +1,10 @@
-# mmrmstress
+# ballast
 
-Stress-test a pre-specified mixed model for repeated measures (MMRM): refit it under families of data and analytic
+ballast keeps a result steady under load: it stress-tests a pre-specified mixed model for repeated measures (MMRM): refit it under families of data and analytic
 perturbations and judge every refit against the pre-specified estimate, confidence interval and p-value.
 
 ```r
-library(mmrmstress)
+library(ballast)
 spec <- stress_spec(mmrm::fev_data, response = "FEV1", subject = "USUBJID", visit = "AVISIT",
                     treatment = "ARMCD", reference = "PBO", covariates = ~ RACE + SEX + FEV1_BL,
                     contrast_visit = "VIS4", covariance = "us",

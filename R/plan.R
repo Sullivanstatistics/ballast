@@ -104,7 +104,7 @@ run_plan <- function(plan, cores = 1L, seed = 1) {
   if (!inherits(plan, "stress_plan")) stop("plan must be a stress_plan")
   t0 <- Sys.time(); spec <- plan$spec; rows <- list()
   for (nm in names(plan$families)) {
-    x <- plan$families[[nm]]; fun <- get(FAMILY_FUN[[nm]], envir = asNamespace("mmrmstress"))
+    x <- plan$families[[nm]]; fun <- get(FAMILY_FUN[[nm]], envir = asNamespace("ballast"))
     calls <- if (nm == "loo" && length(x) && is.list(x[[1]])) x else list(x)
     out <- lapply(calls, function(args) {
       args <- c(list(spec = spec), args)
@@ -166,7 +166,7 @@ stress_report <- function(result, dir = ".", name = "stress_report", width = 9, 
     if (any(!is.na(cen$param) & cen$kind == "search")) save_fig(plot_pcurve(cen[cen$kind == "search" | (!is.na(cen$param) & cen$kind == "alternative"), ]), "pcurve")
   }
   fr <- lapply(result$rows, function(r) attr(r, "fragility")); fr <- fr[!vapply(fr, is.null, TRUE)]
-  lines <- c(paste("#", result$plan$title), "", sprintf("Generated %s with mmrmstress %s.", format(Sys.time(), "%Y-%m-%d %H:%M"), as.character(utils::packageVersion("mmrmstress"))), "",
+  lines <- c(paste("#", result$plan$title), "", sprintf("Generated %s with ballast %s.", format(Sys.time(), "%Y-%m-%d %H:%M"), as.character(utils::packageVersion("ballast"))), "",
              "## Plan", "", paste0("    ", plan_lines(result$plan)), "",
              "## Pre-specified analysis", "", sprintf("Estimate %s (SE %s), 95%% CI %s to %s, p = %s; %d subjects, %d observations.",
                                                       format(b$estimate, digits = 4), format(b$stderr, digits = 3), format(b$lcl, digits = 4), format(b$ucl, digits = 4), format(b$p, digits = 3), b$n_subj, b$n_obs), "",

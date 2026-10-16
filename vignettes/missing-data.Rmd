@@ -16,7 +16,7 @@ reference-based imputation, which replaces the assumption with a clinically stat
 asks how much worse the imputed values would have to be before the conclusion changes.
 
 ```{r spec}
-library(mmrmstress)
+library(ballast)
 dat <- mmrm::fev_data[mmrm::fev_data$USUBJID %in% paste0("PT", 1:100), ]
 spec <- stress_spec(dat, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL,
                     covariance = "us", method = "Satterthwaite", vcov = "Asymptotic")

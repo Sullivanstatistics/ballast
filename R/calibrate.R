@@ -73,7 +73,7 @@ stress_calibrate <- function(n_per_arm = 50, power = c(0, 0.5, 0.8, 0.95), n_tri
                crossed = v$n_crossed, max_shift_se = v$max_shift_se, frag_k = fk, stringsAsFactors = FALSE)
   }
   res <- if (cores > 1L) { cl <- parallel::makeCluster(cores); on.exit(parallel::stopCluster(cl), add = TRUE)
-    parallel::clusterEvalQ(cl, { requireNamespace("mmrmstress", quietly = TRUE); NULL }); parallel::clusterExport(cl, "one", envir = environment())
+    parallel::clusterEvalQ(cl, { requireNamespace("ballast", quietly = TRUE); NULL }); parallel::clusterExport(cl, "one", envir = environment())
     parallel::parLapplyLB(cl, jobs, function(j) tryCatch(one(j), error = function(e) NULL)) } else lapply(jobs, function(j) tryCatch(one(j), error = function(e) NULL))
   trials <- do.call(rbind, res[!vapply(res, is.null, TRUE)])
   out <- do.call(rbind, lapply(split(trials, trials$power), function(g) data.frame(

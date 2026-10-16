@@ -1,4 +1,4 @@
 library(testthat)
-library(mmrmstress)
+library(ballast)
 
-test_check("mmrmstress")
+test_check("ballast")

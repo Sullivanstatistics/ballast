@@ -98,7 +98,7 @@ stress_log <- function(result, file = NULL, seed = 1) {
   txt <- plan_lines(result$plan); tf <- tempfile(); writeLines(txt, tf); h <- unname(tools::md5sum(tf)); unlink(tf)
   v <- result$verdict; s <- result$plan$spec
   log <- list(title = result$plan$title, plan_md5 = h, plan = txt, run_time = format(Sys.time(), "%Y-%m-%d %H:%M:%S %Z"), seed = seed,
-              elapsed_min = round(as.numeric(result$elapsed), 2), r_version = R.version.string, mmrmstress = as.character(utils::packageVersion("mmrmstress")),
+              elapsed_min = round(as.numeric(result$elapsed), 2), r_version = R.version.string, ballast = as.character(utils::packageVersion("ballast")),
               mmrm = as.character(utils::packageVersion("mmrm")), platform = R.version$platform,
               data = list(subjects = nlevels(s$data[[s$subject]]), rows = nrow(s$data), response = s$response, arms = s$treatment_levels),
               families = names(result$rows), rows = nrow(result$census), counted = sum(result$census$counted),

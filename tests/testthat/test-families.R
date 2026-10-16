@@ -1,7 +1,7 @@
 test_that("covariance family flags the base structure and keeps the schema", {
   r <- stress_covariance(spec_small, c("us", "cs", "ar1h"))
   expect_s3_class(r, "stress_rows"); expect_equal(nrow(r), 3L)
-  expect_equal(names(r), mmrmstress:::ROW_COLS); expect_equal(r$role[1], "sensitivity")
+  expect_equal(names(r), ballast:::ROW_COLS); expect_equal(r$role[1], "sensitivity")
   expect_equal(r$is_base, c(TRUE, FALSE, FALSE)); expect_true(all(r$converged))
   expect_equal(r$covariance, c("us", "cs", "ar1h"))
 })
