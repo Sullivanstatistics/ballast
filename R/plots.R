@@ -71,7 +71,7 @@ plot_pcurve <- function(rows, alpha = NULL, xlab = "Perturbation", ylab = "p-val
 plot_pstrip <- function(x, alpha = NULL, log_p = FALSE, xmax = NULL) {
   need_ggplot()
   cens <- if (inherits(x, "stress_census")) list(x) else x
-  if (is.null(names(cens))) names(cens) <- paste("Row", seq_along(cens))
+  if (is.null(names(cens))) names(cens) <- vapply(seq_along(cens), function(i) { l <- attr(cens[[i]], "label"); if (is.null(l)) paste("Row", i) else l }, "")
   d <- do.call(rbind, lapply(names(cens), function(nm) {
     ce <- cens[[nm]]; z <- as.data.frame(ce)[ce$counted & ce$kind == "deletion" & !is.na(ce$p), , drop = FALSE]
     if (!nrow(z)) return(NULL)

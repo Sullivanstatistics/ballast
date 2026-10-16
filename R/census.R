@@ -41,7 +41,7 @@ stress_census <- function(spec, ..., base = NULL) {
   key <- paste(signif(rows$estimate, 10), signif(rows$stderr, 10), signif(rows$df, 10), rows$n_obs, rows$kind)
   rows$duplicate <- !rows$is_base & rows$converged & duplicated(key)
   rows$counted <- !rows$is_base & rows$converged & rows$kind != "search" & !rows$duplicate
-  structure(rows, class = c("stress_census", "data.frame"), base = b, alpha = alpha, treatment_levels = spec$treatment_levels, arms = c(spec$reference, spec$active))
+  structure(rows, class = c("stress_census", "data.frame"), base = b, alpha = alpha, treatment_levels = spec$treatment_levels, arms = c(spec$reference, spec$active), label = spec$label)
 }
 
 #' Summarise a census by family

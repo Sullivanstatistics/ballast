@@ -51,7 +51,7 @@ plot_swarm <- function(x, scale = c("percent", "estimate"), digits = 2, r0 = 0.0
   need_ggplot(); scale <- match.arg(scale)
   cens <- if (inherits(x, "stress_census")) list(x) else x
   if (!length(cens) || !all(vapply(cens, inherits, TRUE, "stress_census"))) stop("x must be a stress_census or a list of them")
-  if (is.null(names(cens))) names(cens) <- paste("Row", seq_along(cens))
+  if (is.null(names(cens))) names(cens) <- vapply(seq_along(cens), function(i) { l <- attr(cens[[i]], "label"); if (is.null(l)) paste("Row", i) else l }, "")
   prep <- lapply(cens, function(ce) {
     b <- attr(ce, "base"); d <- as.data.frame(ce)[ce$counted & !is.na(ce$estimate), , drop = FALSE]
     f <- if (scale == "percent") function(v) 100 * v / b$estimate else identity
