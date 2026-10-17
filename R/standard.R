@@ -27,7 +27,8 @@
 #' @param baseline Optional baseline column for cLDA.
 #' @param deltas Optional shifts for the tipping-point family.
 #' @param shift_visits Visits whose imputed values the tipping family shifts;
-#'   `NULL` shifts every visit.
+#'   `NULL` shifts the contrast visit only (the plan text states the visits;
+#'   pass every visit level to shift all imputed values).
 #' @param ice Optional intercurrent-event table for [stress_estimand()].
 #' @param m Imputations for the multiple-imputation families.
 #' @param n_perm Permutations for the re-randomisation test.
@@ -46,7 +47,7 @@ standard_plan <- function(spec, site = NULL, strata = site, baseline = NULL, del
   est <- est[!vapply(est, is.null, TRUE)]
   plan <- stress_plan(spec, covariance = list(structures = c("us", "ar1h", "ar1", "cs", "csh", "toep", "toeph")), inference = list(),
                       covariates = list(), weights = TRUE, loo = loo, permute = c(list(n = n_perm), if (!is.null(strata)) list(strata = strata)),
-                      tipping = if (!is.null(deltas)) c(list(deltas = deltas, m = m), if (!is.null(shift_visits)) list(shift_visits = shift_visits)), reference = list(m = m), estimator = est,
+                      tipping = if (!is.null(deltas)) list(deltas = deltas, m = m, shift_visits = if (is.null(shift_visits)) spec$contrast_visit else shift_visits), reference = list(m = m), estimator = est,
                       fragility = list(target = "significance", max_k = max_k),
                       title = sprintf("Standard stress test (ballast %s)", as.character(utils::packageVersion("ballast"))))
   if (!is.null(ice)) plan$families$estimand <- list(ice = ice, strategies = c("treatment_policy", "hypothetical", "while_on_treatment"))

@@ -38,6 +38,13 @@ between half and twice the significance level. The classification will be report
 sensitivity analyses alone (those that keep the estimand); alternative data sets, populations, other visits and
 intercurrent-event strategies are supplementary analyses and will be labelled as such.
 
+**Expected verdict under the design assumptions.** Before unblinding, the planned design ([n] per arm, effect [delta],
+residual SD [sigma], correlation [rho], dropout [rate]) was simulated with `ballast::stress_design()` under the
+pre-specified model and the families above ([n_trials] trials per cell). The probability of a significant result is
+[power] and of a significant and robust result [robustness power]; among significant results, [x]% are expected to be
+classed sensitive and [y]% fragile, and one participant's removal is expected to lose significance in [z]% of them. The
+observed verdict will be reported next to these expectations.
+
 **Reporting.** The per-family summary, the list of refits that crossed the significance level or left the interval, the
 deletion-search path, the full census, the bubble-swarm, deletion-strip and tipping-point figures, and a run log with the
 seed, software versions and the hash of this plan will be provided as an appendix to the clinical study report. Subject

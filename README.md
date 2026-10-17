@@ -54,6 +54,25 @@ res <- run_plan(plan, cores = 6)
 stress_report(res, dir = "stress")    # Markdown report with the figures
 ```
 
+## Design stage
+
+The same test runs before the trial. `stress_design()` simulates the planned design over a grid of sample sizes and
+effect sizes and reports the **robustness power**, the probability that the pre-specified analysis is significant *and*
+classed robust, next to the conventional power, with the verdict rates among significant results, the chance that one
+participant's removal loses significance, and optionally the deletion search and the delta-adjustment margin.
+
+```r
+des <- stress_design(n_per_arm = c(50, 75, 100, 150), delta = c(0, 4.5), sigma = 10, rho = 0.6,
+                     n_visits = 4, dropout = 0.03, covariance = "ar1h", n_trials = 200, cores = 8)
+des          # one row per cell; names the smallest n with robustness power >= 0.8
+plot(des)    # power and robustness power against subjects per arm
+stress_sap(standard_plan(spec, ...))   # the analysis-plan text, to which the expected rates can be added
+```
+
+A trial sized for 80% power expects about a third of its significant results to be classed sensitive; sizing for a
+robustness power of 80% removes most of that. The expected rates go into the statistical analysis plan so the verdict
+after unblinding has a pre-registered comparison.
+
 ## Definitions
 
 - **Fragile**: some counted alternative reverses the direction of the estimate or lands outside the pre-specified

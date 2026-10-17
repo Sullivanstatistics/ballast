@@ -12,8 +12,8 @@ reference:
   contents: [stress_plan, standard_plan, run_plan, run_plans, stress_report, stress_tables, stress_log, stress_html, stress_sap, mask_ids]
 - title: Figures
   contents: [plot.stress_census, plot_swarm, plot_pcurve, plot_pstrip, plot_pcdf]
-- title: Calibration
-  contents: [simulate_trial, stress_calibrate]
+- title: Design and calibration
+  contents: [stress_design, plot.stress_design, simulate_trial, stress_calibrate]
 articles:
 - title: Guides
-  contents: [quickstart, interpreting, missing-data, sas-users, validation]
+  contents: [quickstart, design, interpreting, missing-data, sas-users, validation]

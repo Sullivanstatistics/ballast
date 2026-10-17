@@ -30,7 +30,8 @@ re-randomisation strata unless \code{strata} is given).}
 \item{deltas}{Optional shifts for the tipping-point family.}
 
 \item{shift_visits}{Visits whose imputed values the tipping family shifts;
-\code{NULL} shifts every visit.}
+\code{NULL} shifts the contrast visit only (the plan text states the visits;
+pass every visit level to shift all imputed values).}
 
 \item{ice}{Optional intercurrent-event table for \code{\link[=stress_estimand]{stress_estimand()}}.}
 
