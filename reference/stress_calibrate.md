@@ -19,6 +19,11 @@ stress_calibrate(
   rho = 0.6,
   dropout = 0.08,
   baseline_beta = 0.5,
+  errors = "normal",
+  t_df = 3,
+  hetero = 1,
+  mnar = 0,
+  interaction = 0,
   fragility = FALSE,
   cores = 1L,
   seed = 1
@@ -59,6 +64,11 @@ stress_calibrate(
 - baseline_beta:
 
   Slope of the response on the baseline covariate.
+
+- errors, t_df, hetero, mnar, interaction:
+
+  Misspecification settings passed to
+  [`simulate_trial()`](https://sullivanstatistics.github.io/ballast/reference/simulate_trial.md).
 
 - fragility:
 

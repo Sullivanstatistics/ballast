@@ -16,6 +16,11 @@ simulate_trial(
   rho = 0.6,
   dropout = 0.08,
   baseline_beta = 0.5,
+  errors = c("normal", "t"),
+  t_df = 3,
+  hetero = 1,
+  mnar = 0,
+  interaction = 0,
   seed = NULL
 )
 ```
@@ -49,6 +54,31 @@ simulate_trial(
 - baseline_beta:
 
   Slope of the response on the baseline covariate.
+
+- errors:
+
+  `"normal"` or `"t"` (Student t with `t_df` degrees of freedom, scaled
+  to the same standard deviation: heavy tails).
+
+- t_df:
+
+  Degrees of freedom for `errors = "t"`.
+
+- hetero:
+
+  Multiplier of the residual standard deviation at the last visit
+  relative to the first (1 = homoscedastic); the SD grows linearly.
+
+- mnar:
+
+  Strength of missing-not-at-random dropout: dropout after a visit
+  depends on the value the subject would have had at the NEXT visit (0 =
+  missing at random, as the default).
+
+- interaction:
+
+  Treatment effect modification by the baseline covariate: the effect at
+  the last visit is `delta * (1 + interaction * (base - 50) / 10)`.
 
 - seed:
 

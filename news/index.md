@@ -2,19 +2,37 @@
 
 ## ballast 0.5.0
 
+- [`stress_ranktest()`](https://sullivanstatistics.github.io/ballast/reference/stress_ranktest.md):
+  Wilcoxon rank-sum and van Elteren tests at the contrast visit
+  (model-free family).
+
+- [`simulate_trial()`](https://sullivanstatistics.github.io/ballast/reference/simulate_trial.md)
+  gains heavy-tailed errors, heteroscedastic visits, MNAR dropout and
+  effect modification;
+  [`stress_calibrate()`](https://sullivanstatistics.github.io/ballast/reference/stress_calibrate.md)
+  passes them through.
+
+- Observed-margins weighting fixed for three or more arms.
+
 - Reference-based imputation seeds each draw on the worker, so results
   no longer depend on the number of cores.
+
 - The fitter reads the model matrix and covariance parameters through
   mmrm’s public accessors.
+
 - Verdicts, reports and tables state how many refits did not converge.
+
 - [`mask_ids()`](https://sullivanstatistics.github.io/ballast/reference/mask_ids.md)
   replaces subject identifiers with sequence numbers; on by default in
   [`stress_html()`](https://sullivanstatistics.github.io/ballast/reference/stress_html.md).
+
 - [`run_plan()`](https://sullivanstatistics.github.io/ballast/reference/run_plan.md)
   starts one worker cluster and shares it across families.
+
 - [`stress_sap()`](https://sullivanstatistics.github.io/ballast/reference/stress_sap.md)
   and the installed template give the statistical-analysis-plan text for
   a pre-specified stress test.
+
 - Validation vignette; CITATION; Nathan Hogan credited for the SAS
   reference validation.
 

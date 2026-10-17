@@ -34,16 +34,16 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.5.0" id="ballast-050">ballast 0.5.0<a class="anchor" aria-label="anchor" href="#ballast-050"></a></h2>
-<ul><li>Reference-based imputation seeds each draw on the worker, so results no longer depend on the number of cores.</li>
-<li>The fitter reads the model matrix and covariance parameters through mmrm’s public accessors.</li>
-<li>Verdicts, reports and tables state how many refits did not converge.</li>
-<li>
-<code><a href="../reference/mask_ids.html">mask_ids()</a></code> replaces subject identifiers with sequence numbers; on by default in <code><a href="../reference/stress_html.html">stress_html()</a></code>.</li>
-<li>
-<code><a href="../reference/run_plan.html">run_plan()</a></code> starts one worker cluster and shares it across families.</li>
-<li>
-<code><a href="../reference/stress_sap.html">stress_sap()</a></code> and the installed template give the statistical-analysis-plan text for a pre-specified stress test.</li>
-<li>Validation vignette; CITATION; Nathan Hogan credited for the SAS reference validation.</li>
+<ul><li><p><code><a href="../reference/stress_ranktest.html">stress_ranktest()</a></code>: Wilcoxon rank-sum and van Elteren tests at the contrast visit (model-free family).</p></li>
+<li><p><code><a href="../reference/simulate_trial.html">simulate_trial()</a></code> gains heavy-tailed errors, heteroscedastic visits, MNAR dropout and effect modification; <code><a href="../reference/stress_calibrate.html">stress_calibrate()</a></code> passes them through.</p></li>
+<li><p>Observed-margins weighting fixed for three or more arms.</p></li>
+<li><p>Reference-based imputation seeds each draw on the worker, so results no longer depend on the number of cores.</p></li>
+<li><p>The fitter reads the model matrix and covariance parameters through mmrm’s public accessors.</p></li>
+<li><p>Verdicts, reports and tables state how many refits did not converge.</p></li>
+<li><p><code><a href="../reference/mask_ids.html">mask_ids()</a></code> replaces subject identifiers with sequence numbers; on by default in <code><a href="../reference/stress_html.html">stress_html()</a></code>.</p></li>
+<li><p><code><a href="../reference/run_plan.html">run_plan()</a></code> starts one worker cluster and shares it across families.</p></li>
+<li><p><code><a href="../reference/stress_sap.html">stress_sap()</a></code> and the installed template give the statistical-analysis-plan text for a pre-specified stress test.</p></li>
+<li><p>Validation vignette; CITATION; Nathan Hogan credited for the SAS reference validation.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.0" id="ballast-040">ballast 0.4.0<a class="anchor" aria-label="anchor" href="#ballast-040"></a></h2>

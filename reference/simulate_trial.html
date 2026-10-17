@@ -56,6 +56,11 @@ probability rises as the current value falls (missing at random).</p>
 <span>  rho <span class="op">=</span> <span class="fl">0.6</span>,</span>
 <span>  dropout <span class="op">=</span> <span class="fl">0.08</span>,</span>
 <span>  baseline_beta <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  errors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"normal"</span>, <span class="st">"t"</span><span class="op">)</span>,</span>
+<span>  t_df <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  hetero <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  mnar <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  interaction <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -90,6 +95,31 @@ probability rises as the current value falls (missing at random).</p>
 
 <dt id="arg-baseline-beta">baseline_beta<a class="anchor" aria-label="anchor" href="#arg-baseline-beta"></a></dt>
 <dd><p>Slope of the response on the baseline covariate.</p></dd>
+
+
+<dt id="arg-errors">errors<a class="anchor" aria-label="anchor" href="#arg-errors"></a></dt>
+<dd><p><code>"normal"</code> or <code>"t"</code> (Student t with <code>t_df</code> degrees of freedom,
+scaled to the same standard deviation: heavy tails).</p></dd>
+
+
+<dt id="arg-t-df">t_df<a class="anchor" aria-label="anchor" href="#arg-t-df"></a></dt>
+<dd><p>Degrees of freedom for <code>errors = "t"</code>.</p></dd>
+
+
+<dt id="arg-hetero">hetero<a class="anchor" aria-label="anchor" href="#arg-hetero"></a></dt>
+<dd><p>Multiplier of the residual standard deviation at the last
+visit relative to the first (1 = homoscedastic); the SD grows linearly.</p></dd>
+
+
+<dt id="arg-mnar">mnar<a class="anchor" aria-label="anchor" href="#arg-mnar"></a></dt>
+<dd><p>Strength of missing-not-at-random dropout: dropout after a
+visit depends on the value the subject would have had at the NEXT visit
+(0 = missing at random, as the default).</p></dd>
+
+
+<dt id="arg-interaction">interaction<a class="anchor" aria-label="anchor" href="#arg-interaction"></a></dt>
+<dd><p>Treatment effect modification by the baseline covariate:
+the effect at the last visit is <code>delta * (1 + interaction * (base - 50) / 10)</code>.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>

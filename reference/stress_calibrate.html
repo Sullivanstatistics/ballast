@@ -63,6 +63,11 @@ the marginal flag would be set.</p>
 <span>  rho <span class="op">=</span> <span class="fl">0.6</span>,</span>
 <span>  dropout <span class="op">=</span> <span class="fl">0.08</span>,</span>
 <span>  baseline_beta <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  errors <span class="op">=</span> <span class="st">"normal"</span>,</span>
+<span>  t_df <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  hetero <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  mnar <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  interaction <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  fragility <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  cores <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">1</span></span>
@@ -104,6 +109,11 @@ giving each is derived from the design (0 gives the null).</p></dd>
 
 <dt id="arg-baseline-beta">baseline_beta<a class="anchor" aria-label="anchor" href="#arg-baseline-beta"></a></dt>
 <dd><p>Slope of the response on the baseline covariate.</p></dd>
+
+
+<dt id="arg-errors-t-df-hetero-mnar-interaction">errors, t_df, hetero, mnar, interaction<a class="anchor" aria-label="anchor" href="#arg-errors-t-df-hetero-mnar-interaction"></a></dt>
+<dd><p>Misspecification settings passed to
+<code><a href="simulate_trial.html">simulate_trial()</a></code>.</p></dd>
 
 
 <dt id="arg-fragility">fragility<a class="anchor" aria-label="anchor" href="#arg-fragility"></a></dt>

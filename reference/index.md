@@ -71,6 +71,9 @@
 - [`stress_visits()`](https://sullivanstatistics.github.io/ballast/reference/stress_visits.md)
   : Perturbation family: the contrast at every visit
 
+- [`stress_ranktest()`](https://sullivanstatistics.github.io/ballast/reference/stress_ranktest.md)
+  : Perturbation family: rank tests at the contrast visit
+
 ## Census and verdict
 
 - [`stress_census()`](https://sullivanstatistics.github.io/ballast/reference/stress_census.md)
