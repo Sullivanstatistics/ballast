@@ -52,7 +52,7 @@ stress_ranktest(spec, strata = "RACE")
 #> 2                                   CMH row-mean-score statistic on modified ridit scores, strata = RACE
 #>   estimate stderr df lcl ucl           p n_subj n_obs aicc param covariance
 #> 1  4.88842     NA NA  NA  NA 0.008430281    134   134   NA    NA         us
-#> 2  4.88842     NA NA  NA  NA 0.143793534    134   134   NA    NA         us
+#> 2  4.88842     NA NA  NA  NA 0.097974466    134   134   NA    NA         us
 #>   method vcov covariates alpha
 #> 1 Normal none             0.05
 #> 2 Normal none             0.05
