@@ -107,7 +107,7 @@ lsmean_L <- function(tt, d, spec, coefnames, contrasts.arg = NULL, at = list(), 
   vars <- all.vars(tt); trt <- spec$treatment; vis <- spec$visit
   if (identical(weights, "observed")) {   # average the design over the analysis rows, treatment set to each level, visit to the contrast visit
     lv <- c(spec$reference, spec$active); X <- lapply(lv, function(a) { g <- d; g[[trt]] <- factor(a, levels = levels(d[[trt]])); if (vis %in% vars) g[[vis]] <- factor(spec$contrast_visit, levels = levels(d[[vis]]))
-      for (v in names(at)) g[[v]] <- at[[v]]; colMeans(stats::model.matrix(tt, g, contrasts.arg = contrasts.arg)[, coefnames, drop = FALSE]) })
+      for (v in names(at)) g[[v]] <- at[[v]]; Xg <- stats::model.matrix(tt, g, contrasts.arg = contrasts.arg); colMeans(Xg[, match_coef(coefnames, colnames(Xg)), drop = FALSE]) })
     return(X[[2]] - X[[1]])
   }
   cl <- vars[vapply(vars, function(v) is.factor(d[[v]]), TRUE)]; cl <- setdiff(cl, c(trt, vis))
@@ -119,7 +119,7 @@ lsmean_L <- function(tt, d, spec, coefnames, contrasts.arg = NULL, at = list(), 
   grid[[trt]] <- factor(grid[[trt]], levels = levels(d[[trt]])); if (vis %in% vars) grid[[vis]] <- factor(grid[[vis]], levels = levels(d[[vis]]))
   for (v in co) grid[[v]] <- if (v %in% names(at)) at[[v]] else mean(d[[v]], na.rm = TRUE)
   X <- stats::model.matrix(tt, grid, contrasts.arg = contrasts.arg)
-  X <- X[, coefnames, drop = FALSE]   # aliased coefficients are excluded
+  X <- X[, match_coef(coefnames, colnames(X)), drop = FALSE]   # aliased coefficients are excluded; interaction names matched regardless of factor order
   colMeans(X[grid[[trt]] == spec$active, , drop = FALSE]) - colMeans(X[grid[[trt]] == spec$reference, , drop = FALSE])
 }
 
@@ -145,3 +145,12 @@ check_spec <- function(spec) if (!inherits(spec, "stress_spec")) stop("spec must
 
 # Force every argument of the calling function so that closures shipped to parallel workers carry values, not promises.
 force_args <- function(env = parent.frame()) { for (n in ls(env, all.names = TRUE)) get(n, envir = env); invisible(NULL) }
+
+# Match model coefficient names to design-matrix columns when an interaction's factors are written in a different order
+# (mmrm names "trt2:visit5" what model.matrix() on a re-built terms object may call "visit5:trt2").
+match_coef <- function(coefnames, colnames) {
+  canon <- function(nm) vapply(strsplit(nm, ":", fixed = TRUE), function(p) paste(sort(p), collapse = ":"), "")
+  idx <- match(canon(coefnames), canon(colnames))
+  if (anyNA(idx)) stop("coefficients not found in the contrast design: ", paste(coefnames[is.na(idx)], collapse = ", "))
+  idx
+}

@@ -20,7 +20,7 @@
 stress_ranktest <- function(spec, strata = NULL, cores = 1L) {
   check_spec(spec); force_args()
   d <- spec$data; d <- d[as.character(d[[spec$visit]]) == spec$contrast_visit & !is.na(d[[spec$response]]), , drop = FALSE]
-  y <- d[[spec$response]]; g <- as.character(d[[spec$treatment]])
+  y <- signif(d[[spec$response]], 12); g <- as.character(d[[spec$treatment]])   # ranks on 12 significant digits, so near-equal doubles tie as SAS formatted values do
   keep <- g %in% c(spec$reference, spec$active); y <- y[keep]; g <- g[keep]; d <- d[keep, , drop = FALSE]
   act <- g == spec$active
   mk <- function(label, p, est, note) {
@@ -39,8 +39,8 @@ stress_ranktest <- function(spec, strata = NULL, cores = 1L) {
     s <- as.character(d[[strata]]); num <- 0; den <- 0
     for (k in unique(s)) {
       i <- s == k; nk <- sum(i); n1k <- sum(act[i]); if (nk < 2L || n1k == 0L || n1k == nk) next
-      a <- (rank(y[i]) - 0.5) / nk                                   # modified ridit scores
-      w <- 1 / (nk + 1)                                              # van Elteren weights
+      a <- rank(y[i]) / (nk + 1)                                     # modified ridit scores (SAS MODRIDIT: rank / (n_k + 1)), which carry the van Elteren weighting
+      w <- 1
       Tk <- sum(a[act[i]]); ETk <- n1k * mean(a); VTk <- n1k * (nk - n1k) / (nk * (nk - 1)) * sum((a - mean(a))^2)
       num <- num + w * (Tk - ETk); den <- den + w^2 * VTk
     }

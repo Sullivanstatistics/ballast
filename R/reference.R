@@ -82,7 +82,7 @@ stress_reference <- function(spec, methods = c("MAR", "J2R", "CR", "CIR"), m = 2
     NULL
   }
   sigma_of <- function(fit, arm_value) { S <- mmrm::VarCorr(fit); if (is.list(S) && !is.matrix(S)) S <- S[[arm_value]]; S[visits, visits, drop = FALSE] }
-  means_of <- function(fit, grid) { X <- stats::model.matrix(tt, grid); b <- stats::coef(fit, complete = FALSE); matrix(as.vector(X[, names(b), drop = FALSE] %*% b), ncol = nv, byrow = TRUE) }
+  means_of <- function(fit, grid) { X <- stats::model.matrix(tt, grid); b <- stats::coef(fit, complete = FALSE); matrix(as.vector(X[, match_coef(names(b), colnames(X)), drop = FALSE] %*% b), ncol = nv, byrow = TRUE) }
   draws <- stress_map(seq_len(m), function(i) {
     set.seed(seed + i)   # one seed per imputation, set on the worker, so results do not depend on the number of cores
     fb <- draw_params(); if (is.null(fb)) return(NULL)
