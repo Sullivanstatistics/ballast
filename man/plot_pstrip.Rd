@@ -4,7 +4,7 @@
 \alias{plot_pstrip}
 \title{Strip plot of p-values after each deletion}
 \usage{
-plot_pstrip(x, alpha = NULL, log_p = FALSE, xmax = NULL)
+plot_pstrip(x, alpha = NULL, log_p = FALSE, xmax = NULL, label_family = TRUE)
 }
 \arguments{
 \item{x}{A \code{stress_census}, or a named list of them (one strip each).}
@@ -15,6 +15,9 @@ plot_pstrip(x, alpha = NULL, log_p = FALSE, xmax = NULL)
 p-values; harder to read for most audiences).}
 
 \item{xmax}{Upper limit of the linear p-value axis; \code{NULL} fits the data.}
+
+\item{label_family}{Include the deletion family in each strip label; set
+\code{FALSE} when every census contributes one family (subjects only, say).}
 }
 \value{
 A \code{ggplot} object.

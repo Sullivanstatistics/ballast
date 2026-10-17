@@ -60,6 +60,8 @@ plot_pcurve <- function(rows, alpha = NULL, xlab = "Perturbation", ylab = "p-val
 #' @param log_p Draw the p-value axis on a log scale (spreads out the small
 #'   p-values; harder to read for most audiences).
 #' @param xmax Upper limit of the linear p-value axis; `NULL` fits the data.
+#' @param label_family Include the deletion family in each strip label; set
+#'   `FALSE` when every census contributes one family (subjects only, say).
 #' @return A `ggplot` object.
 #' @examples
 #' small <- mmrm::fev_data[mmrm::fev_data$USUBJID %in% paste0("PT", 1:60), ]
@@ -68,7 +70,7 @@ plot_pcurve <- function(rows, alpha = NULL, xlab = "Perturbation", ylab = "p-val
 #' cen <- stress_census(spec, stress_loo(spec, by = "RACE"), stress_loo(spec, by = "SEX"))
 #' if (requireNamespace("ggplot2", quietly = TRUE)) plot_pstrip(cen)
 #' @export
-plot_pstrip <- function(x, alpha = NULL, log_p = FALSE, xmax = NULL) {
+plot_pstrip <- function(x, alpha = NULL, log_p = FALSE, xmax = NULL, label_family = TRUE) {
   need_ggplot()
   cens <- if (inherits(x, "stress_census")) list(x) else x
   if (is.null(names(cens))) names(cens) <- vapply(seq_along(cens), function(i) { l <- attr(cens[[i]], "label"); if (is.null(l)) paste("Row", i) else l }, "")
@@ -79,9 +81,10 @@ plot_pstrip <- function(x, alpha = NULL, log_p = FALSE, xmax = NULL) {
   }))
   if (is.null(d) || !nrow(d)) stop("no deletion rows to plot")
   if (is.null(alpha)) alpha <- d$a[1]
-  lab <- do.call(rbind, lapply(split(d, d$strip), function(g) data.frame(strip = g$strip[1], base_p = g$base_p[1], n = nrow(g), k = sum(g$p < alpha))))
-  lab$text <- sprintf("%s   %d / %d", lab$strip, lab$k, lab$n)
-  d$strip <- factor(d$strip, levels = rev(lab$strip)); lab$strip <- factor(lab$strip, levels = levels(d$strip))
+  order_strips <- unique(d$strip)   # input order: first census (and its first family) at the top
+  lab <- do.call(rbind, lapply(order_strips, function(s) { g <- d[d$strip == s, ]; data.frame(strip = s, row = g$row[1], base_p = g$base_p[1], n = nrow(g), k = sum(g$p < alpha), stringsAsFactors = FALSE) }))
+  lab$text <- sprintf("%s   %d / %d", if (label_family) lab$strip else lab$row, lab$k, lab$n)
+  d$strip <- factor(d$strip, levels = rev(order_strips)); lab$strip <- factor(lab$strip, levels = levels(d$strip))
   ggplot2::ggplot(d, ggplot2::aes(x = p, y = strip)) +
     ggplot2::geom_vline(xintercept = alpha, colour = PAL[["ink2"]], linetype = "22") +
     ggplot2::geom_jitter(colour = PAL[["blue"]], alpha = 0.6, size = 1.8, height = 0.2, width = 0) +
