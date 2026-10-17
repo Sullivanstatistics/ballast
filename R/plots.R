@@ -96,4 +96,50 @@ plot_pstrip <- function(x, alpha = NULL, log_p = FALSE, xmax = NULL, label_famil
     ggplot2::theme_minimal(base_size = 11) + ggplot2::theme(panel.grid.minor = ggplot2::element_blank())
 }
 
-utils::globalVariables(c("param", "p", "crossing", "x", "y", "yend", "id", "sig", "lab", "strip", "base_p", "ymin", "ymax"))
+utils::globalVariables(c("param", "p", "crossing", "x", "y", "yend", "id", "sig", "lab", "strip", "base_p", "ymin", "ymax", "row"))
+
+#' Empirical distribution of the p-values across a census
+#'
+#' The empirical cumulative distribution of the p-values of every counted
+#' refit, against the uniform diagonal that a result with no true effect
+#' would produce (the p-value of each refit of a null result is uniform, so
+#' the curve of a null census hugs the diagonal; a census far above it is
+#' far from random). One curve per census when several are given, with the
+#' pooled curve in black; the share below alpha is annotated.
+#'
+#' The refits are not independent, so the curve is a description, not a test.
+#'
+#' @param x A `stress_census`, or a named list of them.
+#' @param alpha Significance level; defaults to the census's own.
+#' @param pooled Draw the pooled curve over all censuses.
+#' @return A `ggplot` object.
+#' @examples
+#' small <- mmrm::fev_data[mmrm::fev_data$USUBJID %in% paste0("PT", 1:60), ]
+#' spec <- stress_spec(small, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL,
+#'                     covariance = "cs", method = "Satterthwaite", vcov = "Asymptotic")
+#' cen <- stress_census(spec, stress_covariance(spec, c("cs", "ar1h")), stress_loo(spec, by = "RACE"))
+#' if (requireNamespace("ggplot2", quietly = TRUE)) plot_pcdf(cen)
+#' @export
+plot_pcdf <- function(x, alpha = NULL, pooled = TRUE) {
+  need_ggplot()
+  cens <- if (inherits(x, "stress_census")) list(x) else x
+  if (is.null(names(cens))) names(cens) <- vapply(seq_along(cens), function(i) { l <- attr(cens[[i]], "label"); if (is.null(l)) paste("Row", i) else l }, "")
+  d <- do.call(rbind, lapply(names(cens), function(nm) { ce <- cens[[nm]]; z <- as.data.frame(ce)[ce$counted & !is.na(ce$p), , drop = FALSE]
+    data.frame(row = nm, p = z$p, a = attr(ce, "alpha"), stringsAsFactors = FALSE) }))
+  if (is.null(alpha)) alpha <- d$a[1]
+  d$row <- factor(d$row, levels = names(cens))
+  share <- mean(d$p < alpha)
+  g <- ggplot2::ggplot() +
+    ggplot2::geom_abline(intercept = 0, slope = 1, colour = PAL[["light"]], linewidth = 1, linetype = "22") +
+    ggplot2::annotate("text", x = 0.72, y = 0.62, label = "no true effect:\np-values uniform", colour = PAL[["ink2"]], size = 3.2, hjust = 0, lineheight = 0.9) +
+    ggplot2::geom_vline(xintercept = alpha, colour = PAL[["orange"]], linetype = "22")
+  if (length(cens) > 1L) g <- g + ggplot2::stat_ecdf(data = d, ggplot2::aes(x = p, colour = row), geom = "step", linewidth = 0.9, pad = FALSE)
+  if (pooled || length(cens) == 1L) g <- g + ggplot2::stat_ecdf(data = d, ggplot2::aes(x = p), geom = "step", colour = PAL[["ink"]], linewidth = if (length(cens) > 1L) 1.6 else 1.3, pad = FALSE)
+  g <- g + ggplot2::annotate("text", x = alpha, y = 0.02, label = sprintf("%d%% of %d refits below %s", round(100 * share), nrow(d), format(alpha)), colour = PAL[["orange"]], hjust = -0.05, vjust = 0, size = 3.4) +
+    ggplot2::scale_x_continuous(limits = c(0, 1), expand = c(0, 0)) + ggplot2::scale_y_continuous(limits = c(0, 1), expand = c(0, 0.01), labels = function(v) paste0(round(100 * v), "%")) +
+    ggplot2::scale_colour_manual(values = rep(c(PAL[["blue"]], PAL[["orange"]], PAL[["navy"]], PAL[["grey"]], "#7a9e7e", "#b27bb0"), length.out = length(cens))) +
+    ggplot2::labs(x = "Two-sided p-value of the refit", y = "Share of refits with a smaller p-value", colour = NULL) +
+    ggplot2::coord_fixed() + ggplot2::theme_minimal(base_size = 11) +
+    ggplot2::theme(panel.grid.minor = ggplot2::element_blank(), legend.position = if (length(cens) > 1L) "right" else "none")
+  g
+}

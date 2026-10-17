@@ -37,3 +37,10 @@ test_that("plot_pstrip draws deletion p-values", {
   expect_s3_class(plot_pstrip(cen), "ggplot")
   expect_error(plot_pstrip(stress_census(cs_small, stress_covariance(cs_small, c("us", "cs")))), "no deletion rows")
 })
+
+test_that("plot_pcdf draws the p-value distribution for one or several censuses", {
+  skip_if_not_installed("ggplot2")
+  cs_small <- spec_update(spec_small, covariance = "cs")
+  cen <- stress_census(cs_small, stress_covariance(cs_small, c("cs", "ar1h")), stress_loo(cs_small, by = "RACE"))
+  expect_s3_class(plot_pcdf(cen), "ggplot"); expect_s3_class(plot_pcdf(list(A = cen, B = cen)), "ggplot")
+})

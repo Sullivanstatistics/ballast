@@ -11,7 +11,7 @@ reference:
 - title: Pre-specify, run, report
   contents: [stress_plan, standard_plan, run_plan, run_plans, stress_report, stress_tables, stress_log, stress_html, stress_sap, mask_ids]
 - title: Figures
-  contents: [plot.stress_census, plot_swarm, plot_pcurve, plot_pstrip]
+  contents: [plot.stress_census, plot_swarm, plot_pcurve, plot_pstrip, plot_pcdf]
 - title: Calibration
   contents: [simulate_trial, stress_calibrate]
 articles:
