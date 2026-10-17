@@ -237,6 +237,8 @@ entry.
   : Plot p-value curves over a continuous perturbation
 - [`plot_pstrip()`](https://sullivanstatistics.github.io/ballast/reference/plot_pstrip.md)
   : Strip plot of p-values after each deletion
+- [`plot_pcdf()`](https://sullivanstatistics.github.io/ballast/reference/plot_pcdf.md)
+  : Empirical distribution of the p-values across a census
 
 ## Calibration
 
