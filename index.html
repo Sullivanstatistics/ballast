@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ballast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -100,6 +100,18 @@
 <span><span class="va">plan</span>                                  <span class="co"># SAP-ready text</span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/run_plan.html">run_plan</a></span><span class="op">(</span><span class="va">plan</span>, cores <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/stress_report.html">stress_report</a></span><span class="op">(</span><span class="va">res</span>, dir <span class="op">=</span> <span class="st">"stress"</span><span class="op">)</span>    <span class="co"># Markdown report with the figures</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="design-stage">Design stage<a class="anchor" aria-label="anchor" href="#design-stage"></a>
+</h2>
+<p>The same test runs before the trial. <code><a href="reference/stress_design.html">stress_design()</a></code> simulates the planned design over a grid of sample sizes and effect sizes and reports the <strong>robustness power</strong>, the probability that the pre-specified analysis is significant <em>and</em> classed robust, next to the conventional power, with the verdict rates among significant results, the chance that one participant’s removal loses significance, and optionally the deletion search and the delta-adjustment margin.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">des</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/stress_design.html">stress_design</a></span><span class="op">(</span>n_per_arm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">75</span>, <span class="fl">100</span>, <span class="fl">150</span><span class="op">)</span>, delta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4.5</span><span class="op">)</span>, sigma <span class="op">=</span> <span class="fl">10</span>, rho <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>                     n_visits <span class="op">=</span> <span class="fl">4</span>, dropout <span class="op">=</span> <span class="fl">0.03</span>, covariance <span class="op">=</span> <span class="st">"ar1h"</span>, n_trials <span class="op">=</span> <span class="fl">200</span>, cores <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span>
+<span><span class="va">des</span>          <span class="co"># one row per cell; names the smallest n with robustness power &gt;= 0.8</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">des</span><span class="op">)</span>    <span class="co"># power and robustness power against subjects per arm</span></span>
+<span><span class="fu"><a href="reference/stress_sap.html">stress_sap</a></span><span class="op">(</span><span class="fu"><a href="reference/standard_plan.html">standard_plan</a></span><span class="op">(</span><span class="va">spec</span>, <span class="va">...</span><span class="op">)</span><span class="op">)</span>   <span class="co"># the analysis-plan text, to which the expected rates can be added</span></span></code></pre></div>
+<p>A trial sized for 80% power expects about a third of its significant results to be classed sensitive; sizing for a robustness power of 80% removes most of that. The expected rates go into the statistical analysis plan so the verdict after unblinding has a pre-registered comparison.</p>
+</div>
 <div class="section level2">
 <h2 id="definitions">Definitions<a class="anchor" aria-label="anchor" href="#definitions"></a>
 </h2>

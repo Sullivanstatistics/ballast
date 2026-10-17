@@ -123,8 +123,13 @@
 - [`plot_pcdf()`](https://sullivanstatistics.github.io/ballast/reference/plot_pcdf.md)
   : Empirical distribution of the p-values across a census
 
-## Calibration
+## Design and calibration
 
+- [`stress_design()`](https://sullivanstatistics.github.io/ballast/reference/stress_design.md)
+  [`print(`*`<stress_design>`*`)`](https://sullivanstatistics.github.io/ballast/reference/stress_design.md)
+  : Size a trial for a robust result
+- [`plot(`*`<stress_design>`*`)`](https://sullivanstatistics.github.io/ballast/reference/plot.stress_design.md)
+  : Plot power and robustness power against the sample size
 - [`simulate_trial()`](https://sullivanstatistics.github.io/ballast/reference/simulate_trial.md)
   : Simulate a two-arm longitudinal trial
 - [`stress_calibrate()`](https://sullivanstatistics.github.io/ballast/reference/stress_calibrate.md)

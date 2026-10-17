@@ -48,7 +48,8 @@ standard_plan(
 - shift_visits:
 
   Visits whose imputed values the tipping family shifts; `NULL` shifts
-  every visit.
+  the contrast visit only (the plan text states the visits; pass every
+  visit level to shift all imputed values).
 
 - ice:
 
@@ -108,7 +109,7 @@ A `stress_plan`.
 spec <- stress_spec(mmrm::fev_data, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO",
                     covariates = ~ RACE + SEX + FEV1_BL)
 standard_plan(spec, site = "RACE", baseline = "FEV1_BL")
-#> Standard stress test (ballast 0.5.0)
+#> Standard stress test (ballast 0.6.0)
 #> 
 #> Pre-specified analysis: FEV1 ~ RACE + SEX + FEV1_BL + ARMCD + AVISIT + ARMCD:AVISIT + us(AVISIT | USUBJID); contrast TRT minus PBO at VIS4; Kenward-Roger df, Kenward-Roger-Linear variance; alpha 0.05; equal LS-mean weights.
 #> 

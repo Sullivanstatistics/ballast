@@ -4,6 +4,8 @@
 
 - [Quickstart: stress-testing a pre-specified
   MMRM](https://sullivanstatistics.github.io/ballast/articles/quickstart.md):
+- [Designing for a robust
+  result](https://sullivanstatistics.github.io/ballast/articles/design.md):
 - [Interpreting the
   verdict](https://sullivanstatistics.github.io/ballast/articles/interpreting.md):
 - [Missing data: reference-based and delta-adjusted

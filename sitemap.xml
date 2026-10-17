@@ -1,6 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://sullivanstatistics.github.io/ballast/404.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/LICENSE-text.html</loc></url>
+<url><loc>https://sullivanstatistics.github.io/ballast/articles/design.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/articles/index.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/articles/interpreting.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/articles/missing-data.html</loc></url>
@@ -14,6 +15,7 @@
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/index.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/mask_ids.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/plot.stress_census.html</loc></url>
+<url><loc>https://sullivanstatistics.github.io/ballast/reference/plot.stress_design.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/plot_pcdf.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/plot_pcurve.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/plot_pstrip.html</loc></url>
@@ -29,6 +31,7 @@
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_covariates.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_curve.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_data.html</loc></url>
+<url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_design.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_estimand.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_estimator.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_explain.html</loc></url>
