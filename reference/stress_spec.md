@@ -28,7 +28,8 @@ stress_spec(
   alpha = 0.05,
   weights = c("equal", "observed"),
   label = "pre-specified",
-  sas_conventions = TRUE
+  sas_conventions = TRUE,
+  time = NULL
 )
 ```
 
@@ -81,7 +82,9 @@ stress_spec(
 - covariance:
 
   Covariance structure name as used by `mmrm`: `"us"`, `"ar1"`,
-  `"ar1h"`, `"cs"`, `"csh"`, `"toep"`, `"toeph"`, `"ad"`, `"adh"`.
+  `"ar1h"`, `"cs"`, `"csh"`, `"toep"`, `"toeph"`, `"ad"`, `"adh"`, or
+  `"sp_exp"` (spatial exponential, the SAS `SP(POW)` structure, on the
+  continuous `time` variable).
 
 - method:
 
@@ -120,6 +123,12 @@ stress_spec(
   sandwich-variance contrast are computed as SAS `PROC MIXED` does when
   `EMPIRICAL` is combined with a `DDFM` it cannot honour (observations
   minus subjects minus the rank of the within-subject design columns).
+
+- time:
+
+  Name of a numeric time column for the `"sp_exp"` structure (days from
+  randomisation, say; mmrm converges more readily with time rescaled to
+  hundreds of days).
 
 ## Value
 
