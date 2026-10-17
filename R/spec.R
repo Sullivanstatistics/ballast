@@ -31,7 +31,12 @@
 #' @param contrast_visit The visit level at which the treatment contrast is
 #'   estimated. Defaults to the last visit level.
 #' @param covariance Covariance structure name as used by `mmrm`: `"us"`,
-#'   `"ar1"`, `"ar1h"`, `"cs"`, `"csh"`, `"toep"`, `"toeph"`, `"ad"`, `"adh"`.
+#'   `"ar1"`, `"ar1h"`, `"cs"`, `"csh"`, `"toep"`, `"toeph"`, `"ad"`, `"adh"`, or
+#'   `"sp_exp"` (spatial exponential, the SAS `SP(POW)` structure, on the
+#'   continuous `time` variable).
+#' @param time Name of a numeric time column for the `"sp_exp"` structure (days
+#'   from randomisation, say; mmrm converges more readily with time rescaled to
+#'   hundreds of days).
 #' @param method Degrees-of-freedom method passed to [mmrm::mmrm_control()]:
 #'   `"Satterthwaite"`, `"Kenward-Roger"`, `"Residual"` or `"Between-Within"`.
 #' @param vcov Variance estimator passed to [mmrm::mmrm_control()]:
@@ -60,8 +65,9 @@
 stress_spec <- function(data, response, subject, visit, treatment, reference = NULL, active = NULL,
                         covariates = NULL, contrast_visit = NULL, covariance = "us",
                         method = "Kenward-Roger", vcov = "Kenward-Roger-Linear",
-                        alpha = 0.05, weights = c("equal", "observed"), label = "pre-specified", sas_conventions = TRUE) {
+                        alpha = 0.05, weights = c("equal", "observed"), label = "pre-specified", sas_conventions = TRUE, time = NULL) {
   weights <- match.arg(weights)
+  if (covariance == "sp_exp" && (is.null(time) || !time %in% names(data))) stop("the sp_exp structure needs a numeric `time` column")
   data <- as.data.frame(data)
   need <- c(response, subject, visit, treatment)
   if (!all(need %in% names(data))) stop("columns not in data: ", paste(setdiff(need, names(data)), collapse = ", "))
@@ -74,7 +80,7 @@ stress_spec <- function(data, response, subject, visit, treatment, reference = N
   spec <- structure(list(data = NULL, response = response, subject = subject, visit = visit, treatment = treatment,
                          reference = reference, active = active, covariates = covs, cov_vars = cov_vars, contrast_visit = NULL,
                          covariance = covariance, method = method, vcov = vcov, alpha = alpha, weights = weights, label = label,
-                         sas_conventions = sas_conventions, visit_levels = NULL, treatment_levels = NULL),
+                         sas_conventions = sas_conventions, time = time, visit_levels = NULL, treatment_levels = NULL),
                     class = "stress_spec")
   data <- conform_data(spec, data, first = TRUE)
   spec$data <- data
@@ -91,7 +97,7 @@ stress_spec <- function(data, response, subject, visit, treatment, reference = N
   spec
 }
 
-COV_STRUCTURES <- c("us", "ar1", "ar1h", "cs", "csh", "toep", "toeph", "ad", "adh")
+COV_STRUCTURES <- c("us", "ar1", "ar1h", "cs", "csh", "toep", "toeph", "ad", "adh", "sp_exp")
 DF_METHODS <- c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within")
 VCOV_TYPES <- c("Asymptotic", "Empirical", "Empirical-Jackknife", "Empirical-Bias-Reduced", "Kenward-Roger", "Kenward-Roger-Linear")
 
@@ -136,7 +142,7 @@ conform_data <- function(spec, data, first = FALSE) {
 #' @export
 spec_update <- function(spec, ...) {
   new <- list(...)
-  bad <- setdiff(names(new), c("covariance", "method", "vcov", "covariates", "contrast_visit", "alpha", "label", "data", "weights", "active"))
+  bad <- setdiff(names(new), c("covariance", "method", "vcov", "covariates", "contrast_visit", "alpha", "label", "data", "weights", "active", "time"))
   if (!is.null(new$active)) { new$active <- as.character(new$active); if (!new$active %in% spec$treatment_levels || new$active == spec$reference) stop("active must be a treatment level other than the reference") }
   if (!is.null(new$contrast_visit)) { new$contrast_visit <- as.character(new$contrast_visit); if (!new$contrast_visit %in% spec$visit_levels) stop("contrast_visit is not a visit level") }
   if (!is.null(new$weights)) new$weights <- match.arg(new$weights, c("equal", "observed"))
@@ -166,7 +172,8 @@ print.stress_spec <- function(x, ...) {
 
 # Model formula for mmrm from a spec (optionally with a different covariate set / covariance).
 build_formula <- function(spec, covariates = spec$covariates, covariance = spec$covariance) {
-  rhs <- c(covariates, spec$treatment, spec$visit, paste0(spec$treatment, ":", spec$visit),
-           paste0(covariance, "(", spec$visit, " | ", spec$subject, ")"))
+  cov_term <- if (identical(covariance, "sp_exp")) { if (is.null(spec$time)) stop("the sp_exp structure needs `time` in the spec"); paste0("sp_exp(", spec$time, " | ", spec$subject, ")") }
+              else paste0(covariance, "(", spec$visit, " | ", spec$subject, ")")
+  rhs <- c(covariates, spec$treatment, spec$visit, paste0(spec$treatment, ":", spec$visit), cov_term)
   stats::as.formula(paste(spec$response, "~", paste(rhs, collapse = " + ")), env = globalenv())
 }

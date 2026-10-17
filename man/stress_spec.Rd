@@ -20,7 +20,8 @@ stress_spec(
   alpha = 0.05,
   weights = c("equal", "observed"),
   label = "pre-specified",
-  sas_conventions = TRUE
+  sas_conventions = TRUE,
+  time = NULL
 )
 }
 \arguments{
@@ -50,7 +51,9 @@ Character and logical columns are treated as class variables.}
 estimated. Defaults to the last visit level.}
 
 \item{covariance}{Covariance structure name as used by \code{mmrm}: \code{"us"},
-\code{"ar1"}, \code{"ar1h"}, \code{"cs"}, \code{"csh"}, \code{"toep"}, \code{"toeph"}, \code{"ad"}, \code{"adh"}.}
+\code{"ar1"}, \code{"ar1h"}, \code{"cs"}, \code{"csh"}, \code{"toep"}, \code{"toeph"}, \code{"ad"}, \code{"adh"}, or
+\code{"sp_exp"} (spatial exponential, the SAS \code{SP(POW)} structure, on the
+continuous \code{time} variable).}
 
 \item{method}{Degrees-of-freedom method passed to \code{\link[mmrm:mmrm_control]{mmrm::mmrm_control()}}:
 \code{"Satterthwaite"}, \code{"Kenward-Roger"}, \code{"Residual"} or \code{"Between-Within"}.}
@@ -74,6 +77,10 @@ as SAS \code{OBSMARGINS} and g-computation do).}
 a sandwich-variance contrast are computed as SAS \verb{PROC MIXED} does when
 \code{EMPIRICAL} is combined with a \code{DDFM} it cannot honour (observations minus
 subjects minus the rank of the within-subject design columns).}
+
+\item{time}{Name of a numeric time column for the \code{"sp_exp"} structure (days
+from randomisation, say; mmrm converges more readily with time rescaled to
+hundreds of days).}
 }
 \value{
 An object of class \code{stress_spec}.

@@ -15,6 +15,7 @@
 stress_covariance <- function(spec, structures = c("us", "ar1h", "ar1", "cs", "csh", "toep", "toeph"), cores = 1L) {
   check_spec(spec); force_args()
   structures <- match.arg(structures, COV_STRUCTURES, several.ok = TRUE)
+  if ("sp_exp" %in% structures && is.null(spec$time)) stop("the sp_exp structure needs `time` in the spec")
   bind_rows_(stress_map(structures, function(s)
     stress_fit(spec, label = s, family = "covariance structure", is_base = identical(s, spec$covariance), covariance = s), cores))
 }

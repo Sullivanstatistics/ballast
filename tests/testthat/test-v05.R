@@ -79,3 +79,12 @@ test_that("unequal visit schedules, missing baseline and three arms run through 
   expect_s3_class(res$census, "stress_census"); expect_true(all(c("covariance", "weights", "loo", "permute", "reference", "estimator", "visits") %in% names(res$rows)))
   expect_true(res$verdict$n_failed <= 2L)
 })
+
+test_that("the spatial-exponential structure fits on a numeric time variable", {
+  d <- fev[fev$USUBJID %in% paste0("PT", 1:80), ]; d$days <- d$VISITN * 0.3
+  s <- stress_spec(d, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL, covariance = "sp_exp", time = "days",
+                   method = "Satterthwaite", vcov = "Asymptotic")
+  r <- stress_fit(s); expect_true(r$converged); expect_equal(r$covariance, "sp_exp")
+  expect_error(stress_spec(d, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariance = "sp_exp"), "time")
+  expect_true(all(stress_covariance(s, c("sp_exp", "cs"))$converged))
+})

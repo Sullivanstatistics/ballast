@@ -57,6 +57,7 @@ stress_fit <- function(spec, data = NULL, label = spec$label, family = "base", k
   cov_vars <- if (length(covariates)) all.vars(stats::reformulate(covariates)) else character()
   keep <- !is.na(d[[spec$response]])
   if (length(cov_vars)) keep <- keep & stats::complete.cases(d[, cov_vars, drop = FALSE])
+  if (identical(covariance, "sp_exp")) keep <- keep & !is.na(d[[spec$time]])
   d <- d[keep, , drop = FALSE]
   if (!nrow(d)) { row$note <- paste(note, "[no observations]"); return(row) }
   d[[spec$subject]] <- droplevels(d[[spec$subject]]); d[[spec$visit]] <- droplevels(d[[spec$visit]])
