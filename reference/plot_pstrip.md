@@ -8,7 +8,7 @@ dashed line is alpha. Counts of deletions below alpha label each strip.
 ## Usage
 
 ``` r
-plot_pstrip(x, alpha = NULL, log_p = FALSE, xmax = NULL)
+plot_pstrip(x, alpha = NULL, log_p = FALSE, xmax = NULL, label_family = TRUE)
 ```
 
 ## Arguments
@@ -29,6 +29,11 @@ plot_pstrip(x, alpha = NULL, log_p = FALSE, xmax = NULL)
 - xmax:
 
   Upper limit of the linear p-value axis; `NULL` fits the data.
+
+- label_family:
+
+  Include the deletion family in each strip label; set `FALSE` when
+  every census contributes one family (subjects only, say).
 
 ## Value
 
