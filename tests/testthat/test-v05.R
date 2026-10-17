@@ -46,3 +46,36 @@ test_that("run_plan shares one cluster, and stress_sap writes the plan text", {
   f <- file.path(tempdir(), "sap.md"); stress_sap(plan, file = f); expect_true(file.exists(f))
   expect_true(file.exists(system.file("templates", "sap_stress_test.md", package = "ballast")) || TRUE)
 })
+
+test_that("rank tests match stats::wilcox.test and run stratified", {
+  r <- stress_ranktest(spec_full, strata = "RACE")
+  expect_equal(nrow(r), 2L); expect_equal(r$family, rep("rank test", 2)); expect_true(all(is.na(r$stderr)))
+  d <- fev[fev$AVISIT == "VIS4" & !is.na(fev$FEV1), ]
+  w <- suppressWarnings(stats::wilcox.test(FEV1 ~ ARMCD, data = d, correct = TRUE, exact = FALSE))
+  expect_equal(r$p[1], w$p.value, tolerance = 1e-10)
+  expect_true(r$p[2] > 0 && r$p[2] < 1)
+  expect_error(stress_ranktest(spec_full, strata = "nope"), "column not in data")
+})
+
+test_that("greedy deletion search finds the true single-subject minimum when one exists", {
+  tiny <- stress_spec(fev[fev$USUBJID %in% paste0("PT", 1:40), ], "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL,
+                      covariance = "cs", method = "Satterthwaite", vcov = "Asymptotic")
+  fr <- stress_fragility(tiny, "significance", max_k = 1); a <- attr(fr, "fragility")
+  loo <- stress_loo(tiny); base_sig <- stress_fit(tiny)$p < 0.05
+  exhaustive <- any((loo$p < 0.05) != base_sig, na.rm = TRUE)
+  expect_equal(a$reached, exhaustive)     # the greedy first step is the exhaustive single deletion
+})
+
+test_that("unequal visit schedules, missing baseline and three arms run through the standard plan", {
+  d <- fev[fev$USUBJID %in% paste0("PT", 1:90), ]
+  d <- d[!(d$USUBJID %in% paste0("PT", 1:10) & d$AVISIT == "VIS1"), ]          # ten subjects start at visit 2
+  d$FEV1_BL[d$USUBJID %in% paste0("PT", 11:13)] <- NA                           # three subjects without a baseline
+  d$ARM3 <- as.character(d$ARMCD); d$ARM3[d$USUBJID %in% paste0("PT", seq(3, 90, by = 3))] <- "TRT2"
+  s3 <- stress_spec(d, "FEV1", "USUBJID", "AVISIT", "ARM3", "PBO", covariates = ~ FEV1_BL, covariance = "cs", method = "Satterthwaite", vcov = "Asymptotic")
+  expect_equal(stress_fit(s3)$n_subj, 86L)   # 90 less three without baseline less one with no post-baseline value
+  plan <- stress_plan(s3, covariance = list(structures = c("cs", "ar1h")), inference = NULL, covariates = NULL, weights = TRUE, loo = list(by = "RACE"),
+                      permute = list(n = 9), reference = list(m = 2, methods = "J2R"), estimator = list(estimators = c("ancova", "complete_cases")), fragility = NULL, visits = list())
+  res <- run_plan(plan, seed = 2)
+  expect_s3_class(res$census, "stress_census"); expect_true(all(c("covariance", "weights", "loo", "permute", "reference", "estimator", "visits") %in% names(res$rows)))
+  expect_true(res$verdict$n_failed <= 2L)
+})

@@ -106,7 +106,7 @@ stress_fit <- function(spec, data = NULL, label = spec$label, family = "base", k
 lsmean_L <- function(tt, d, spec, coefnames, contrasts.arg = NULL, at = list(), weights = spec$weights) {
   vars <- all.vars(tt); trt <- spec$treatment; vis <- spec$visit
   if (identical(weights, "observed")) {   # average the design over the analysis rows, treatment set to each level, visit to the contrast visit
-    lv <- c(spec$reference, spec$active); X <- lapply(lv, function(a) { g <- d; g[[trt]] <- factor(a, levels = lv); if (vis %in% vars) g[[vis]] <- factor(spec$contrast_visit, levels = levels(d[[vis]]))
+    lv <- c(spec$reference, spec$active); X <- lapply(lv, function(a) { g <- d; g[[trt]] <- factor(a, levels = levels(d[[trt]])); if (vis %in% vars) g[[vis]] <- factor(spec$contrast_visit, levels = levels(d[[vis]]))
       for (v in names(at)) g[[v]] <- at[[v]]; colMeans(stats::model.matrix(tt, g, contrasts.arg = contrasts.arg)[, coefnames, drop = FALSE]) })
     return(X[[2]] - X[[1]])
   }

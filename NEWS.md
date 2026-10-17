@@ -1,5 +1,9 @@
 # ballast 0.5.0
 
+* `stress_ranktest()`: Wilcoxon rank-sum and van Elteren tests at the contrast visit (model-free family).
+* `simulate_trial()` gains heavy-tailed errors, heteroscedastic visits, MNAR dropout and effect modification; `stress_calibrate()` passes them through.
+* Observed-margins weighting fixed for three or more arms.
+
 * Reference-based imputation seeds each draw on the worker, so results no longer depend on the number of cores.
 * The fitter reads the model matrix and covariance parameters through mmrm's public accessors.
 * Verdicts, reports and tables state how many refits did not converge.

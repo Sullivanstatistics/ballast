@@ -12,20 +12,37 @@
 #' @param rho AR(1) correlation between adjacent visits.
 #' @param dropout Baseline per-visit dropout probability.
 #' @param baseline_beta Slope of the response on the baseline covariate.
+#' @param errors `"normal"` or `"t"` (Student t with `t_df` degrees of freedom,
+#'   scaled to the same standard deviation: heavy tails).
+#' @param t_df Degrees of freedom for `errors = "t"`.
+#' @param hetero Multiplier of the residual standard deviation at the last
+#'   visit relative to the first (1 = homoscedastic); the SD grows linearly.
+#' @param mnar Strength of missing-not-at-random dropout: dropout after a
+#'   visit depends on the value the subject would have had at the NEXT visit
+#'   (0 = missing at random, as the default).
+#' @param interaction Treatment effect modification by the baseline covariate:
+#'   the effect at the last visit is `delta * (1 + interaction * (base - 50) / 10)`.
 #' @param seed Random seed.
 #' @return A long data frame with `id`, `arm` (`"REF"`, `"ACT"`), `base`,
 #'   `visit` (`"V1"`, ...) and `y`, missing rows removed.
 #' @examples
 #' d <- simulate_trial(40, delta = 3, seed = 1); head(d)
 #' @export
-simulate_trial <- function(n_per_arm = 50, delta = 0, n_visits = 4, sigma = 10, rho = 0.6, dropout = 0.08, baseline_beta = 0.5, seed = NULL) {
+simulate_trial <- function(n_per_arm = 50, delta = 0, n_visits = 4, sigma = 10, rho = 0.6, dropout = 0.08, baseline_beta = 0.5,
+                           errors = c("normal", "t"), t_df = 3, hetero = 1, mnar = 0, interaction = 0, seed = NULL) {
+  errors <- match.arg(errors)
   if (!is.null(seed)) set.seed(seed)
   n <- 2 * n_per_arm; arm <- rep(c("REF", "ACT"), each = n_per_arm); base <- stats::rnorm(n, 50, 10)
   R <- rho^abs(outer(seq_len(n_visits), seq_len(n_visits), "-")); L <- chol(R)
-  eps <- matrix(stats::rnorm(n * n_visits), n) %*% L * sigma
-  mu <- outer(baseline_beta * (base - 50), rep(1, n_visits)) + outer(arm == "ACT", delta * seq_len(n_visits) / n_visits)
+  Z <- if (errors == "t") matrix(stats::rt(n * n_visits, t_df) / sqrt(t_df / (t_df - 2)), n) else matrix(stats::rnorm(n * n_visits), n)
+  sdv <- sigma * seq(1, hetero, length.out = n_visits)
+  eps <- (Z %*% L) * matrix(sdv, n, n_visits, byrow = TRUE)
+  eff <- delta * (1 + interaction * (base - 50) / 10)
+  mu <- outer(baseline_beta * (base - 50), rep(1, n_visits)) + outer(ifelse(arm == "ACT", eff, 0), seq_len(n_visits) / n_visits)
   Y <- mu + eps
-  if (n_visits > 1) for (v in 2:n_visits) { z <- (Y[, v - 1] - mean(Y[, v - 1], na.rm = TRUE)) / sigma; p <- stats::plogis(stats::qlogis(dropout) - 0.8 * z)
+  if (n_visits > 1) for (v in 2:n_visits) {
+    z_prev <- (Y[, v - 1] - mean(Y[, v - 1], na.rm = TRUE)) / sigma; z_next <- (Y[, v] - mean(Y[, v], na.rm = TRUE)) / sigma
+    p <- stats::plogis(stats::qlogis(dropout) - 0.8 * z_prev - mnar * z_next)
     gone <- is.na(Y[, v - 1]) | stats::runif(n) < p; Y[gone, v:n_visits] <- NA }
   d <- data.frame(id = rep(sprintf("S%04d", seq_len(n)), each = n_visits), arm = rep(arm, each = n_visits), base = rep(base, each = n_visits),
                   visit = rep(sprintf("V%d", seq_len(n_visits)), n), y = as.vector(t(Y)), stringsAsFactors = FALSE)
@@ -46,6 +63,8 @@ simulate_trial <- function(n_per_arm = 50, delta = 0, n_visits = 4, sigma = 10, 
 #'   giving each is derived from the design (0 gives the null).
 #' @param n_trials Trials per power.
 #' @param fragility Run the deletion search (slower).
+#' @param errors,t_df,hetero,mnar,interaction Misspecification settings passed to
+#'   [simulate_trial()].
 #' @param cores Worker processes (the trials are distributed, so each trial's
 #'   families run on one core).
 #' @param seed Base seed.
@@ -57,12 +76,12 @@ simulate_trial <- function(n_per_arm = 50, delta = 0, n_visits = 4, sigma = 10, 
 #' \donttest{stress_calibrate(n_per_arm = 20, power = c(0, 0.8), n_trials = 2)}
 #' @export
 stress_calibrate <- function(n_per_arm = 50, power = c(0, 0.5, 0.8, 0.95), n_trials = 100, n_visits = 4, sigma = 10, rho = 0.6, dropout = 0.08,
-                             baseline_beta = 0.5, fragility = FALSE, cores = 1L, seed = 1) {
+                             baseline_beta = 0.5, errors = "normal", t_df = 3, hetero = 1, mnar = 0, interaction = 0, fragility = FALSE, cores = 1L, seed = 1) {
   n_eff <- n_per_arm * (1 - dropout)^(n_visits - 1); r2 <- (baseline_beta * 10)^2 / ((baseline_beta * 10)^2 + sigma^2)
   delta_for <- function(pw) if (pw == 0) 0 else (stats::qnorm(0.975) + stats::qnorm(pw)) * sigma * sqrt(2 / n_eff) * sqrt(1 - r2)
   jobs <- do.call(c, lapply(seq_along(power), function(s) lapply(seq_len(n_trials), function(i) list(power = power[s], delta = delta_for(power[s]), seed = seed + 100000 * s + i))))
   one <- function(job) {
-    d <- simulate_trial(n_per_arm, job$delta, n_visits, sigma, rho, dropout, baseline_beta, seed = job$seed)
+    d <- simulate_trial(n_per_arm, job$delta, n_visits, sigma, rho, dropout, baseline_beta, errors = errors, t_df = t_df, hetero = hetero, mnar = mnar, interaction = interaction, seed = job$seed)
     spec <- stress_spec(d, "y", "id", "visit", "arm", "REF", covariates = ~ base, covariance = "us", method = "Satterthwaite", vcov = "Asymptotic")
     base <- stress_fit(spec); if (!base$converged) return(NULL)
     rows <- list(stress_covariance(spec, c("us", "ar1h", "cs")), stress_inference(spec, default_inference()[c("Satterthwaite", "Kenward-Roger (linear)", "Sandwich, between-within")]),
@@ -82,7 +101,7 @@ stress_calibrate <- function(n_per_arm = 50, power = c(0, 0.5, 0.8, 0.95), n_tri
     sensitive_given_sig = if (any(g$significant)) mean(g$stability[g$significant] == "sensitive") else NA_real_,
     fragile_k1_given_sig = if (fragility && any(g$significant)) mean(g$frag_k[g$significant] == 1, na.rm = TRUE) else NA_real_)))
   rownames(out) <- NULL
-  structure(out, class = c("stress_calibration", "data.frame"), trials = trials, design = list(n_per_arm = n_per_arm, n_visits = n_visits, sigma = sigma, rho = rho, dropout = dropout))
+  structure(out, class = c("stress_calibration", "data.frame"), trials = trials, design = list(n_per_arm = n_per_arm, n_visits = n_visits, sigma = sigma, rho = rho, dropout = dropout, errors = errors, hetero = hetero, mnar = mnar, interaction = interaction))
 }
 
 #' @export
