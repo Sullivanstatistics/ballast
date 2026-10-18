@@ -37,6 +37,7 @@ the standardised difference against the pooled Monte Carlo standard errors (|z| 
 | 5 | Estimator class: GEE independence with cluster sandwich, site random intercept, complete cases, ANCOVA at the contrast visit, MM robust regression (`stress_estimator()`) | 5 | all within tolerance (the MM fit exactly, with the same seed) |
 | 6 | Re-randomisation test, 20,000 permutations within strata, two scales (`stress_permute()`) | 2 | within Monte Carlo error, |z| 0.96 and 0.46 |
 | 6 | cLDA with baseline as an outcome (`stress_estimator("clda")`) | 1 | within tolerance |
+| 7 | The full submitted census: every alternative analysis of the SAS package reproduced through the package's own functions (`stress_data()`, `stress_covariates()`, `stress_grid()`, `stress_estimator()`, `stress_ranktest()`, `stress_tipping()`, `stress_reference()`) | 360 | 355 exact; 5 multiple-imputation rows within Monte Carlo error |
 
 The port itself had been validated against the SAS master table under the same tolerances, so the chain is SAS to port
 to package.
