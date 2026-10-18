@@ -145,7 +145,7 @@ plan
 res <- run_plan(plan, seed = 1)
 res
 #> Pre-specified stress test
-#> 8 families, 22 rows, 17 counted; 0.1 min
+#> 8 families, 22 rows, 17 counted; 0.2 min
 #> Base: estimate 3.87, 95% CI -0.255 to 8, p = 0.0655 (alpha 0.05)
 #> Counted: 14 alternative analyses, 3 deletions; 4 significant, 4 crossed alpha
 #> Outside base CI: 0; direction reversed: 0; largest shift: 1.74 base SE
