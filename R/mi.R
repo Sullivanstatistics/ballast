@@ -8,7 +8,7 @@
 # FCS: a preliminary fill (each imputed variable regressed on the preceding variables), then nbiter burn-in
 # iterations in which each imputed variable is regressed on all other variables at their current values. The
 # shift is added to the imputed values of the selected variables on the selected rows at every draw, which is
-# what reproduces the SAS tipping-point curve (checked 7 Oct 2026 against the HOPE-3 run).
+# what reproduces the SAS tipping-point curve (checked 7 Oct 2026 against the SAS reference run).
 
 mi_reg_impute <- function(y, X, Xmis) {
   qrX <- qr(X); keep <- qrX$pivot[seq_len(qrX$rank)]            # drop aliased columns, as PROC MI does
