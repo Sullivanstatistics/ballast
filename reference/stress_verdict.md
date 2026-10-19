@@ -29,3 +29,19 @@ A list of class `stress_verdict`: `stability` over every counted row,
 `stability_sensitivity` over the rows that keep the estimand
 (`role = "sensitivity"`), `marginal`, the counts behind them, and the
 rows that drove the classification.
+
+## Examples
+
+``` r
+spec <- stress_spec(mmrm::fev_data, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO",
+                    covariates = ~ RACE + SEX + FEV1_BL)
+cen <- stress_census(spec, stress_covariance(spec, c("us", "cs")), stress_covariates(spec))
+v <- stress_verdict(cen)
+v$stability
+#> [1] "robust"
+v
+#> Base: estimate 4.4, 95% CI 1.09 to 7.71, p = 0.00948 (alpha 0.05)
+#> Counted: 5 alternative analyses, 0 deletions; 5 significant, 0 crossed alpha
+#> Outside base CI: 0; direction reversed: 0; largest shift: 0.364 base SE
+#> Verdict: ROBUST over all counted rows; ROBUST over the 5 sensitivity analyses (same estimand; 0 supplementary rows)
+```

@@ -6,6 +6,19 @@
   now shifts the tipping family at the contrast visit unless
   `shift_visits` is given; before, an omitted `shift_visits` shifted
   every imputed visit, which changed the tipping estimand silently.
+- Seeded steps (simulation, re-randomisation, multiple imputation,
+  robust regression) restore the caller’s random-number state on exit,
+  so a `seed` argument never changes the global stream.
+- [`stress_report()`](https://sullivanstatistics.github.io/ballast/reference/stress_report.md),
+  [`stress_tables()`](https://sullivanstatistics.github.io/ballast/reference/stress_tables.md)
+  and
+  [`stress_html()`](https://sullivanstatistics.github.io/ballast/reference/stress_html.md)
+  have no default output location; nothing is written unless a directory
+  or file is given.
+- [`stress_verdict()`](https://sullivanstatistics.github.io/ballast/reference/stress_verdict.md)
+  and
+  [`tipping_point()`](https://sullivanstatistics.github.io/ballast/reference/tipping_point.md)
+  gain examples.
 - [`stress_design()`](https://sullivanstatistics.github.io/ballast/reference/stress_design.md):
   design-stage use. Simulates a planned trial over a grid of sample
   sizes and effect sizes and reports the robustness power (significant

@@ -10,7 +10,7 @@ result has rows with a parameter) as PNG files beside it.
 ``` r
 stress_report(
   result,
-  dir = ".",
+  dir,
   name = "stress_report",
   width = 9,
   height = 5,
@@ -28,7 +28,8 @@ stress_report(
 
 - dir:
 
-  Directory to write into (created if needed).
+  Directory to write into (created if needed). There is no default, so
+  nothing is written unless a location is given.
 
 - name:
 

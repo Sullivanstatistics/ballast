@@ -10,7 +10,7 @@ refit's estimate and p-value. Needs `plotly` and `htmlwidgets`.
 ## Usage
 
 ``` r
-stress_html(result, file = "stress_report.html", digits = 2, mask_ids = TRUE)
+stress_html(result, file, digits = 2, mask_ids = TRUE)
 ```
 
 ## Arguments
@@ -22,7 +22,8 @@ stress_html(result, file = "stress_report.html", digits = 2, mask_ids = TRUE)
 
 - file:
 
-  Path of the HTML file to write.
+  Path of the HTML file to write. There is no default, so nothing is
+  written unless a path is given.
 
 - digits:
 

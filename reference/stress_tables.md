@@ -11,7 +11,7 @@ too, and an RTF version of each table.
 ``` r
 stress_tables(
   result,
-  dir = ".",
+  dir,
   name = "stress",
   formats = c("csv", "docx", "rtf"),
   digits = 3,
@@ -28,7 +28,8 @@ stress_tables(
 
 - dir:
 
-  Directory to write into.
+  Directory to write into (created if needed). There is no default, so
+  nothing is written unless a location is given.
 
 - name:
 
