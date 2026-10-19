@@ -135,6 +135,16 @@ with rbmi on its public antidepressant data. See the validation
 vignette. `R CMD check --as-cran` runs on Windows, macOS and Linux on
 every push.
 
+## Development
+
+ballast was designed and directed by Adam Sullivan, who specified its
+methods, made the design decisions and reviewed every function. Code,
+tests and documentation were written with Claude (Anthropic), an AI
+coding assistant, which is why commits carry a co-author line.
+Correctness does not rest on the tool: the package is validated against
+an independent SAS reference analysis on about 1,250 cells and against
+rbmi (see the validation vignette), and its tests run on every change.
+
 ## Citation
 
 Sullivan A (2026). ballast: Stress-Test a Pre-Specified Mixed Model for
