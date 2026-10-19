@@ -126,24 +126,13 @@ method, `MNAR ADJUST` applied at every draw) and PROC MIANALYZE.
 
 ## Status and validation
 
-Version 0.6.0. The engine is a generic rewrite of a program-by-program
+Version 0.5.0. The engine is a generic rewrite of a program-by-program
 validated R port of a SAS robustness package and reproduces that package
-cell by cell (seven validation gates, about 1,250 cells including the
-full submitted census, deterministic quantities to 1e-6, Monte Carlo
-quantities within Monte Carlo error); reference-based imputation agrees
-with rbmi on its public antidepressant data. See the validation
-vignette. `R CMD check --as-cran` runs on Windows, macOS and Linux on
-every push.
-
-## Development
-
-ballast was designed and directed by Adam Sullivan, who specified its
-methods, made the design decisions and reviewed every function. Code,
-tests and documentation were written with Claude (Anthropic), an AI
-coding assistant, which is why commits carry a co-author line.
-Correctness does not rest on the tool: the package is validated against
-an independent SAS reference analysis on about 1,250 cells and against
-rbmi (see the validation vignette), and its tests run on every change.
+cell by cell (six validation gates, about 1,200 cells, deterministic
+quantities to 1e-6, Monte Carlo quantities within Monte Carlo error);
+reference-based imputation agrees with rbmi on its public antidepressant
+data. See the validation vignette. `R CMD check --as-cran` runs on
+Windows, macOS and Linux on every push.
 
 ## Citation
 
