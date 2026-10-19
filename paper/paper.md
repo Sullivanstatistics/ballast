@@ -92,6 +92,13 @@ Simulation studies of 2,750 trials establish the operating characteristics of th
 validation gates are documented in the package vignettes. The package has 278 tests and is checked on Windows, macOS and
 Linux on every push.
 
+# AI usage disclosure
+
+The software, tests, documentation and this paper were developed with the assistance of Claude (Anthropic), an AI coding
+and writing tool, under the direction of the authors, who specified the methods, made the design decisions, reviewed all
+code and text, and take responsibility for them. Correctness was established independently of the tool through the
+validation chain described above.
+
 # Acknowledgements
 
 The authors thank the clinical, data management and programming teams of the trial whose review prompted this work,
