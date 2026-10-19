@@ -6,7 +6,6 @@ This is a new submission.
 
 * local Windows 11, R 4.5.3
 * GitHub Actions: windows-latest (release), macos-latest (release), ubuntu-latest (release, devel)
-* win-builder (devel): [to be added]
 
 ## R CMD check results
 
