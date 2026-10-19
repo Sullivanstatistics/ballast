@@ -119,5 +119,5 @@ SAS reference analysis on about 1,250 cells and against rbmi (see the validation
 
 ## Citation
 
-Sullivan A (2026). ballast: Stress-Test a Pre-Specified Mixed Model for Repeated Measures. R package version 0.5.0.
+Sullivan AJ (2026). ballast: Stress-Test a Pre-Specified Mixed Model for Repeated Measures. R package version 0.6.1.
 doi:10.5281/zenodo.23427834. `citation("ballast")` gives the BibTeX entry.
