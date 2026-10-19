@@ -9,3 +9,4 @@
 ^\.gitattributes$
 ^\.gitignore$
 ^paper$
+^CRAN-SUBMISSION$
