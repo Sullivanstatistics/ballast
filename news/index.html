@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ballast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,14 +33,19 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.6.0" id="ballast-060">ballast 0.6.0<a class="anchor" aria-label="anchor" href="#ballast-060"></a></h2>
-<ul><li>
-<code><a href="../reference/standard_plan.html">standard_plan()</a></code> now shifts the tipping family at the contrast visit unless <code>shift_visits</code> is given; before, an omitted <code>shift_visits</code> shifted every imputed visit, which changed the tipping estimand silently.</li>
-<li>Seeded steps (simulation, re-randomisation, multiple imputation, robust regression) restore the caller’s random-number state on exit, so a <code>seed</code> argument never changes the global stream.</li>
+<h2 class="pkg-version" data-toc-text="0.6.1" id="ballast-061">ballast 0.6.1<a class="anchor" aria-label="anchor" href="#ballast-061"></a></h2>
+<p>First CRAN submission.</p>
+<ul><li>Seeded steps (simulation, re-randomisation, multiple imputation, robust regression) restore the caller’s random-number state on exit, so a <code>seed</code> argument never changes the global stream.</li>
 <li>
 <code><a href="../reference/stress_report.html">stress_report()</a></code>, <code><a href="../reference/stress_tables.html">stress_tables()</a></code> and <code><a href="../reference/stress_html.html">stress_html()</a></code> have no default output location; nothing is written unless a directory or file is given.</li>
 <li>
 <code><a href="../reference/stress_verdict.html">stress_verdict()</a></code> and <code><a href="../reference/tipping_point.html">tipping_point()</a></code> gain examples.</li>
+<li>ORCID and copyright-holder role in <code>Authors@R</code>; the citation reads the version from the package metadata.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.6.0" id="ballast-060">ballast 0.6.0<a class="anchor" aria-label="anchor" href="#ballast-060"></a></h2>
+<ul><li>
+<code><a href="../reference/standard_plan.html">standard_plan()</a></code> now shifts the tipping family at the contrast visit unless <code>shift_visits</code> is given; before, an omitted <code>shift_visits</code> shifted every imputed visit, which changed the tipping estimand silently.</li>
 <li>
 <code><a href="../reference/stress_design.html">stress_design()</a></code>: design-stage use. Simulates a planned trial over a grid of sample sizes and effect sizes and reports the robustness power (significant and robust) next to the conventional power, the verdict rates among significant results, the one-subject fragility, and optionally the deletion search and the delta-adjustment margin; <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> draws power and robustness power against the sample size, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> names the smallest sample size that reaches a target robustness power.</li>
 </ul></div>

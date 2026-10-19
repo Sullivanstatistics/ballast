@@ -126,7 +126,7 @@ method, `MNAR ADJUST` applied at every draw) and PROC MIANALYZE.
 
 ## Status and validation
 
-Version 0.6.0. The engine is a generic rewrite of a program-by-program
+Version 0.6.1. The engine is a generic rewrite of a program-by-program
 validated R port of a SAS robustness package and reproduces that package
 cell by cell (seven validation gates, about 1,250 cells including the
 full submitted census, deterministic quantities to 1e-6, Monte Carlo
@@ -147,7 +147,7 @@ rbmi (see the validation vignette), and its tests run on every change.
 
 ## Citation
 
-Sullivan A (2026). ballast: Stress-Test a Pre-Specified Mixed Model for
-Repeated Measures. R package version 0.5.0.
+Sullivan AJ (2026). ballast: Stress-Test a Pre-Specified Mixed Model for
+Repeated Measures. R package version 0.6.1.
 <doi:10.5281/zenodo.23427834>. `citation("ballast")` gives the BibTeX
 entry.

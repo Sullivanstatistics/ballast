@@ -11,7 +11,7 @@ and mean one thing. It contains, in order:'><meta property="og:image" content="h
 
     <a class="navbar-brand me-2" href="../index.html">ballast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -135,7 +135,7 @@ hypothetical, while on treatment).</p></li>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">spec</span> <span class="op">&lt;-</span> <span class="fu"><a href="stress_spec.html">stress_spec</a></span><span class="op">(</span><span class="fu">mmrm</span><span class="fu">::</span><span class="va"><a href="https://openpharma.github.io/mmrm/latest-tag/reference/fev_data.html" class="external-link">fev_data</a></span>, <span class="st">"FEV1"</span>, <span class="st">"USUBJID"</span>, <span class="st">"AVISIT"</span>, <span class="st">"ARMCD"</span>, <span class="st">"PBO"</span>,</span></span>
 <span class="r-in"><span>                    covariates <span class="op">=</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">FEV1_BL</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">standard_plan</span><span class="op">(</span><span class="va">spec</span>, site <span class="op">=</span> <span class="st">"RACE"</span>, baseline <span class="op">=</span> <span class="st">"FEV1_BL"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Standard stress test (ballast 0.6.0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Standard stress test (ballast 0.6.1)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Pre-specified analysis: FEV1 ~ RACE + SEX + FEV1_BL + ARMCD + AVISIT + ARMCD:AVISIT + us(AVISIT | USUBJID); contrast TRT minus PBO at VIS4; Kenward-Roger df, Kenward-Roger-Linear variance; alpha 0.05; equal LS-mean weights.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>

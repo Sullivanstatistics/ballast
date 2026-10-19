@@ -39,7 +39,7 @@ A character vector of paragraphs, invisibly if `file` is given.
 spec <- stress_spec(mmrm::fev_data, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO",
                     covariates = ~ RACE + SEX + FEV1_BL)
 cat(stress_sap(standard_plan(spec, site = "RACE"), trial = "Study 001"), sep = "\n\n")
-#> **Stress test of the primary analysis (pre-specified).** After database lock and unblinding, the primary analysis of Study 001 will be stress-tested with the ballast R package (version 0.6.0): the pre-specified model will be refitted under the families of perturbations listed below, and every refit will be judged against the pre-specified estimate, its 95% confidence interval and the two-sided significance level of 0.05.
+#> **Stress test of the primary analysis (pre-specified).** After database lock and unblinding, the primary analysis of Study 001 will be stress-tested with the ballast R package (version 0.6.1): the pre-specified model will be refitted under the families of perturbations listed below, and every refit will be judged against the pre-specified estimate, its 95% confidence interval and the two-sided significance level of 0.05.
 #> 
 #> **Pre-specified analysis.** FEV1 ~ RACE + SEX + FEV1_BL + ARMCD + AVISIT + ARMCD:AVISIT + us(AVISIT | USUBJID), with the treatment contrast TRT minus PBO at VIS4 formed from least-squares means (equal weights), Kenward-Roger degrees of freedom and the Kenward-Roger-Linear variance estimator.
 #> 
@@ -69,5 +69,5 @@ cat(stress_sap(standard_plan(spec, site = "RACE"), trial = "Study 001"), sep = "
 #> 
 #> **Reporting.** The per-family summary (analyses, significant, crossed, outside the interval, reversed, range as a percentage of the pre-specified estimate, largest shift in pre-specified standard errors), the list of refits that crossed the significance level or left the interval, the deletion-search path, the full census, the bubble-swarm, deletion-strip and tipping-point figures, and a run log with the seed, software versions and the hash of this plan will be provided as an appendix to the clinical study report. Subject identifiers will be masked in any version that leaves the sponsor.
 #> 
-#> **Plan hash.** MD5 of the plan text as fixed in this document: `018d207ce7e440c099c37cbc870be0f3`. The run log will carry the same hash.
+#> **Plan hash.** MD5 of the plan text as fixed in this document: `822a13cd23520956f3574ccd12dfbba1`. The run log will carry the same hash.
 ```
