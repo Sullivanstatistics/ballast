@@ -6,7 +6,7 @@
 \usage{
 stress_tables(
   result,
-  dir = ".",
+  dir,
   name = "stress",
   formats = c("csv", "docx", "rtf"),
   digits = 3,
@@ -16,7 +16,7 @@ stress_tables(
 \arguments{
 \item{result}{A \code{stress_result} from \code{\link[=run_plan]{run_plan()}}.}
 
-\item{dir}{Directory to write into.}
+\item{dir}{Directory to write into (created if needed). There is no default, so nothing is written unless a location is given.}
 
 \item{name}{File stem.}
 

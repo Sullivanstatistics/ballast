@@ -51,6 +51,11 @@ stress_curve <- function(spec, values, modify, family = "perturbation curve", an
 #'   parameter value, `NA` when the curve does not cross) and `direction`
 #'   (`"up"` when p rises through alpha with increasing parameter, `"down"`
 #'   otherwise).
+#' @examples
+#' small <- mmrm::fev_data[mmrm::fev_data$USUBJID %in% paste0("PT", 1:60), ]
+#' spec <- stress_spec(small, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL)
+#' shift_pt3 <- function(d, v) { k <- d$USUBJID == "PT3"; d$FEV1[k] <- d$FEV1[k] + v; d }
+#' tipping_point(stress_curve(spec, values = c(-20, 0, 20), modify = shift_pt3))
 #' @export
 tipping_point <- function(rows, alpha = NULL) {
   x <- as.data.frame(rows); x <- x[!is.na(x$param) & !is.na(x$p), , drop = FALSE]

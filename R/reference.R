@@ -49,7 +49,7 @@
 #' @export
 stress_reference <- function(spec, methods = c("MAR", "J2R", "CR", "CIR"), m = 25, seed = 1, delta = 0, arm = NULL,
                              impute_covariates = NULL, same_cov = TRUE, max_tries = 3L, cores = 1L) {
-  check_spec(spec); force_args()
+  check_spec(spec); force_args(); old_rng <- rng_state(); on.exit(rng_restore(old_rng), add = TRUE)
   methods <- match.arg(methods, c("MAR", "J2R", "CR", "CIR"), several.ok = TRUE)
   trt <- spec$treatment; sub <- spec$subject; vis <- spec$visit; y <- spec$response
   if (is.null(arm)) arm <- spec$active

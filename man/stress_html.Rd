@@ -4,12 +4,12 @@
 \alias{stress_html}
 \title{Interactive HTML report}
 \usage{
-stress_html(result, file = "stress_report.html", digits = 2, mask_ids = TRUE)
+stress_html(result, file, digits = 2, mask_ids = TRUE)
 }
 \arguments{
 \item{result}{A \code{stress_result} from \code{\link[=run_plan]{run_plan()}}.}
 
-\item{file}{Path of the HTML file to write.}
+\item{file}{Path of the HTML file to write. There is no default, so nothing is written unless a path is given.}
 
 \item{digits}{Rounding used to group estimates into bubbles.}
 

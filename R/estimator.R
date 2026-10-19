@@ -115,7 +115,7 @@ est_ancova <- function(spec, fam, robust, seed) {
   f <- stats::reformulate(c(covs, trt), response = spec$response)
   if (robust) {
     if (!requireNamespace("MASS", quietly = TRUE)) return(est_row(spec, lab, fam, NA, NA, NA, NA, NA, "MASS not installed"))
-    set.seed(seed); fit <- tryCatch(MASS::rlm(f, data = d, method = "MM"), error = function(e) NULL)
+    old_rng <- rng_state(); on.exit(rng_restore(old_rng), add = TRUE); set.seed(seed); fit <- tryCatch(MASS::rlm(f, data = d, method = "MM"), error = function(e) NULL)
     if (is.null(fit)) return(est_row(spec, lab, fam, NA, NA, NA, NA, NA, "rlm did not converge"))
     b <- stats::coef(fit); V <- stats::vcov(fit); df <- NA_real_
   } else {

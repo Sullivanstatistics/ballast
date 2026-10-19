@@ -10,7 +10,7 @@ tags:
   - reproducibility
 authors:
   - name: Adam J. Sullivan
-    orcid: 0000-0000-0000-0000
+    orcid: 0000-0002-9429-3611
     corresponding: true
     affiliation: 1
   - name: Nathan Hogan

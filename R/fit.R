@@ -155,3 +155,11 @@ match_coef <- function(coefnames, colnames) {
   if (anyNA(idx)) stop("coefficients not found in the contrast design: ", paste(coefnames[is.na(idx)], collapse = ", "))
   idx
 }
+
+# Random-number state of the caller, saved before a seeded step and restored on exit, so that a seed given to a ballast
+# function never changes the user's global stream (the pattern of withr::with_seed, without the dependency).
+rng_state <- function() if (exists(".Random.seed", envir = globalenv(), inherits = FALSE)) get(".Random.seed", envir = globalenv(), inherits = FALSE) else NULL
+rng_restore <- function(old) {
+  if (is.null(old)) { if (exists(".Random.seed", envir = globalenv(), inherits = FALSE)) rm(".Random.seed", envir = globalenv()) }
+  else assign(".Random.seed", old, envir = globalenv())
+}

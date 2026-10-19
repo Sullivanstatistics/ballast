@@ -140,7 +140,7 @@ print.stress_result <- function(x, ...) {
 #' rows with a parameter) as PNG files beside it.
 #'
 #' @param result A `stress_result` from [run_plan()].
-#' @param dir Directory to write into (created if needed).
+#' @param dir Directory to write into (created if needed). There is no default, so nothing is written unless a location is given.
 #' @param name File stem for the report and figures.
 #' @param width,height,dpi Figure size in inches and resolution.
 #' @param mask_ids Replace subject identifiers with sequence numbers.
@@ -156,7 +156,7 @@ print.stress_result <- function(x, ...) {
 #' stress_report(run_plan(plan), dir = tempdir())
 #' }
 #' @export
-stress_report <- function(result, dir = ".", name = "stress_report", width = 9, height = 5, dpi = 150, mask_ids = FALSE) {
+stress_report <- function(result, dir, name = "stress_report", width = 9, height = 5, dpi = 150, mask_ids = FALSE) {
   if (!inherits(result, "stress_result")) stop("result must be a stress_result")
   dir.create(dir, showWarnings = FALSE, recursive = TRUE)
   b <- result$base; v <- result$verdict; cen <- result$census

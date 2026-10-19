@@ -8,7 +8,7 @@
 #' shows the refit's estimate and p-value. Needs `plotly` and `htmlwidgets`.
 #'
 #' @param result A `stress_result` from [run_plan()].
-#' @param file Path of the HTML file to write.
+#' @param file Path of the HTML file to write. There is no default, so nothing is written unless a path is given.
 #' @param digits Rounding used to group estimates into bubbles.
 #' @param mask_ids Replace subject identifiers with sequence numbers (on by
 #'   default: the page is the deliverable most likely to leave the organisation).
@@ -25,7 +25,7 @@
 #'   stress_html(run_plan(plan), file.path(tempdir(), "stress.html"))
 #' }
 #' @export
-stress_html <- function(result, file = "stress_report.html", digits = 2, mask_ids = TRUE) {
+stress_html <- function(result, file, digits = 2, mask_ids = TRUE) {
   if (!inherits(result, "stress_result")) stop("result must be a stress_result")
   if (!requireNamespace("plotly", quietly = TRUE) || !requireNamespace("htmlwidgets", quietly = TRUE)) stop("plotly and htmlwidgets are needed")
   cen <- result$census; b <- result$base; v <- result$verdict

@@ -25,3 +25,11 @@ direction or lies outside the base confidence interval; otherwise
 \emph{robust}. \emph{Marginal} is a separate flag on the base p-value, true when it
 lies within \code{alpha * marginal_band}.
 }
+\examples{
+spec <- stress_spec(mmrm::fev_data, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO",
+                    covariates = ~ RACE + SEX + FEV1_BL)
+cen <- stress_census(spec, stress_covariance(spec, c("us", "cs")), stress_covariates(spec))
+v <- stress_verdict(cen)
+v$stability
+v
+}

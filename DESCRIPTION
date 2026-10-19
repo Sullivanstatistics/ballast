@@ -3,20 +3,24 @@ Title: Stress-Test a Pre-Specified Mixed Model for Repeated Measures
 Version: 0.6.0
 Authors@R: c(
     person("Adam", "Sullivan", email = "asullivan@capricor.com",
-           role = c("aut", "cre")),
+           role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0000-0002-9429-3611")),
     person("Nathan", "Hogan", role = "ctb",
            comment = "validation of the SAS reference results"),
     person("Capricor Therapeutics", role = "fnd"))
 Description: Refits one pre-specified mixed model for repeated measures (MMRM)
     under families of data and analytic perturbations (covariance structure,
     degrees-of-freedom method and variance estimator, covariate set, analysis
-    population, alternative analysis datasets, leave-one-out deletions, crossed
-    specification grids, re-randomisation tests and delta-adjusted multiple
-    imputation) and judges every refit against the pre-specified estimate,
-    confidence interval and p-value. Classifies the result as robust, sensitive
-    or fragile, with a separate flag for marginal significance. Fitting uses
-    'mmrm' (Sabanes Bove et al., 2024, <https://openpharma.github.io/mmrm/>) with
-    SAS 'PROC MIXED' conventions for the least-squares-mean contrast,
+    population, alternative analysis data sets, leave-one-out deletions, crossed
+    specification grids, re-randomisation tests, delta-adjusted and
+    reference-based multiple imputation, and alternative estimators) and judges
+    every refit against the pre-specified estimate, confidence interval and
+    p-value. Classifies the result as robust, sensitive or fragile, with a
+    separate flag for marginal significance, and estimates by simulation the
+    probability that a planned design gives a significant and robust result.
+    Fitting uses 'mmrm' (Sabanes Bove et al., 2024,
+    <https://openpharma.github.io/mmrm/>) with 'SAS' 'PROC MIXED' conventions
+    for the least-squares-mean contrast,
     Kenward-Roger adjustment and the corrected Akaike criterion. Reference-based
     multiple imputation follows Carpenter, Roger and Kenward (2013)
     <doi:10.1080/10543406.2013.834911> and was checked against 'rbmi'

@@ -23,3 +23,9 @@ For rows that carry a \code{param} value (from \code{\link[=stress_tipping]{stre
 \code{\link[=stress_curve]{stress_curve()}}), interpolates linearly between adjacent parameter values
 to find where the p-value crosses \code{alpha}, separately for each family.
 }
+\examples{
+small <- mmrm::fev_data[mmrm::fev_data$USUBJID \%in\% paste0("PT", 1:60), ]
+spec <- stress_spec(small, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL)
+shift_pt3 <- function(d, v) { k <- d$USUBJID == "PT3"; d$FEV1[k] <- d$FEV1[k] + v; d }
+tipping_point(stress_curve(spec, values = c(-20, 0, 20), modify = shift_pt3))
+}

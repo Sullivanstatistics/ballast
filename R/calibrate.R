@@ -31,7 +31,7 @@
 simulate_trial <- function(n_per_arm = 50, delta = 0, n_visits = 4, sigma = 10, rho = 0.6, dropout = 0.08, baseline_beta = 0.5,
                            errors = c("normal", "t"), t_df = 3, hetero = 1, mnar = 0, interaction = 0, seed = NULL) {
   errors <- match.arg(errors)
-  if (!is.null(seed)) set.seed(seed)
+  if (!is.null(seed)) { old_rng <- rng_state(); on.exit(rng_restore(old_rng), add = TRUE); set.seed(seed) }
   n <- 2 * n_per_arm; arm <- rep(c("REF", "ACT"), each = n_per_arm); base <- stats::rnorm(n, 50, 10)
   R <- rho^abs(outer(seq_len(n_visits), seq_len(n_visits), "-")); L <- chol(R)
   Z <- if (errors == "t") matrix(stats::rt(n * n_visits, t_df) / sqrt(t_df / (t_df - 2)), n) else matrix(stats::rnorm(n * n_visits), n)

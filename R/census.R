@@ -97,6 +97,13 @@ print.summary.stress_census <- function(x, digits = 3, ...) {
 #'   row, `stability_sensitivity` over the rows that keep the estimand
 #'   (`role = "sensitivity"`), `marginal`, the counts behind them, and the rows
 #'   that drove the classification.
+#' @examples
+#' spec <- stress_spec(mmrm::fev_data, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO",
+#'                     covariates = ~ RACE + SEX + FEV1_BL)
+#' cen <- stress_census(spec, stress_covariance(spec, c("us", "cs")), stress_covariates(spec))
+#' v <- stress_verdict(cen)
+#' v$stability
+#' v
 #' @export
 stress_verdict <- function(census, marginal_band = c(0.5, 2)) {
   b <- attr(census, "base"); alpha <- attr(census, "alpha")

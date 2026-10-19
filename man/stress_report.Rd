@@ -6,7 +6,7 @@
 \usage{
 stress_report(
   result,
-  dir = ".",
+  dir,
   name = "stress_report",
   width = 9,
   height = 5,
@@ -17,7 +17,7 @@ stress_report(
 \arguments{
 \item{result}{A \code{stress_result} from \code{\link[=run_plan]{run_plan()}}.}
 
-\item{dir}{Directory to write into (created if needed).}
+\item{dir}{Directory to write into (created if needed). There is no default, so nothing is written unless a location is given.}
 
 \item{name}{File stem for the report and figures.}
 

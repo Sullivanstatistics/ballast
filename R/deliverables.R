@@ -7,7 +7,7 @@
 #' an RTF version of each table.
 #'
 #' @param result A `stress_result` from [run_plan()].
-#' @param dir Directory to write into.
+#' @param dir Directory to write into (created if needed). There is no default, so nothing is written unless a location is given.
 #' @param name File stem.
 #' @param formats Any of `"csv"`, `"docx"`, `"rtf"`.
 #' @param digits Decimal places in the formatted tables.
@@ -24,7 +24,7 @@
 #' stress_tables(run_plan(plan), dir = tempdir(), formats = "csv")
 #' }
 #' @export
-stress_tables <- function(result, dir = ".", name = "stress", formats = c("csv", "docx", "rtf"), digits = 3, mask_ids = FALSE) {
+stress_tables <- function(result, dir, name = "stress", formats = c("csv", "docx", "rtf"), digits = 3, mask_ids = FALSE) {
   if (!inherits(result, "stress_result")) stop("result must be a stress_result")
   formats <- match.arg(formats, c("csv", "docx", "rtf"), several.ok = TRUE)
   dir.create(dir, showWarnings = FALSE, recursive = TRUE)

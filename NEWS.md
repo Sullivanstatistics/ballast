@@ -1,6 +1,9 @@
 # ballast 0.6.0
 
 * `standard_plan()` now shifts the tipping family at the contrast visit unless `shift_visits` is given; before, an omitted `shift_visits` shifted every imputed visit, which changed the tipping estimand silently.
+* Seeded steps (simulation, re-randomisation, multiple imputation, robust regression) restore the caller's random-number state on exit, so a `seed` argument never changes the global stream.
+* `stress_report()`, `stress_tables()` and `stress_html()` have no default output location; nothing is written unless a directory or file is given.
+* `stress_verdict()` and `tipping_point()` gain examples.
 * `stress_design()`: design-stage use. Simulates a planned trial over a grid of sample sizes and effect sizes and reports the robustness power (significant and robust) next to the conventional power, the verdict rates among significant results, the one-subject fragility, and optionally the deletion search and the delta-adjustment margin; `plot()` draws power and robustness power against the sample size, and `print()` names the smallest sample size that reaches a target robustness power.
 
 # ballast 0.5.0
