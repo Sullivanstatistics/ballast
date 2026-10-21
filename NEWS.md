@@ -5,6 +5,7 @@
 * `expected_crossing()` and `expected_exit()`: first-order probabilities that one re-analysis crosses the significance level, which depend on where the p-value sits, and that it leaves the pre-specified interval, which do not.
 * `stress_path()` and `path_changes()`: the analytic axis of the margin-of-error definition. A greedy search for the fewest analytic changes, made together and each family at most once (covariance, inference, covariates, weighting, reference-based imputation, alternative data sets), that move the estimate outside the pre-specified interval; reports the count `j`, the path, and whether it ran through a reference-based imputation (`assumption_dependent`). Inference changes move only the standard error, so they can make a result sensitive but never move it out of the interval.
 * `deletion_benchmark()` and `removal_ratio()`: the data axis. The number of deletions a trial with normally distributed influences would need to leave the interval (and, given z, to lose significance or reverse), and the observed `k_ci` as a fraction of it.
+* `stress_fragility()` gains `method = "ranked"`: subjects ranked once by their single-deletion influence and removed together, top 1, 2, ..., k, one refit per step (about n + k refits against about k * n for the greedy search), which makes deletion counts practical for large trials and is the quantity `deletion_benchmark()` approximates. The greedy search remains the default.
 
 # ballast 0.6.1
 

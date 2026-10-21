@@ -98,3 +98,22 @@ test_that("deletion_benchmark gives the T5 counts", {
   expect_true(all(diff(sapply(c(30, 100, 500), function(n) deletion_benchmark(n)[["ci"]])) >= 0))
   expect_error(deletion_benchmark(c(10, 20)))
 })
+
+test_that("ranked and greedy deletion searches start from the same participant", {
+  d <- simulate_rare_trial(20, delta = 0, defect = "outlier", outlier_size = 6, dropout = 0.001, seed = 8)
+  sp <- stress_spec(d, "y", "id", "visit", "arm", "REF", covariates = ~ base, method = "Satterthwaite", vcov = "Asymptotic")
+  g <- stress_fragility(sp, "direction", max_k = 3)
+  r <- stress_fragility(sp, "direction", max_k = 3, method = "ranked")
+  expect_equal(attr(r, "fragility")$method, "ranked"); expect_equal(attr(g, "fragility")$method, "greedy")
+  # step 1 of the greedy search is the best single deletion, which is the top of the ranking
+  expect_equal(attr(r, "fragility")$subjects[1], attr(g, "fragility")$subjects[1])
+  expect_equal(r$estimate[1], g$estimate[1])
+  expect_true(all(r$family == "ranked deletion search")); expect_true(all(r$kind == "search"))
+})
+
+test_that("ranked removal on clean data needs about the benchmark number of deletions", {
+  d <- simulate_rare_trial(100, delta = 4, dropout = 0, site_sd = 0, seed = 21)
+  sp <- stress_spec(d, "y", "id", "visit", "arm", "REF", covariates = ~ base, method = "Satterthwaite", vcov = "Asymptotic")
+  k <- attr(stress_fragility(sp, "ci", max_k = 40, method = "ranked"), "fragility")$k
+  expect_true(!is.na(k)); expect_gt(removal_ratio(k, 200), 0.5); expect_lt(removal_ratio(k, 200), 1.5)
+})

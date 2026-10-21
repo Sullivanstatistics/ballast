@@ -174,7 +174,7 @@ stress_report <- function(result, dir, name = "stress_report", width = 9, height
     save_fig(plot(cen), "families")
     if (any(cen$counted & cen$kind == "alternative")) save_fig(plot_swarm(stats::setNames(list(cen), result$plan$spec$label)), "swarm", h = height)
     if (any(cen$counted & cen$kind == "deletion")) save_fig(plot_pstrip(stats::setNames(list(cen), result$plan$spec$label)), "pstrip", h = max(3, 1 + 0.8 * length(unique(cen$family[cen$kind == "deletion"]))))
-    crv <- cen[!is.na(cen$param) & cen$family != "greedy deletion search", , drop = FALSE]   # the deletion search has its own x (subjects removed)
+    crv <- cen[!is.na(cen$param) & !cen$family %in% c("greedy deletion search", "ranked deletion search"), , drop = FALSE]   # the deletion search has its own x (subjects removed)
     if (any(crv$kind == "search")) { g <- plot_pcurve(crv, xlab = "Shift applied to imputed values of the active arm")
       if (length(unique(crv$family)) > 1L) g <- g + ggplot2::facet_wrap(~ family, scales = "free_x"); save_fig(g, "pcurve") }
   }

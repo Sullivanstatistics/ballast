@@ -181,7 +181,7 @@ mask_ids <- function(census, spec) {
   ids <- levels(spec$data[[spec$subject]]); map <- stats::setNames(sprintf("S%03d", seq_along(ids)), ids)
   sub_one <- function(lab) { parts <- trimws(strsplit(lab, ",", fixed = TRUE)[[1]]); hit <- parts %in% names(map)
     if (!any(hit)) return(lab); parts[hit] <- map[parts[hit]]; paste(parts, collapse = ", ") }
-  k <- census$family %in% c("leave-one-out: subject", "greedy deletion search") | grepl("^leave-one-out: ", census$family) & census$label %in% names(map)
+  k <- census$family %in% c("leave-one-out: subject", "greedy deletion search", "ranked deletion search") | grepl("^leave-one-out: ", census$family) & census$label %in% names(map)
   census$label[k] <- vapply(census$label[k], sub_one, "")
   if ("note" %in% names(census)) { k2 <- grepl("^step [0-9]+ removed ", census$note); census$note[k2] <- vapply(census$note[k2], function(n) { id <- sub("^step [0-9]+ removed ", "", n); if (id %in% names(map)) sub(id, map[[id]], n, fixed = TRUE) else n }, "") }
   attr(census, "id_map") <- map

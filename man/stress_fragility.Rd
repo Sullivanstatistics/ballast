@@ -9,7 +9,8 @@ stress_fragility(
   target = c("significance", "ci", "direction"),
   max_k = 5,
   candidates = NULL,
-  cores = 1L
+  cores = 1L,
+  method = c("greedy", "ranked")
 )
 }
 \arguments{
@@ -26,23 +27,35 @@ estimate changes sign).}
 restrict the search to (one arm, say).}
 
 \item{cores}{Number of worker processes; \code{1} fits sequentially.}
+
+\item{method}{\code{"greedy"} or \code{"ranked"}.}
 }
 \value{
 A \code{stress_rows} data frame with one row per step
 (\code{kind = "search"}, so the rows are not counted in a census, since the
 search crosses the target by construction; \code{param} = number removed,
-\code{label} = the subjects removed so far). \code{attr(, "fragility")} is a list with \code{target}, \code{k} (the
+\code{label} = the subjects removed so far). \code{attr(, "fragility")} is a list with \code{target}, \code{method}, \code{k} (the
 step at which the target was reached, \code{NA} if never), \code{subjects} and
 \code{reached}.
 }
 \description{
-A greedy forward search: at each step every remaining subject is removed
-in turn from the current data, the pre-specified model is refitted, and
-the subject whose removal moves the result furthest towards the target is
-dropped for good. The search stops when the target is reached or after
-\code{max_k} steps. The number of steps needed is a continuous-outcome analogue
-of the fragility index; because the search is greedy it is an upper bound
-on the true minimum.
+Two searches for the fewest subjects whose removal moves the result to the
+target. The number needed is a continuous-outcome analogue of the
+fragility index; both searches give an upper bound on the true minimum.
+}
+\details{
+\itemize{
+\item \code{method = "greedy"} (default): at each step every remaining subject is
+removed in turn from the current data, the pre-specified model is
+refitted, and the subject whose removal moves the result furthest
+towards the target is dropped for good. About \code{k * n} refits.
+\item \code{method = "ranked"}: subjects are ranked once, by how far removing each
+alone moves the result towards the target (the leave-one-out refits),
+and the top 1, 2, ..., k are removed together, one refit per step. About
+\code{n + k} refits, so it is practical for large trials. It is the quantity
+that \code{\link[=deletion_benchmark]{deletion_benchmark()}} approximates: removing the k largest
+influences at once.
+}
 }
 \examples{
 small <- mmrm::fev_data[mmrm::fev_data$USUBJID \%in\% paste0("PT", 1:60), ]
@@ -50,4 +63,5 @@ spec <- stress_spec(small, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariat
                     covariance = "cs", method = "Satterthwaite", vcov = "Asymptotic")
 fr <- stress_fragility(spec, max_k = 2)
 attr(fr, "fragility")
+attr(stress_fragility(spec, "ci", max_k = 10, method = "ranked"), "fragility")$k
 }
