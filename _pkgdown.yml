@@ -13,7 +13,7 @@ reference:
 - title: Figures
   contents: [plot.stress_census, plot_swarm, plot_pcurve, plot_pstrip, plot_pcdf]
 - title: Design and calibration
-  contents: [stress_design, plot.stress_design, simulate_trial, stress_calibrate]
+  contents: [stress_design, plot.stress_design, simulate_trial, simulate_rare_trial, stress_calibrate, expected_crossing]
 articles:
 - title: Guides
   contents: [quickstart, design, interpreting, missing-data, sas-users, validation]

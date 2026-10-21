@@ -4,26 +4,42 @@
 \alias{stress_verdict}
 \title{Classify the census: robust, sensitive or fragile, and marginal}
 \usage{
-stress_verdict(census, marginal_band = c(0.5, 2))
+stress_verdict(
+  census,
+  marginal_band = c(0.5, 2),
+  rule = c("interval", "interval_or_direction")
+)
 }
 \arguments{
 \item{census}{A \code{stress_census}.}
 
 \item{marginal_band}{Multiplicative band around \code{alpha} for the marginal
 flag; the default flags a base p between \code{alpha / 2} and \code{2 * alpha}.}
+
+\item{rule}{\code{"interval"} (default): fragile means outside the base
+confidence interval. \code{"interval_or_direction"}: outside the interval or a
+reversed direction (the rule of ballast 0.6 and earlier).}
 }
 \value{
 A list of class \code{stress_verdict}: \code{stability} over every counted
 row, \code{stability_sensitivity} over the rows that keep the estimand
-(\code{role = "sensitivity"}), \code{marginal}, the counts behind them, and the rows
-that drove the classification.
+(\code{role = "sensitivity"}), \code{marginal}, \code{rule}, the counts behind them, and
+the rows that drove the classification.
 }
 \description{
-Applies the definitions: \emph{fragile} if any counted row reverses the base
-direction or lies outside the base confidence interval; otherwise
-\emph{sensitive} if any counted row changes significance at \code{alpha}; otherwise
-\emph{robust}. \emph{Marginal} is a separate flag on the base p-value, true when it
-lies within \code{alpha * marginal_band}.
+Applies the definitions: \emph{fragile} if any counted row lies outside the base
+95\% confidence interval (the margin-of-error rule, the default from 0.7.0);
+otherwise \emph{sensitive} if any counted row changes significance at \code{alpha};
+otherwise \emph{robust}. \emph{Marginal} is a separate flag on the base p-value, true
+when it lies within \code{alpha * marginal_band}.
+}
+\details{
+For a significant base result the interval excludes zero, so a refit that
+reverses the direction always lies outside it and the two rules agree. They
+differ only for a non-significant base result: there a sign change of an
+estimate near zero is a small move inside the interval, and the default rule
+does not call it fragile. \code{rule = "interval_or_direction"} restores the
+0.6 behaviour, in which any reversal is fragile.
 }
 \examples{
 spec <- stress_spec(mmrm::fev_data, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO",

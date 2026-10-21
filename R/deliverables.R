@@ -29,7 +29,7 @@ stress_tables <- function(result, dir, name = "stress", formats = c("csv", "docx
   formats <- match.arg(formats, c("csv", "docx", "rtf"), several.ok = TRUE)
   dir.create(dir, showWarnings = FALSE, recursive = TRUE)
   cen <- result$census; v <- result$verdict; b <- result$base
-  if (mask_ids) { cen <- ballast::mask_ids(cen, result$plan$spec); v <- stress_verdict(cen) }
+  if (mask_ids) { cen <- ballast::mask_ids(cen, result$plan$spec); v <- stress_verdict(cen, rule = plan_rule(result$plan)) }
   fmt <- function(x, d = digits) ifelse(is.na(x), "", formatC(x, digits = d, format = "f"))
   fp <- function(p) ifelse(is.na(p), "", ifelse(p < 0.001, "<0.001", formatC(p, digits = 3, format = "f")))
   s <- as.data.frame(summary(cen))

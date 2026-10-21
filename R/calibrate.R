@@ -68,6 +68,7 @@ simulate_trial <- function(n_per_arm = 50, delta = 0, n_visits = 4, sigma = 10, 
 #' @param cores Worker processes (the trials are distributed, so each trial's
 #'   families run on one core).
 #' @param seed Base seed.
+#' @param rule Classification rule for [stress_verdict()].
 #' @return A data frame of class `stress_calibration` with one row per power:
 #'   the effect size, observed power, and the proportion of trials with each
 #'   verdict, the marginal flag, and (if run) a one-subject fragility;
@@ -76,7 +77,9 @@ simulate_trial <- function(n_per_arm = 50, delta = 0, n_visits = 4, sigma = 10, 
 #' \donttest{stress_calibrate(n_per_arm = 20, power = c(0, 0.8), n_trials = 2)}
 #' @export
 stress_calibrate <- function(n_per_arm = 50, power = c(0, 0.5, 0.8, 0.95), n_trials = 100, n_visits = 4, sigma = 10, rho = 0.6, dropout = 0.08,
-                             baseline_beta = 0.5, errors = "normal", t_df = 3, hetero = 1, mnar = 0, interaction = 0, fragility = FALSE, cores = 1L, seed = 1) {
+                             baseline_beta = 0.5, errors = "normal", t_df = 3, hetero = 1, mnar = 0, interaction = 0, fragility = FALSE, cores = 1L, seed = 1,
+                             rule = c("interval", "interval_or_direction")) {
+  rule <- match.arg(rule)
   n_eff <- n_per_arm * (1 - dropout)^(n_visits - 1); r2 <- (baseline_beta * 10)^2 / ((baseline_beta * 10)^2 + sigma^2)
   delta_for <- function(pw) if (pw == 0) 0 else (stats::qnorm(0.975) + stats::qnorm(pw)) * sigma * sqrt(2 / n_eff) * sqrt(1 - r2)
   jobs <- do.call(c, lapply(seq_along(power), function(s) lapply(seq_len(n_trials), function(i) list(power = power[s], delta = delta_for(power[s]), seed = seed + 100000 * s + i))))
@@ -86,7 +89,7 @@ stress_calibrate <- function(n_per_arm = 50, power = c(0, 0.5, 0.8, 0.95), n_tri
     base <- stress_fit(spec); if (!base$converged) return(NULL)
     rows <- list(stress_covariance(spec, c("us", "ar1h", "cs")), stress_inference(spec, default_inference()[c("Satterthwaite", "Kenward-Roger (linear)", "Sandwich, between-within")]),
                  stress_covariates(spec), stress_weights(spec), stress_loo(spec))
-    cen <- do.call(stress_census, c(list(spec = spec), rows, list(base = base))); v <- stress_verdict(cen)
+    cen <- do.call(stress_census, c(list(spec = spec), rows, list(base = base))); v <- stress_verdict(cen, rule = rule)
     fk <- if (fragility) { a <- attr(stress_fragility(spec, "significance", max_k = 3), "fragility"); if (a$reached) a$k else NA_integer_ } else NA_integer_
     data.frame(power = job$power, delta = job$delta, seed = job$seed, base_p = base$p, significant = base$p < 0.05, stability = v$stability, marginal = v$marginal,
                crossed = v$n_crossed, max_shift_se = v$max_shift_se, frag_k = fk, stringsAsFactors = FALSE)

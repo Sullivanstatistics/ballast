@@ -75,9 +75,9 @@ after unblinding has a pre-registered comparison.
 
 ## Definitions
 
-- **Fragile**: some counted alternative reverses the direction of the estimate or lands outside the pre-specified
+- **Fragile**: some counted alternative lands outside the pre-specified
   95% confidence interval.
-- **Sensitive**: some counted alternative crosses alpha while keeping the direction and staying inside the interval.
+- **Sensitive**: some counted alternative crosses alpha, but every alternative stays inside the interval.
 - **Robust**: no counted alternative crosses alpha.
 - **Marginal** (separate flag): the pre-specified p-value lies near alpha.
 

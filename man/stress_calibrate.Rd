@@ -20,7 +20,8 @@ stress_calibrate(
   interaction = 0,
   fragility = FALSE,
   cores = 1L,
-  seed = 1
+  seed = 1,
+  rule = c("interval", "interval_or_direction")
 )
 }
 \arguments{
@@ -50,6 +51,8 @@ giving each is derived from the design (0 gives the null).}
 families run on one core).}
 
 \item{seed}{Base seed.}
+
+\item{rule}{Classification rule for \code{\link[=stress_verdict]{stress_verdict()}}.}
 }
 \value{
 A data frame of class \code{stress_calibration} with one row per power:

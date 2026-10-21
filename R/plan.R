@@ -26,6 +26,8 @@
 #' @param estimand Arguments for [stress_estimand()] (needs `ice`).
 #' @param visits Arguments for [stress_visits()].
 #' @param title A title for the plan.
+#' @param rule Classification rule passed to [stress_verdict()]: `"interval"`
+#'   (default) or `"interval_or_direction"`.
 #' @return An object of class `stress_plan`.
 #' @examples
 #' spec <- stress_spec(mmrm::fev_data, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO",
@@ -38,13 +40,14 @@
 #' @export
 stress_plan <- function(spec, covariance = list(), inference = list(), covariates = list(), weights = TRUE, population = NULL,
                         data = NULL, loo = list(), grid = NULL, permute = list(n = 2000), tipping = NULL, reference = list(),
-                        estimator = list(), fragility = list(), curve = NULL, estimand = NULL, visits = NULL, title = "Pre-specified stress test") {
-  check_spec(spec)
+                        estimator = list(), fragility = list(), curve = NULL, estimand = NULL, visits = NULL, title = "Pre-specified stress test",
+                        rule = c("interval", "interval_or_direction")) {
+  check_spec(spec); rule <- match.arg(rule)
   fams <- list(covariance = covariance, inference = inference, covariates = covariates, weights = if (isTRUE(weights)) list() else NULL,
                population = population, data = data, loo = loo, grid = grid, permute = permute, tipping = tipping,
                reference = reference, estimator = estimator, fragility = fragility, curve = curve, estimand = estimand, visits = visits)
   fams <- fams[!vapply(fams, is.null, TRUE)]
-  structure(list(spec = spec, families = fams, title = title), class = "stress_plan")
+  structure(list(spec = spec, families = fams, title = title, rule = rule), class = "stress_plan")
 }
 
 FAMILY_FUN <- c(covariance = "stress_covariance", inference = "stress_inference", covariates = "stress_covariates", weights = "stress_weights",
@@ -66,9 +69,9 @@ plan_lines <- function(plan) {
             s$response, paste(c(s$covariates, s$treatment, s$visit, paste0(s$treatment, ":", s$visit), paste0(s$covariance, "(", s$visit, " | ", s$subject, ")")), collapse = " + "),
             s$active, s$reference, s$contrast_visit, s$method, s$vcov, format(s$alpha), s$weights),
     "", "Perturbation families, run after unblinding exactly as listed; every refit is judged against the pre-specified estimate,",
-    "its 95% confidence interval and alpha. Classification: fragile if any counted alternative reverses direction or leaves the",
-    "pre-specified confidence interval; otherwise sensitive if any crosses alpha; otherwise robust. Specifications reached by two",
-    "families are counted once; tipping-point grids are searches and are not counted; deletions are counted separately.", "",
+    "its 95% confidence interval and alpha.", paste0("Classification: ", plan_rule_text(plan), "; otherwise sensitive if any crosses alpha; otherwise robust."),
+    "Specifications reached by two families are counted once; tipping-point grids are searches and are not counted; deletions are",
+    "counted separately.", "",
     vapply(seq_along(f), function(i) {
       nm <- names(f)[i]; x <- f[[i]]
       if (nm == "loo" && length(x) && is.list(x[[1]])) sprintf("%d. %s: %s", i, desc[[nm]], paste(vapply(x, fmt, ""), collapse = " | "))
@@ -122,7 +125,7 @@ run_plan <- function(plan, cores = 1L, seed = 1) {
   }
   base <- stress_fit(spec)
   census <- do.call(stress_census, c(list(spec = spec), unname(rows), list(base = base)))
-  structure(list(plan = plan, rows = rows, census = census, verdict = stress_verdict(census), base = base,
+  structure(list(plan = plan, rows = rows, census = census, verdict = stress_verdict(census, rule = plan_rule(plan)), base = base,
                  elapsed = difftime(Sys.time(), t0, units = "mins")), class = "stress_result")
 }
 
@@ -160,7 +163,7 @@ stress_report <- function(result, dir, name = "stress_report", width = 9, height
   if (!inherits(result, "stress_result")) stop("result must be a stress_result")
   dir.create(dir, showWarnings = FALSE, recursive = TRUE)
   b <- result$base; v <- result$verdict; cen <- result$census
-  if (mask_ids) { cen <- ballast::mask_ids(cen, result$plan$spec); v <- stress_verdict(cen) }
+  if (mask_ids) { cen <- ballast::mask_ids(cen, result$plan$spec); v <- stress_verdict(cen, rule = plan_rule(result$plan)) }
   s <- summary(cen)
   md_table <- function(df) { df[] <- lapply(df, function(col) if (is.numeric(col)) format(round(col, 3), trim = TRUE) else as.character(col))
     c(paste("|", paste(names(df), collapse = " | "), "|"), paste("|", paste(rep("---", ncol(df)), collapse = " | "), "|"), apply(df, 1, function(r) paste("|", paste(r, collapse = " | "), "|"))) }
@@ -191,3 +194,7 @@ stress_report <- function(result, dir, name = "stress_report", width = 9, height
   f <- file.path(dir, paste0(name, ".md")); writeLines(lines, f)
   invisible(f)
 }
+
+## The classification rule of a plan; plans built before 0.7.0 carry none and keep the rule they were written under.
+plan_rule <- function(plan) if (is.null(plan$rule)) "interval_or_direction" else plan$rule
+plan_rule_text <- function(plan) rule_text(plan_rule(plan))

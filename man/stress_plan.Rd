@@ -22,7 +22,8 @@ stress_plan(
   curve = NULL,
   estimand = NULL,
   visits = NULL,
-  title = "Pre-specified stress test"
+  title = "Pre-specified stress test",
+  rule = c("interval", "interval_or_direction")
 )
 }
 \arguments{
@@ -62,6 +63,9 @@ times (subjects and a site variable, say).}
 \item{visits}{Arguments for \code{\link[=stress_visits]{stress_visits()}}.}
 
 \item{title}{A title for the plan.}
+
+\item{rule}{Classification rule passed to \code{\link[=stress_verdict]{stress_verdict()}}: \code{"interval"}
+(default) or \code{"interval_or_direction"}.}
 }
 \value{
 An object of class \code{stress_plan}.

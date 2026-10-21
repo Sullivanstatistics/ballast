@@ -31,8 +31,8 @@ Tipping-point grids and the deletion search are searches and are not counted; th
 is counted. Deletions are counted but summarised separately from alternative analyses. Refits that do not converge are
 reported and not counted.
 
-**Classification.** The result will be classed *fragile* if any counted alternative reverses the direction of the
-estimate or lands outside the pre-specified 95% confidence interval; otherwise *sensitive* if any counted alternative
+**Classification.** The result will be classed *fragile* if any counted alternative lands outside the pre-specified
+95% confidence interval (the margin of error); otherwise *sensitive* if any counted alternative
 crosses the significance level; otherwise *robust*. The pre-specified p-value will be flagged *marginal* if it lies
 between half and twice the significance level. The classification will be reported over all counted refits and over the
 sensitivity analyses alone (those that keep the estimand); alternative data sets, populations, other visits and

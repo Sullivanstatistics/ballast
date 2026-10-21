@@ -31,7 +31,8 @@ stress_design(
   mnar = 0,
   interaction = 0,
   cores = 1L,
-  seed = 1
+  seed = 1,
+  rule = c("interval", "interval_or_direction")
 )
 
 \method{print}{stress_design}(x, target = 0.8, ...)
@@ -97,6 +98,8 @@ the effect at the last visit is \code{delta * (1 + interaction * (base - 50) / 1
 families run on one core.}
 
 \item{seed}{Base seed; every trial's seed is derived from it.}
+
+\item{rule}{Classification rule for \code{\link[=stress_verdict]{stress_verdict()}}.}
 
 \item{x}{A \code{stress_design} object.}
 

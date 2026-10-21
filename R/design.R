@@ -42,6 +42,7 @@
 #' @param cores Worker processes. Trials are distributed, so each trial's
 #'   families run on one core.
 #' @param seed Base seed; every trial's seed is derived from it.
+#' @param rule Classification rule for [stress_verdict()].
 #' @return A data frame of class `stress_design` with one row per cell:
 #'   `n_per_arm`, `delta`, `trials`, `power` (proportion significant),
 #'   `robustness_power` (significant and robust), `robust_given_sig`,
@@ -66,8 +67,8 @@ stress_design <- function(n_per_arm, delta, n_trials = 100, n_visits = 4, sigma 
                           covariance = "us", method = "Satterthwaite", vcov = "Asymptotic", alpha = 0.05,
                           alternatives = c("us", "ar1h", "cs"), loo = TRUE, fragility = FALSE, max_k = 5, tipping = FALSE,
                           shifts = seq(0, 2, by = 0.25), m = 5, errors = "normal", t_df = 3, hetero = 1, mnar = 0, interaction = 0,
-                          cores = 1L, seed = 1) {
-  force_args()
+                          cores = 1L, seed = 1, rule = c("interval", "interval_or_direction")) {
+  rule <- match.arg(rule); force_args()
   n_per_arm <- as.integer(n_per_arm); delta <- as.numeric(delta)
   if (!length(n_per_arm) || any(n_per_arm < 4L)) stop("n_per_arm must be 4 or more")
   grid <- expand.grid(n = n_per_arm, delta = delta, KEEP.OUT.ATTRS = FALSE)
@@ -84,7 +85,7 @@ stress_design <- function(n_per_arm, delta, n_trials = 100, n_visits = 4, sigma 
     rows <- list(stress_inference(spec, infer), stress_covariates(spec), stress_weights(spec))
     if (length(alts)) rows <- c(list(stress_covariance(spec, alts)), rows)
     if (loo) rows <- c(rows, list(stress_loo(spec)))
-    cen <- do.call(stress_census, c(list(spec = spec), rows, list(base = base))); v <- stress_verdict(cen)
+    cen <- do.call(stress_census, c(list(spec = spec), rows, list(base = base))); v <- stress_verdict(cen, rule = rule)
     k <- NA_integer_
     if (fragility) {
       a <- attr(stress_fragility(spec, "significance", max_k = max_k), "fragility"); if (isTRUE(a$reached)) k <- as.integer(a$k)
@@ -106,7 +107,7 @@ stress_design <- function(n_per_arm, delta, n_trials = 100, n_visits = 4, sigma 
     cl <- parallel::makeCluster(cores); on.exit(parallel::stopCluster(cl), add = TRUE)
     parallel::clusterEvalQ(cl, { requireNamespace("ballast", quietly = TRUE); NULL })
     parallel::clusterExport(cl, c("one", "n_visits", "sigma", "rho", "dropout", "baseline_beta", "errors", "t_df", "hetero", "mnar", "interaction",
-                                  "covariance", "method", "vcov", "alpha", "alts", "infer", "loo", "fragility", "max_k", "tipping", "shifts", "m"), envir = environment())
+                                  "covariance", "method", "vcov", "alpha", "alts", "infer", "loo", "fragility", "max_k", "tipping", "shifts", "m", "rule"), envir = environment())
     parallel::parLapplyLB(cl, jobs, function(j) tryCatch(one(j), error = function(e) NULL))
   } else lapply(jobs, function(j) tryCatch(one(j), error = function(e) NULL))
   trials <- do.call(rbind, res[!vapply(res, is.null, TRUE)])

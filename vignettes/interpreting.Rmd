@@ -22,7 +22,9 @@ Every counted refit is scored against the pre-specified result:
 
 The verdict then reads:
 
-* **fragile**: some counted alternative reverses the direction or lands outside the pre-specified interval;
+* **fragile**: some counted alternative lands outside the pre-specified interval (for a significant result this includes
+  any reversal of direction, since that interval excludes zero; `rule = "interval_or_direction"` restores the 0.6 rule,
+  under which any reversal is fragile);
 * **sensitive**: no alternative does that, but some alternative crosses alpha;
 * **robust**: no alternative crosses alpha.
 

@@ -1,3 +1,9 @@
+# ballast 0.7.0
+
+* **Classification rule.** `stress_verdict()` gains `rule`. The default, `"interval"`, calls a result *fragile* only when a counted re-analysis lands outside the pre-specified 95% confidence interval (the margin of error). For a significant result this is the same as before, because a reversed estimate always lies outside an interval that excludes zero. For a non-significant result a sign change of an estimate near zero is no longer fragile. `rule = "interval_or_direction"` gives the 0.6 behaviour. `stress_plan()`, `stress_design()` and `stress_calibrate()` take the same argument; the plan text, `stress_sap()` and the installed SAP template state the rule; plans saved by 0.6 keep the old rule; verdicts print the rule they used.
+* `simulate_rare_trial()`: a small two-arm trial with rare-disease features (a mixture of fast and slow progressors with a random slope and a progression-dependent effect, heavy-tailed errors, sites, dropout) and optional planted defects (outlying participants, an effect carried by one site, informative dropout). It is the generator of the methods paper's simulation studies; `simulate_trial()` is unchanged, so earlier simulations still reproduce.
+* `expected_crossing()` and `expected_exit()`: first-order probabilities that one re-analysis crosses the significance level, which depend on where the p-value sits, and that it leaves the pre-specified interval, which do not.
+
 # ballast 0.6.1
 
 First CRAN submission.
