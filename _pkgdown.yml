@@ -7,7 +7,7 @@ reference:
 - title: Perturbation families
   contents: [stress_covariance, stress_inference, default_inference, stress_covariates, stress_weights, stress_data, stress_population, stress_loo, stress_grid, stress_permute, stress_tipping, stress_reference, stress_estimator, stress_fragility, stress_curve, stress_estimand, stress_visits, stress_ranktest]
 - title: Census and verdict
-  contents: [stress_census, summary.stress_census, stress_verdict, tipping_point, stress_explain]
+  contents: [stress_census, summary.stress_census, stress_verdict, stress_path, path_changes, deletion_benchmark, tipping_point, stress_explain]
 - title: Pre-specify, run, report
   contents: [stress_plan, standard_plan, run_plan, run_plans, stress_report, stress_tables, stress_log, stress_html, stress_sap, mask_ids]
 - title: Figures
