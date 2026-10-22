@@ -117,3 +117,12 @@ test_that("ranked removal on clean data needs about the benchmark number of dele
   k <- attr(stress_fragility(sp, "ci", max_k = 40, method = "ranked"), "fragility")$k
   expect_true(!is.na(k)); expect_gt(removal_ratio(k, 200), 0.5); expect_lt(removal_ratio(k, 200), 1.5)
 })
+
+test_that("the mutual target catches an outlier that the CI target cannot", {
+  d <- simulate_rare_trial(50, delta = 0, defect = "outlier", outlier_size = 30, dropout = 0.001, seed = 8)
+  sp <- stress_spec(d, "y", "id", "visit", "arm", "REF", covariates = ~ base, method = "Satterthwaite", vcov = "Asymptotic")
+  ci <- attr(stress_fragility(sp, "ci", max_k = 1, method = "ranked"), "fragility")
+  mu <- attr(stress_fragility(sp, "mutual", max_k = 1, method = "ranked"), "fragility")
+  expect_false(ci$reached)                    # one gross error widens the base CI, so its removal stays inside it (T4b)
+  expect_true(mu$reached); expect_equal(mu$k, 1L)
+})

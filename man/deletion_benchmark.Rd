@@ -27,7 +27,8 @@ and \code{reversal}. \code{removal_ratio()}: \code{k_ci} divided by the \code{ci
 \description{
 The data axis of the margin-of-error definition compares the number of
 participants whose removal moves the estimate outside the pre-specified
-interval (\code{k_ci}, from \code{stress_fragility(spec, "ci", method = "ranked")}) with the number a
+interval (\code{k_ci}, from \code{stress_fragility(spec, "ci", method = "ranked")}, or the mutual count from
+\code{target = "mutual"}) with the number a
 trial of the same size with normally distributed influences would need.
 }
 \details{

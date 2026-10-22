@@ -6,7 +6,7 @@
 \usage{
 stress_fragility(
   spec,
-  target = c("significance", "ci", "direction"),
+  target = c("significance", "ci", "mutual", "direction"),
   max_k = 5,
   candidates = NULL,
   cores = 1L,
@@ -18,8 +18,14 @@ stress_fragility(
 
 \item{target}{What has to change: \code{"significance"} (the p-value crosses
 alpha in either direction, depending on the base result), \code{"ci"} (the
-estimate leaves the base confidence interval) or \code{"direction"} (the
-estimate changes sign).}
+estimate leaves the base confidence interval), \code{"mutual"} (the two
+results become incompatible: the refit estimate leaves the base interval
+or the base estimate leaves the refit interval) or \code{"direction"} (the
+estimate changes sign). \code{"mutual"} is the data axis of the
+margin-of-error definition: an outlying participant widens the base
+interval it would otherwise be judged by, so removing it can leave the
+base estimate outside the narrower refit interval without the refit
+estimate leaving the base one.}
 
 \item{max_k}{Maximum number of subjects to remove.}
 

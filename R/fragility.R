@@ -18,8 +18,14 @@
 #' @inheritParams stress_covariance
 #' @param target What has to change: `"significance"` (the p-value crosses
 #'   alpha in either direction, depending on the base result), `"ci"` (the
-#'   estimate leaves the base confidence interval) or `"direction"` (the
-#'   estimate changes sign).
+#'   estimate leaves the base confidence interval), `"mutual"` (the two
+#'   results become incompatible: the refit estimate leaves the base interval
+#'   or the base estimate leaves the refit interval) or `"direction"` (the
+#'   estimate changes sign). `"mutual"` is the data axis of the
+#'   margin-of-error definition: an outlying participant widens the base
+#'   interval it would otherwise be judged by, so removing it can leave the
+#'   base estimate outside the narrower refit interval without the refit
+#'   estimate leaving the base one.
 #' @param max_k Maximum number of subjects to remove.
 #' @param candidates Optional character vector of subject identifiers to
 #'   restrict the search to (one arm, say).
@@ -38,7 +44,7 @@
 #' attr(fr, "fragility")
 #' attr(stress_fragility(spec, "ci", max_k = 10, method = "ranked"), "fragility")$k
 #' @export
-stress_fragility <- function(spec, target = c("significance", "ci", "direction"), max_k = 5, candidates = NULL, cores = 1L,
+stress_fragility <- function(spec, target = c("significance", "ci", "mutual", "direction"), max_k = 5, candidates = NULL, cores = 1L,
                              method = c("greedy", "ranked")) {
   check_spec(spec); force_args()
   target <- match.arg(target); method <- match.arg(method)
@@ -47,11 +53,13 @@ stress_fragility <- function(spec, target = c("significance", "ci", "direction")
   base_sig <- base$p < alpha; sgn <- sign(base$estimate)
   reached <- function(r) {
     if (!isTRUE(r$converged)) return(FALSE)
-    switch(target, significance = (r$p < alpha) != base_sig, ci = r$estimate < base$lcl || r$estimate > base$ucl, direction = sign(r$estimate) != sgn)
+    switch(target, significance = (r$p < alpha) != base_sig, ci = r$estimate < base$lcl || r$estimate > base$ucl,
+           mutual = r$estimate < base$lcl || r$estimate > base$ucl || base$estimate < r$lcl || base$estimate > r$ucl,
+           direction = sign(r$estimate) != sgn)
   }
   score <- function(r) {     # larger is further towards the target
     if (!isTRUE(r$converged)) return(-Inf)
-    switch(target, significance = if (base_sig) r$p else -r$p, ci = -sgn * r$estimate, direction = -sgn * r$estimate)
+    switch(target, significance = if (base_sig) r$p else -r$p, ci = -sgn * r$estimate, mutual = -sgn * r$estimate, direction = -sgn * r$estimate)
   }
   pool <- if (is.null(candidates)) levels(d[[sub]]) else as.character(candidates)
   if (!all(pool %in% levels(d[[sub]]))) stop("candidates must be subject identifiers")

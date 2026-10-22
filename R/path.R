@@ -142,7 +142,8 @@ stress_path <- function(spec, changes = path_changes(spec), max_j = 3, direction
 #'
 #' The data axis of the margin-of-error definition compares the number of
 #' participants whose removal moves the estimate outside the pre-specified
-#' interval (`k_ci`, from `stress_fragility(spec, "ci", method = "ranked")`) with the number a
+#' interval (`k_ci`, from `stress_fragility(spec, "ci", method = "ranked")`, or the mutual count from
+#' `target = "mutual"`) with the number a
 #' trial of the same size with normally distributed influences would need.
 #'
 #' Removing participant *i* moves the estimate by about \eqn{-\psi_i / n}, which
