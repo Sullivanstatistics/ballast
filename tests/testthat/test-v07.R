@@ -155,3 +155,40 @@ test_that("delta-adjusted imputation is a path change in the reference-based fam
   r <- stress_reference(spec_small, methods = "MAR", m = 2, seed = 2, delta = if (grepl("-10", p$label[1])) -10 else -5)
   expect_equal(p$estimate[1], r$estimate[1])
 })
+
+test_that("a method's imputations are the same alone and with others, and a delta is exactly a shift", {
+  skip_on_cran()
+  all3 <- stress_reference(spec_small, methods = c("MAR", "J2R", "CR"), m = 3, seed = 5)
+  for (meth in c("MAR", "J2R", "CR")) {
+    one <- stress_reference(spec_small, methods = meth, m = 3, seed = 5)
+    expect_equal(one$estimate, all3$estimate[all3$label == meth]); expect_equal(one$stderr, all3$stderr[all3$label == meth])
+  }
+  dr <- ballast:::reference_draws(spec_small, "MAR", 2, 5)
+  shifted <- lapply(dr$draws, function(d1) { wi <- d1$MAR; Y <- as.matrix(wi[, dr$ycols]); Y[dr$shift_cells] <- Y[dr$shift_cells] - 5; wi[, dr$ycols] <- Y; wi })
+  fits <- lapply(shifted, function(wi) stress_fit(spec_small, data = dr$lengthen(wi)))
+  manual <- ballast:::mi_pool(vapply(fits, `[[`, 0, "estimate"), vapply(fits, `[[`, 0, "stderr"), spec_small$alpha)
+  expect_equal(stress_reference(spec_small, "MAR", m = 2, seed = 5, delta = -5)$estimate, manual$estimate)
+  arm_of <- dr$draws[[1]]$MAR[[spec_small$treatment]]; expect_false(any(dr$shift_cells[arm_of != spec_small$active, ])); expect_true(any(dr$shift_cells))
+})
+
+test_that("the cached path search gives the standalone fits, and the direction cap keeps the winner", {
+  skip_on_cran()
+  ch <- path_changes(spec_small, covariance = "cs", inference = list(), covariates = FALSE, weights = TRUE,
+                     reference = c("J2R", "CR"), delta_adjusted = -5, m = 2)
+  labels <- vapply(ch, `[[`, "", "label")
+  p <- stress_path(spec_small, ch, max_j = 3, seed = 7)
+  a <- attr(p, "path")
+  rows <- as.data.frame(p); rows <- rows[grepl(if (a$direction == "toward zero") "^toward" else "^away", rows$note), ]
+  expect_gt(nrow(rows), 0)
+  st <- spec_small; mi <- NULL
+  for (k in seq_len(nrow(rows))) {                 # every row on the winning path equals the fit of its changes made by hand
+    parts <- strsplit(rows$label[k], " + ", fixed = TRUE)[[1]]; c1 <- ch[[match(parts[k], labels)]]
+    if (c1$type == "spec") st <- do.call(spec_update, c(list(st), c1$value)) else mi <- c1$value
+    by_hand <- if (is.null(mi)) stress_fit(st) else stress_reference(st, methods = mi$method, m = mi$m, seed = 7, delta = mi$delta)
+    expect_equal(rows$estimate[k], by_hand$estimate[1]); expect_equal(rows$stderr[k], by_hand$stderr[1])
+  }
+  tz <- attr(stress_path(spec_small, ch, max_j = 3, direction = "toward_zero", seed = 7), "path")
+  az <- attr(stress_path(spec_small, ch, max_j = 3, direction = "away_from_zero", seed = 7), "path")
+  best <- if (is.na(az$j) || (!is.na(tz$j) && tz$j <= az$j)) tz else az
+  expect_equal(a$j, best$j); expect_equal(a$changes, best$changes); expect_equal(a$direction, best$direction)
+})

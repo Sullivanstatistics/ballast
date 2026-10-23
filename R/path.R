@@ -80,6 +80,12 @@ path_changes <- function(spec, covariance = c("us", "ar1h", "cs"),
 #' combination; to first order the shifts of different families add, so the
 #' greedy path is the worst case when they do.
 #'
+#' The search is exact but avoids repeated work: the imputation draws are
+#' made once per imputation model and reused by every change that leaves the
+#' model alone, a state reached twice (by both directions, or by two orders of
+#' the same changes) is fitted once, and the second direction is searched
+#' only as far as it could still give a shorter path than the first.
+#'
 #' @param spec A [stress_spec()]: the pre-specified analysis.
 #' @param changes Candidate changes from [path_changes()].
 #' @param max_j Largest number of changes to combine.
@@ -107,21 +113,49 @@ stress_path <- function(spec, changes = path_changes(spec), max_j = 3, direction
   if (!length(changes)) stop("no changes to search over")
   base <- stress_fit(spec); if (!isTRUE(base$converged)) stop("the base model did not converge")
   sgn <- sign(base$estimate)
+  mi_changes <- Filter(function(ch) ch$type == "mi", changes)
+  mi_methods <- unique(vapply(mi_changes, function(ch) ch$value$method, ""))
+  mi_m <- if (length(mi_changes)) max(vapply(mi_changes, function(ch) ch$value$m, 0)) else 0
+  # Two caches. The imputation draws depend only on the analysis data and the covariates, so every change that leaves
+  # those alone (covariance, weighting, the method or the delta) reuses them. The fitted result of a state (spec plus
+  # imputation) is kept so that a state reached again, by the other direction or by another order of the same changes,
+  # is not refitted; in particular the first step is evaluated once for both directions.
+  draws_cache <- new.env(parent = emptyenv()); fit_cache <- new.env(parent = emptyenv())
+  draws_for <- function(sp) {
+    key <- imputation_key(sp)
+    if (!exists(key, envir = draws_cache, inherits = FALSE))
+      assign(key, tryCatch(reference_draws(sp, mi_methods, mi_m, seed), error = function(e) NULL), envir = draws_cache)
+    get(key, envir = draws_cache, inherits = FALSE)
+  }
   apply_change <- function(state, ch) {
     if (ch$type == "spec") state$spec <- do.call(spec_update, c(list(state$spec), ch$value)) else state$mi <- ch$value
     state
   }
+  state_key <- function(state) paste(spec_key(state$spec), if (is.null(state$mi)) "" else paste(state$mi$method, state$mi$delta))
   evaluate <- function(state) {
-    r <- if (is.null(state$mi)) stress_fit(state$spec) else stress_reference(state$spec, methods = state$mi$method, m = state$mi$m, seed = seed,
-                                                                                        delta = if (is.null(state$mi$delta)) 0 else state$mi$delta)
-    r[1, , drop = FALSE]
+    r <- tryCatch({
+      if (is.null(state$mi)) stress_fit(state$spec)
+      else { dr <- draws_for(state$spec); if (is.null(dr)) stop("imputation failed")
+             reference_analyse(state$spec, dr, state$mi$method, if (is.null(state$mi$delta)) 0 else state$mi$delta) }
+    }, error = function(e) NULL)
+    if (is.null(r)) NULL else r[1, , drop = FALSE]
   }
-  search <- function(dir) {                       # dir = -1 moves towards zero, +1 away from zero
+  evaluate_all <- function(states) {
+    keys <- vapply(states, state_key, "")
+    todo <- which(!vapply(keys, function(k) exists(k, envir = fit_cache, inherits = FALSE), TRUE))
+    if (length(todo)) {
+      for (i in todo) if (!is.null(states[[i]]$mi)) draws_for(states[[i]]$spec)   # drawn here, so the cache is shared
+      new <- stress_map(states[todo], evaluate, cores)
+      for (k in seq_along(todo)) assign(keys[todo[k]], new[[k]], envir = fit_cache)
+    }
+    lapply(keys, function(k) get(k, envir = fit_cache, inherits = FALSE))
+  }
+  search <- function(dir, limit) {                # dir = -1 moves towards zero, +1 away from zero
     state <- list(spec = spec, mi = NULL); used <- character(); labels <- character(); rows <- list(); hit <- NA_integer_
-    for (j in seq_len(max_j)) {
+    for (j in seq_len(limit)) {
       cand <- Filter(function(ch) !ch$family %in% used, changes)
       if (!length(cand)) break
-      fits <- stress_map(cand, function(ch) tryCatch(evaluate(apply_change(state, ch)), error = function(e) NULL), cores)
+      fits <- evaluate_all(lapply(cand, function(ch) apply_change(state, ch)))
       est <- vapply(fits, function(r) if (!is.null(r) && isTRUE(r$converged)) r$estimate else NA_real_, 0)
       if (all(is.na(est))) break
       best <- which.max(dir * sgn * est)
@@ -135,7 +169,12 @@ stress_path <- function(spec, changes = path_changes(spec), max_j = 3, direction
     list(rows = rows, j = hit, labels = labels, mi = !is.null(state$mi))
   }
   dirs <- switch(direction, both = c(-1, 1), toward_zero = -1, away_from_zero = 1)
-  res <- lapply(dirs, search)
+  # The second direction can only win with a shorter path, so it is searched no further than that.
+  res <- list(); limit <- max_j
+  for (dv in dirs) {
+    res[[length(res) + 1L]] <- if (limit >= 1) search(dv, limit) else list(rows = list(), j = NA_integer_, labels = character(), mi = FALSE)
+    if (!is.na(res[[length(res)]]$j)) limit <- min(limit, res[[length(res)]]$j - 1L)
+  }
   js <- vapply(res, function(x) x$j, 0L)
   win <- if (all(is.na(js))) 1L else which.min(replace(js, is.na(js), Inf))
   all_rows <- unlist(lapply(res, `[[`, "rows"), recursive = FALSE)
@@ -145,6 +184,15 @@ stress_path <- function(spec, changes = path_changes(spec), max_j = 3, direction
                             base_estimate = base$estimate, base_lcl = base$lcl, base_ucl = base$ucl, max_j = max_j)
   out
 }
+
+# Keys for the caches of stress_path(). The analysis data are identified by their size and a few sums of the response.
+data_key <- function(sp) {
+  y <- sp$data[[sp$response]]; y <- y[!is.na(y)]
+  paste(nrow(sp$data), length(unique(sp$data[[sp$subject]])), format(sum(y), digits = 17), format(sum(y^2), digits = 17),
+        format(sum(seq_along(y) * y), digits = 17))
+}
+imputation_key <- function(sp) paste(data_key(sp), paste(sp$cov_vars, collapse = ","), sp$active)
+spec_key <- function(sp) paste(imputation_key(sp), sp$covariance, sp$weights, sp$method, sp$vcov, paste(sp$covariates, collapse = "+"), sp$contrast_visit, sp$alpha)
 
 #' Deletions a well-behaved trial would need to change its conclusion
 #'

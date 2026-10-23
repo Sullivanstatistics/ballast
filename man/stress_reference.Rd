@@ -78,7 +78,11 @@ conditional normal distribution given the subject's observed values.
 An optional \code{delta} is added to every imputed value of the active arm.
 
 Imputation \code{i} uses seed \code{seed + i} on whichever worker draws it, so
-the result is the same for any number of \code{cores}.
+the result is the same for any number of \code{cores}. Within an imputation
+the methods share the bootstrap refit and the standard-normal draws
+(common random numbers), so they differ only through the means they
+impute from: a method gives the same rows whether it is requested alone
+or with others, and \code{delta} is exactly a shift of the imputed values.
 }
 \examples{
 small <- mmrm::fev_data[mmrm::fev_data$USUBJID \%in\% paste0("PT", 1:100), ]

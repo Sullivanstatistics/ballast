@@ -53,6 +53,12 @@ rather than on the observed data.
 Because the search is greedy, \code{j} is an upper bound on the smallest
 combination; to first order the shifts of different families add, so the
 greedy path is the worst case when they do.
+
+The search is exact but avoids repeated work: the imputation draws are
+made once per imputation model and reused by every change that leaves the
+model alone, a state reached twice (by both directions, or by two orders of
+the same changes) is fitted once, and the second direction is searched
+only as far as it could still give a shorter path than the first.
 }
 \examples{
 \donttest{

@@ -33,7 +33,11 @@
 #'   arm's is used for the reference-based draws.
 #' @param max_tries Bootstrap refits attempted per imputation before giving up.
 #' @details Imputation `i` uses seed `seed + i` on whichever worker draws it, so
-#'   the result is the same for any number of `cores`.
+#'   the result is the same for any number of `cores`. Within an imputation
+#'   the methods share the bootstrap refit and the standard-normal draws
+#'   (common random numbers), so they differ only through the means they
+#'   impute from: a method gives the same rows whether it is requested alone
+#'   or with others, and `delta` is exactly a shift of the imputed values.
 #' @return A `stress_rows` data frame, one counted row per method
 #'   (`role = "sensitivity"`), with the number of imputations and the Monte
 #'   Carlo standard error in `note`.
@@ -49,8 +53,20 @@
 #' @export
 stress_reference <- function(spec, methods = c("MAR", "J2R", "CR", "CIR"), m = 25, seed = 1, delta = 0, arm = NULL,
                              impute_covariates = NULL, same_cov = TRUE, max_tries = 3L, cores = 1L) {
-  check_spec(spec); force_args(); old_rng <- rng_state(); on.exit(rng_restore(old_rng), add = TRUE)
+  check_spec(spec); force_args()
   methods <- match.arg(methods, c("MAR", "J2R", "CR", "CIR"), several.ok = TRUE)
+  dr <- reference_draws(spec, methods, m, seed, arm, impute_covariates, same_cov, max_tries, cores)
+  bind_rows_(lapply(methods, function(meth) reference_analyse(spec, dr, meth, delta)))
+}
+
+# The imputations themselves: m completed wide data frames per method, without any delta. Imputation i seeds with
+# seed + i, draws the bootstrap refit of the imputation model and then one vector of standard normals per subject with
+# missing values, which every method shares (common random numbers: the methods differ only in the conditional means
+# they impute from, and a delta is added afterwards). So a method's imputations are the same whether it is requested
+# alone or with others, and MAR with a delta is exactly MAR plus the delta. stress_path() computes the draws once per
+# imputation model and reuses them for every change that leaves that model alone.
+reference_draws <- function(spec, methods, m, seed, arm = NULL, impute_covariates = NULL, same_cov = TRUE, max_tries = 3L, cores = 1L) {
+  old_rng <- rng_state(); on.exit(rng_restore(old_rng), add = TRUE)
   trt <- spec$treatment; sub <- spec$subject; vis <- spec$visit; y <- spec$response
   if (is.null(arm)) arm <- spec$active
   ref <- spec$reference
@@ -71,6 +87,7 @@ stress_reference <- function(spec, methods = c("MAR", "J2R", "CR", "CIR"), m = 2
   last_obs <- apply(!miss, 1, function(o) if (any(o)) max(which(o)) else 0L)
   is_active <- w[[trt]] == arm
   subj_arm <- as.character(w[[trt]])
+  with_missing <- which(rowSums(miss) > 0)
   draw_params <- function() {
     for (try in seq_len(max_tries)) {
       idx <- unlist(lapply(split(seq_len(nrow(w)), subj_arm), function(k) sample(k, length(k), replace = TRUE)))
@@ -88,9 +105,11 @@ stress_reference <- function(spec, methods = c("MAR", "J2R", "CR", "CIR"), m = 2
     fb <- draw_params(); if (is.null(fb)) return(NULL)
     mu_own <- means_of(fb, g_own); mu_ref <- means_of(fb, g_ref)
     S_own <- lapply(stats::setNames(spec$treatment_levels, spec$treatment_levels), function(a) sigma_of(fb, a))
+    z_subj <- lapply(with_missing, function(s) stats::rnorm(sum(miss[s, ])))   # shared by every method
     lapply(stats::setNames(methods, methods), function(meth) {
       Yi <- Y
-      for (s in which(rowSums(miss) > 0)) {
+      for (k in seq_along(with_missing)) {
+        s <- with_missing[k]
         mu <- mu_own[s, ]; S <- S_own[[subj_arm[s]]]; lo <- last_obs[s]; post <- seq_len(nv) > lo
         if (is_active[s] && meth != "MAR") {
           if (meth == "CR") mu <- mu_ref[s, ]
@@ -104,19 +123,26 @@ stress_reference <- function(spec, methods = c("MAR", "J2R", "CR", "CIR"), m = 2
           cm <- mu[u] + as.vector(A %*% (Y[s, o] - mu[o])); cv <- S[u, u, drop = FALSE] - A %*% t(Suo) }
         else { cm <- mu[u]; cv <- S[u, u, drop = FALSE] }
         cv <- (cv + t(cv)) / 2; R <- tryCatch(chol(cv), error = function(e) chol(cv + diag(1e-8, nrow(cv))))
-        val <- cm + as.vector(t(R) %*% stats::rnorm(length(u)))
-        if (is_active[s] && delta != 0) val <- val + delta
-        Yi[s, u] <- val
+        Yi[s, u] <- cm + as.vector(t(R) %*% z_subj[[k]])
       }
       wi <- w; wi[, ycols] <- Yi; wi
     })
   }, cores)
   draws <- draws[!vapply(draws, is.null, TRUE)]
   if (!length(draws)) stop("no bootstrap refit of the imputation model converged")
-  note <- sprintf("reference %s, shift %s on %s, %s covariance, seed %s", ref, format(delta), arm, if (same_cov) "common" else "arm-specific", format(seed))
-  bind_rows_(lapply(methods, function(meth) {
-    fits <- lapply(draws, function(dr) stress_fit(spec, data = fr$lengthen(dr[[meth]])))
-    mi_row(spec, fits, if (delta == 0) meth else sprintf("%s, delta %s", meth, format(delta)), "reference-based multiple imputation",
-           "alternative", "sensitivity", note, m, nrow(w), param = if (delta == 0) NA_real_ else delta)
-  }))
+  list(draws = draws, lengthen = fr$lengthen, ycols = ycols, shift_cells = miss & matrix(is_active, nrow(miss), ncol(miss)),
+       m = m, n_subj = nrow(w), ref = ref, arm = arm, same_cov = same_cov, seed = seed)
+}
+
+# The analysis of one method's imputations under the analysis spec, with delta added to the active arm's imputed
+# values, pooled by Rubin's rules into one counted row.
+reference_analyse <- function(spec, dr, meth, delta = 0) {
+  fits <- lapply(dr$draws, function(d1) {
+    wi <- d1[[meth]]
+    if (delta != 0) { Yi <- as.matrix(wi[, dr$ycols]); Yi[dr$shift_cells] <- Yi[dr$shift_cells] + delta; wi[, dr$ycols] <- Yi }
+    stress_fit(spec, data = dr$lengthen(wi))
+  })
+  note <- sprintf("reference %s, shift %s on %s, %s covariance, seed %s", dr$ref, format(delta), dr$arm, if (dr$same_cov) "common" else "arm-specific", format(dr$seed))
+  mi_row(spec, fits, if (delta == 0) meth else sprintf("%s, delta %s", meth, format(delta)), "reference-based multiple imputation",
+         "alternative", "sensitivity", note, dr$m, dr$n_subj, param = if (delta == 0) NA_real_ else delta)
 }
