@@ -27,7 +27,7 @@ mi_design <- function(df, vars) if (length(vars)) stats::model.matrix(stats::ref
 
 # w: wide data frame; vars: imputation variables in order (covariates first); adjust: NULL or list(vars, shift, rows).
 mi_fcs_reg <- function(w, vars, nimp, seed, nbiter = 10, adjust = NULL, shift_every = TRUE) {
-  old_rng <- rng_state(); on.exit(rng_restore(old_rng), add = TRUE); set.seed(seed)
+  old_rng <- rng_state(); on.exit(rng_restore(old_rng), add = TRUE); seed_rng(seed)
   imputed <- vars[vapply(vars, function(v) anyNA(w[[v]]), TRUE)]
   misl <- lapply(stats::setNames(imputed, imputed), function(v) is.na(w[[v]]))
   shift <- function(cur, tg) {

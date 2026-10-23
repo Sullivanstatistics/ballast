@@ -20,11 +20,12 @@ simulate_rare_trial(
   t_df = 3,
   n_sites = 8,
   site_sd = 2.5,
-  defect = c("none", "outlier", "site", "mnar"),
+  defect = c("none", "outlier", "site", "mnar", "allocation"),
   n_outliers = 1,
   outlier_size = 10,
   mnar_strength = 1.5,
   mnar_dropout = 3 * dropout,
+  fast_to_active = 0.25,
   seed = NULL
 )
 }
@@ -48,13 +49,19 @@ simulate_rare_trial(
 \item{n_sites, site_sd}{Number of sites and SD of the site effect on
 progression.}
 
-\item{defect}{\code{"none"}, \code{"outlier"}, \code{"site"} or \code{"mnar"}.}
+\item{defect}{\code{"none"}, \code{"outlier"}, \code{"site"}, \code{"mnar"} or \code{"allocation"}.}
 
 \item{n_outliers, outlier_size}{Outlier settings (size in units of \code{sigma}).}
 
 \item{mnar_strength, mnar_dropout}{Informative-dropout settings.}
 
-\item{seed}{Random seed; the caller's random-number state is restored.}
+\item{fast_to_active}{Allocation-defect setting: the weight with which a
+fast progressor is drawn into the active arm (slow progressors get
+\code{1 - fast_to_active}); 0.5 is fair allocation.}
+
+\item{seed}{Random seed; the caller's random-number state is restored. The
+draws use R's default generators whatever the caller's \code{RNGkind()}, so a
+seed gives the same trial in a plain session and on parallel workers.}
 }
 \value{
 A data frame in long format with one row per observed visit:
@@ -98,6 +105,13 @@ Defects (each makes a significant result one that should not be trusted):
 \item \code{"mnar"}: active-arm dropout also depends on the unobserved next value,
 so participants about to decline leave (informative dropout), with a
 baseline dropout rate of \code{mnar_dropout} per visit.
+\item \code{"allocation"}: allocation is not independent of prognosis (for example a
+stratification error or selection at enrolment). Participants are drawn
+into the active arm with weight \code{fast_to_active} for fast progressors and
+\code{1 - fast_to_active} for slow ones, so with \code{fast_to_active < 0.5} fast
+progressors (who decline more in the \code{"mixture"} population) gather in
+the reference arm. An analysis that omits \code{fast} is then biased in favour
+of the active arm; one that adjusts for it is not.
 }
 }
 \examples{

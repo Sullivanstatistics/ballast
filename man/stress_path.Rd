@@ -44,9 +44,9 @@ been made. It runs towards zero (the direction that weakens the result) and,
 with \code{direction = "both"}, also away from zero; \code{j} is the smaller count.
 }
 \details{
-Changes combine: a reference-based imputation chosen at one step is kept,
-and later changes are evaluated under it. A path that leaves the interval
-through a reference-based imputation is flagged \code{assumption_dependent}:
+Changes combine: a reference-based or delta-adjusted imputation chosen at
+one step is kept, and later changes are evaluated under it. A path that
+leaves the interval through either is flagged \code{assumption_dependent}:
 the conclusion then rests on an untestable assumption about dropouts
 rather than on the observed data.
 

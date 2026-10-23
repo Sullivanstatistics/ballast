@@ -126,3 +126,32 @@ test_that("the mutual target catches an outlier that the CI target cannot", {
   expect_false(ci$reached)                    # one gross error widens the base CI, so its removal stays inside it (T4b)
   expect_true(mu$reached); expect_equal(mu$k, 1L)
 })
+
+test_that("a seed gives the same trial whatever the caller's generator kind, and the kind is restored", {
+  a <- simulate_rare_trial(15, delta = 3, population = "mixture", seed = 11)
+  old <- RNGkind("L'Ecuyer-CMRG"); on.exit(RNGkind(old[1], old[2], old[3]), add = TRUE)
+  set.seed(5); before <- .Random.seed
+  b <- simulate_rare_trial(15, delta = 3, population = "mixture", seed = 11)
+  expect_identical(a, b)
+  expect_equal(RNGkind()[1], "L'Ecuyer-CMRG")
+  expect_identical(.Random.seed, before)
+})
+
+test_that("the allocation defect gathers fast progressors in the reference arm", {
+  d <- simulate_rare_trial(200, population = "mixture", defect = "allocation", fast_to_active = 0.2, seed = 3)
+  subj <- unique(d[, c("id", "arm", "fast")])
+  expect_equal(sum(subj$arm == "ACT"), 200)
+  expect_gt(mean(subj$fast[subj$arm == "REF"]), mean(subj$fast[subj$arm == "ACT"]) + 0.15)
+  expect_error(simulate_rare_trial(10, defect = "allocation", fast_to_active = 1, seed = 1), "between 0 and 1")
+})
+
+test_that("delta-adjusted imputation is a path change in the reference-based family", {
+  ch <- path_changes(spec_small, covariance = character(), inference = list(), covariates = FALSE, weights = FALSE,
+                     reference = "J2R", delta_adjusted = c(-5, -10), m = 2)
+  expect_equal(vapply(ch, `[[`, "", "label"), c("J2R", "MAR, delta -5", "MAR, delta -10"))
+  expect_true(all(vapply(ch, `[[`, "", "family") == "reference-based multiple imputation"))
+  expect_equal(ch[[3]]$value$delta, -10)
+  p <- stress_path(spec_small, ch[2:3], max_j = 1, direction = "toward_zero", seed = 2)
+  r <- stress_reference(spec_small, methods = "MAR", m = 2, seed = 2, delta = if (grepl("-10", p$label[1])) -10 else -5)
+  expect_equal(p$estimate[1], r$estimate[1])
+})

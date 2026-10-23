@@ -157,9 +157,18 @@ match_coef <- function(coefnames, colnames) {
 }
 
 # Random-number state of the caller, saved before a seeded step and restored on exit, so that a seed given to a ballast
-# function never changes the user's global stream (the pattern of withr::with_seed, without the dependency).
-rng_state <- function() if (exists(".Random.seed", envir = globalenv(), inherits = FALSE)) get(".Random.seed", envir = globalenv(), inherits = FALSE) else NULL
-rng_restore <- function(old) {
-  if (is.null(old)) { if (exists(".Random.seed", envir = globalenv(), inherits = FALSE)) rm(".Random.seed", envir = globalenv()) }
-  else assign(".Random.seed", old, envir = globalenv())
+# function never changes the user's global stream (the pattern of withr::with_seed, without the dependency). The
+# generator kind is saved and restored too, because seed_rng() fixes it.
+rng_state <- function() {
+  list(kind = RNGkind(),
+       seed = if (exists(".Random.seed", envir = globalenv(), inherits = FALSE)) get(".Random.seed", envir = globalenv(), inherits = FALSE) else NULL)
 }
+rng_restore <- function(old) {
+  suppressWarnings(RNGkind(kind = old$kind[1], normal.kind = old$kind[2], sample.kind = old$kind[3]))
+  if (is.null(old$seed)) { if (exists(".Random.seed", envir = globalenv(), inherits = FALSE)) rm(".Random.seed", envir = globalenv()) }
+  else assign(".Random.seed", old$seed, envir = globalenv())
+}
+# Seed with R's default generators (Mersenne-Twister, Inversion, Rejection) whatever the caller's kind is, so that a
+# seed means the same draws everywhere: in a plain session, under parallel::RNGkind("L'Ecuyer-CMRG"), and on future or
+# furrr workers with seed = TRUE, which switch the kind.
+seed_rng <- function(seed) set.seed(seed, kind = "Mersenne-Twister", normal.kind = "Inversion", sample.kind = "Rejection")

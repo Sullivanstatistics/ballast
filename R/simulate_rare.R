@@ -32,6 +32,13 @@
 #' * `"mnar"`: active-arm dropout also depends on the unobserved next value,
 #'   so participants about to decline leave (informative dropout), with a
 #'   baseline dropout rate of `mnar_dropout` per visit.
+#' * `"allocation"`: allocation is not independent of prognosis (for example a
+#'   stratification error or selection at enrolment). Participants are drawn
+#'   into the active arm with weight `fast_to_active` for fast progressors and
+#'   `1 - fast_to_active` for slow ones, so with `fast_to_active < 0.5` fast
+#'   progressors (who decline more in the `"mixture"` population) gather in
+#'   the reference arm. An analysis that omits `fast` is then biased in favour
+#'   of the active arm; one that adjusts for it is not.
 #'
 #' @param n_per_arm Participants per arm (exactly balanced).
 #' @param delta Average treatment effect at the last visit (higher is better).
@@ -43,10 +50,15 @@
 #' @param t_df Degrees of freedom of the heavy-tailed errors.
 #' @param n_sites,site_sd Number of sites and SD of the site effect on
 #'   progression.
-#' @param defect `"none"`, `"outlier"`, `"site"` or `"mnar"`.
+#' @param defect `"none"`, `"outlier"`, `"site"`, `"mnar"` or `"allocation"`.
 #' @param n_outliers,outlier_size Outlier settings (size in units of `sigma`).
 #' @param mnar_strength,mnar_dropout Informative-dropout settings.
-#' @param seed Random seed; the caller's random-number state is restored.
+#' @param fast_to_active Allocation-defect setting: the weight with which a
+#'   fast progressor is drawn into the active arm (slow progressors get
+#'   `1 - fast_to_active`); 0.5 is fair allocation.
+#' @param seed Random seed; the caller's random-number state is restored. The
+#'   draws use R's default generators whatever the caller's `RNGkind()`, so a
+#'   seed gives the same trial in a plain session and on parallel workers.
 #' @return A data frame in long format with one row per observed visit:
 #'   `id`, `arm` (`"REF"` or `"ACT"`), `site`, `base`, `fast` (0/1), `visit`
 #'   (`"V1"`, ...) and `y`.
@@ -60,15 +72,21 @@
 #' @export
 simulate_rare_trial <- function(n_per_arm = 25, delta = 0, n_visits = 4, sigma = 10, rho = 0.6, dropout = 0.03, baseline_beta = 0.5,
                                 population = c("homogeneous", "mixture", "heavy"), fast_frac = 0.35, fast_decline = 8, slope_sd = 4,
-                                fast_effect = 1.6, t_df = 3, n_sites = 8, site_sd = 2.5, defect = c("none", "outlier", "site", "mnar"),
-                                n_outliers = 1, outlier_size = 10, mnar_strength = 1.5, mnar_dropout = 3 * dropout, seed = NULL) {
+                                fast_effect = 1.6, t_df = 3, n_sites = 8, site_sd = 2.5, defect = c("none", "outlier", "site", "mnar", "allocation"),
+                                n_outliers = 1, outlier_size = 10, mnar_strength = 1.5, mnar_dropout = 3 * dropout, fast_to_active = 0.25,
+                                seed = NULL) {
   population <- match.arg(population); defect <- match.arg(defect)
   if (fast_frac * fast_effect >= 1) stop("fast_frac * fast_effect must be below 1 so the slow-progressor effect stays positive")
-  if (!is.null(seed)) { old_rng <- rng_state(); on.exit(rng_restore(old_rng), add = TRUE); set.seed(seed) }
+  if (!is.null(seed)) { old_rng <- rng_state(); on.exit(rng_restore(old_rng), add = TRUE); seed_rng(seed) }
   n <- 2 * n_per_arm; V <- n_visits; tv <- seq_len(V) / V
   arm <- sample(rep(c("REF", "ACT"), each = n_per_arm)); act <- arm == "ACT"
   site <- sample(seq_len(n_sites), n, replace = TRUE)
   base <- stats::rnorm(n, 50, 10); fast <- stats::rbinom(n, 1, fast_frac)
+  if (defect == "allocation") {
+    if (fast_to_active <= 0 || fast_to_active >= 1) stop("fast_to_active must be between 0 and 1")
+    on_active <- sample(n, n_per_arm, prob = ifelse(fast == 1, fast_to_active, 1 - fast_to_active))
+    arm <- ifelse(seq_len(n) %in% on_active, "ACT", "REF"); act <- arm == "ACT"
+  }
   mixture <- population == "mixture"
   decline <- if (mixture) -fast_decline * fast else rep(0, n)
   slope <- if (mixture) stats::rnorm(n, 0, slope_sd) else rep(0, n)

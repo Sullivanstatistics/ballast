@@ -12,6 +12,7 @@ path_changes(
   covariates = TRUE,
   weights = TRUE,
   reference = c("J2R", "CR", "CIR"),
+  delta_adjusted = numeric(),
   m = 10,
   data = list()
 )
@@ -30,6 +31,12 @@ of them; a named list of covariate sets to use instead; \code{FALSE} for none.}
 
 \item{reference}{Reference-based imputation assumptions (any of \code{"MAR"},
 \code{"J2R"}, \code{"CR"}, \code{"CIR"}); \code{character()} for none.}
+
+\item{delta_adjusted}{Shifts for delta-adjusted imputation under MAR. Each
+value is one change that adds the shift to every imputed value of the
+active arm (for example minus half the residual SD, against the active
+arm). It belongs to the reference-based imputation family, so a path uses
+at most one missing-data assumption. \code{numeric()} for none.}
 
 \item{m}{Imputations per reference-based analysis.}
 

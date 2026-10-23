@@ -15,6 +15,11 @@
 #' @param weights `TRUE` to include the other LS-mean weighting.
 #' @param reference Reference-based imputation assumptions (any of `"MAR"`,
 #'   `"J2R"`, `"CR"`, `"CIR"`); `character()` for none.
+#' @param delta_adjusted Shifts for delta-adjusted imputation under MAR. Each
+#'   value is one change that adds the shift to every imputed value of the
+#'   active arm (for example minus half the residual SD, against the active
+#'   arm). It belongs to the reference-based imputation family, so a path uses
+#'   at most one missing-data assumption. `numeric()` for none.
 #' @param m Imputations per reference-based analysis.
 #' @param data Named list of alternative analysis data sets (for example,
 #'   other intercurrent-event handlings).
@@ -27,7 +32,8 @@
 #' @export
 path_changes <- function(spec, covariance = c("us", "ar1h", "cs"),
                          inference = default_inference()[c("Satterthwaite", "Kenward-Roger (linear)", "Sandwich, between-within")],
-                         covariates = TRUE, weights = TRUE, reference = c("J2R", "CR", "CIR"), m = 10, data = list()) {
+                         covariates = TRUE, weights = TRUE, reference = c("J2R", "CR", "CIR"), delta_adjusted = numeric(),
+                         m = 10, data = list()) {
   check_spec(spec)
   out <- list()
   add <- function(family, label, type, value) out[[length(out) + 1L]] <<- list(family = family, label = label, type = type, value = value)
@@ -46,7 +52,8 @@ path_changes <- function(spec, covariance = c("us", "ar1h", "cs"),
   }
   if (isTRUE(weights)) { w <- setdiff(c("equal", "observed"), spec$weights); add("LS-mean weighting", paste(w, "LS-mean weights"), "spec", list(weights = w)) }
   if (length(reference)) reference <- match.arg(reference, c("MAR", "J2R", "CR", "CIR"), several.ok = TRUE)
-  for (r in reference) add("reference-based multiple imputation", r, "mi", list(method = r, m = m))
+  for (r in reference) add("reference-based multiple imputation", r, "mi", list(method = r, m = m, delta = 0))
+  for (d in delta_adjusted) add("reference-based multiple imputation", sprintf("MAR, delta %s", format(d)), "mi", list(method = "MAR", m = m, delta = d))
   if (length(data) && (is.null(names(data)) || any(names(data) == ""))) stop("data sets must be named")
   for (nm in names(data)) add("analysis data set", nm, "spec", list(data = data[[nm]]))
   out
@@ -63,9 +70,9 @@ path_changes <- function(spec, covariance = c("us", "ar1h", "cs"),
 #' been made. It runs towards zero (the direction that weakens the result) and,
 #' with `direction = "both"`, also away from zero; `j` is the smaller count.
 #'
-#' Changes combine: a reference-based imputation chosen at one step is kept,
-#' and later changes are evaluated under it. A path that leaves the interval
-#' through a reference-based imputation is flagged `assumption_dependent`:
+#' Changes combine: a reference-based or delta-adjusted imputation chosen at
+#' one step is kept, and later changes are evaluated under it. A path that
+#' leaves the interval through either is flagged `assumption_dependent`:
 #' the conclusion then rests on an untestable assumption about dropouts
 #' rather than on the observed data.
 #'
@@ -105,7 +112,8 @@ stress_path <- function(spec, changes = path_changes(spec), max_j = 3, direction
     state
   }
   evaluate <- function(state) {
-    r <- if (is.null(state$mi)) stress_fit(state$spec) else stress_reference(state$spec, methods = state$mi$method, m = state$mi$m, seed = seed)
+    r <- if (is.null(state$mi)) stress_fit(state$spec) else stress_reference(state$spec, methods = state$mi$method, m = state$mi$m, seed = seed,
+                                                                                        delta = if (is.null(state$mi$delta)) 0 else state$mi$delta)
     r[1, , drop = FALSE]
   }
   search <- function(dir) {                       # dir = -1 moves towards zero, +1 away from zero

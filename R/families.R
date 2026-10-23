@@ -231,7 +231,7 @@ stress_permute <- function(spec, n = 1000, strata = NULL, statistic = c("estimat
     if (!strata %in% names(d)) stop("column not in data: ", strata)
     if (any(tapply(as.character(d[[strata]]), d[[sub]], function(x) length(unique(x))) > 1L)) stop("strata must be constant within subject")
   }
-  old_rng <- rng_state(); on.exit(rng_restore(old_rng), add = TRUE); set.seed(seed)
+  old_rng <- rng_state(); on.exit(rng_restore(old_rng), add = TRUE); seed_rng(seed)
   arm <- s[[trt]]; str <- if (is.null(strata)) rep(1L, nrow(s)) else as.character(s[[strata]])
   perms <- lapply(seq_len(n), function(i) { a <- arm; for (g in unique(str)) { k <- which(str == g); a[k] <- arm[k][sample.int(length(k))] }; a })
   idx <- match(d[[sub]], s[[sub]])
