@@ -192,3 +192,30 @@ test_that("the cached path search gives the standalone fits, and the direction c
   best <- if (is.na(az$j) || (!is.na(tz$j) && tz$j <= az$j)) tz else az
   expect_equal(a$j, best$j); expect_equal(a$changes, best$changes); expect_equal(a$direction, best$direction)
 })
+
+test_that("stress_direction reports reversal under re-analysis and the deletions to reverse, against the benchmark", {
+  d <- simulate_rare_trial(15, delta = 5, population = "mixture", seed = 11)
+  sp <- stress_spec(d, "y", "id", "visit", "arm", "REF", covariates = ~ base + fast, method = "Satterthwaite", vcov = "Asymptotic")
+  cen <- stress_census(sp, stress_covariance(sp, c("us", "cs")), stress_covariates(sp))
+  dr <- stress_direction(sp, cen, max_k = 8)
+  expect_s3_class(dr, "stress_direction")
+  expect_equal(dr$n, 30L)
+  expect_equal(dr$z, dr$base$estimate / dr$base$stderr)
+  expect_equal(dr$n_counted, sum(cen$counted & !is.na(cen$estimate)))
+  expect_equal(dr$n_reversed, sum(!cen$same_direction[cen$counted & !is.na(cen$estimate)]))
+  expect_equal(dr$benchmark_rev, unname(deletion_benchmark(30, z = dr$z)[["reversal"]]))
+  if (dr$k_rev_reached) {
+    expect_equal(dr$k_rev, attr(dr$search, "fragility")$k)
+    expect_equal(dr$share_of_n, dr$k_rev / 30)
+    expect_equal(dr$removal_ratio_rev, dr$k_rev / dr$benchmark_rev)
+  } else {
+    expect_true(is.na(dr$k_rev)); expect_true(is.na(dr$share_of_n))
+  }
+  expect_output(print(dr), "Direction stability")
+  expect_output(print(dr), "does not show that the effect is real")
+  # without a census only the search is reported
+  dr2 <- stress_direction(sp, max_k = 3)
+  expect_true(is.na(dr2$n_counted)); expect_null(dr2$reversed_rows)
+  expect_output(print(dr2), "Participants removed to reverse")
+  expect_error(stress_direction(sp, census = cen$estimate), "stress_census")
+})
