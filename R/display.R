@@ -102,7 +102,7 @@ plot_swarm <- function(x, style = c("auto", "bubbles", "dots"), reference = NULL
     ggplot2::geom_rect(data = A, ggplot2::aes(xmin = lcl, xmax = ucl, ymin = -0.62, ymax = 0.66), fill = PAL[["band"]]) +
     ggplot2::geom_vline(xintercept = 0, colour = PAL[["ink"]], linewidth = 0.8) +
     ggplot2::geom_point(data = P[!P$diagnostic, , drop = FALSE], ggplot2::aes(x = x, y = y, colour = group), size = 1.8, alpha = 0.85) +
-    ggplot2::geom_point(data = P[P$diagnostic, , drop = FALSE], ggplot2::aes(x = x, y = y, colour = group), shape = 21, fill = "white", size = 2.3, stroke = 1.1) +
+    ggplot2::geom_point(data = P[P$diagnostic, , drop = FALSE], ggplot2::aes(x = x, y = y, colour = group), shape = 21, fill = "white", size = 2.3, stroke = 1.1, show.legend = FALSE) +
     ggplot2::geom_segment(data = A, ggplot2::aes(x = lcl, xend = ucl, y = 0, yend = 0), colour = PAL[["navy"]], linewidth = 2.2, lineend = "round") +
     ggplot2::geom_point(data = A, ggplot2::aes(x = est, y = 0), shape = 23, fill = "white", colour = PAL[["navy"]], size = 3.6, stroke = 1.2) +
     ggplot2::geom_text(data = A, ggplot2::aes(x = est, y = -0.08, label = format(est, digits = 3)), colour = PAL[["navy"]], size = 3.1, fontface = "bold", vjust = 1) +
