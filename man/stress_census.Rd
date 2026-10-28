@@ -26,8 +26,9 @@ the pre-specified (base) fit: percent of the base estimate, shift in base
 standard errors, whether the estimate lies inside the base confidence
 interval, keeps the base direction, is significant at \code{alpha}, and whether
 significance changed. Rows that reproduce the base (\code{is_base}), did not
-converge, are tipping-point searches, or duplicate an earlier row are not
-counted.
+converge, are tipping-point searches, are diagnostic refits (\code{kind = "diagnostic"}, such as the complete-case refit of the standard plan, which
+is fitted and shown but does not enter the verdict), or duplicate an
+earlier row are not counted.
 }
 \examples{
 spec <- stress_spec(mmrm::fev_data, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO",

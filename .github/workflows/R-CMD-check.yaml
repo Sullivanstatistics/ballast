@@ -1,8 +1,8 @@
 on:
   push:
-    branches: [main, master, dev-0.7.1, dev-0.7.2]
+    branches: [main, master, dev-0.7.1, dev-0.7.2, dev-0.7.3]
   pull_request:
-    branches: [main, master, dev-0.7.1, dev-0.7.2]
+    branches: [main, master, dev-0.7.1, dev-0.7.2, dev-0.7.3]
 name: R-CMD-check
 jobs:
   R-CMD-check:

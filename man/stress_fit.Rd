@@ -29,7 +29,8 @@ fits the spec's own data.}
 
 \item{label, family, kind}{Labels for the output row. \code{kind} is one of
 \code{"alternative"} (a counted alternative analysis), \code{"deletion"} (a
-leave-one-out refit) or \code{"search"} (a point on a tipping-point grid).}
+leave-one-out refit), \code{"search"} (a point on a tipping-point grid) or
+\code{"diagnostic"} (fitted and shown but not counted).}
 
 \item{is_base}{\code{TRUE} when the row reproduces the pre-specified analysis
 exactly; such rows are not counted in a census.}

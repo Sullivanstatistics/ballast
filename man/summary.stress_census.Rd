@@ -15,8 +15,10 @@
 A data frame with one row per family, kind and role: counted analyses,
 number significant, number that crossed \code{alpha}, number outside the base
 confidence interval, number reversing direction, the range of percent of
-base, and the largest shift in base standard errors. Closing rows total
-the sensitivity analyses (same estimand) and all counted rows.
+base, the largest shift in base standard errors, and \code{counted}. Diagnostic
+refits (\code{kind = "diagnostic"}) get their own line with \code{counted = FALSE}
+so a reader sees they were fitted; they are left out of the closing rows,
+which total the sensitivity analyses (same estimand) and all counted rows.
 }
 \description{
 Summarise a census by family

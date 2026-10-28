@@ -42,8 +42,10 @@ panel with the filed value labelled, every counted alternative analysis as a dot
 coloured by the decision it varies (statistical: covariance, inference, covariate set, weighting, grid,
 estimator; data-handling: data set, population, intercurrent-event strategy, imputation), the counted deletions
 as a strip of small light dots beneath the axis, a vertical line at no difference, and an optional labelled
-reference line. Counted rows that return no estimate (rank tests) are not drawn; their number per row is in
-the \code{caption} attribute of the returned plot, with the counts of alternatives and deletions.
+reference line. Diagnostic refits (\code{kind = "diagnostic"}, such as the complete-case refit of the standard plan)
+are drawn as hollow dots in the colour of their decision group; they are not counted and do not enter the
+verdict. Counted rows that return no estimate (rank tests) are not drawn; their number per row is in
+the \code{caption} attribute of the returned plot, with the counts of alternatives, deletions and diagnostic refits.
 }
 \examples{
 spec <- stress_spec(mmrm::fev_data, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO",

@@ -20,10 +20,11 @@ as_census_list <- function(x) {
 
 # Which decision a family varies. Statistical decisions change the model or the inference on the same data; data-handling
 # decisions change what is analysed (data set, population, intercurrent-event strategy, imputation). Deletions are their
-# own group. Anything unknown is "other", so a user family is drawn, not dropped.
+# own group. Every family name the package itself produces is listed, so "Other family" appears only for a user-defined
+# family (from stress_fit() or stress_curve() with its own name), which is drawn, not dropped.
 decision_group <- function(family, kind) {
-  stat <- c("covariance structure", "inference", "covariate set", "LS-mean weighting", "specification grid", "estimator", "rank test", "contrast visit", "re-randomisation test")
-  data <- c("data handling", "analysis population", "intercurrent-event strategy", "reference-based multiple imputation", "delta-adjusted imputation", "tipping point", "perturbation curve")
+  stat <- c("covariance structure", "inference", "covariate set", "LS-mean weighting", "specification grid", "estimator class", "rank test", "contrast visit", "re-randomisation test")
+  data <- c("data handling", "analysis population", "intercurrent-event strategy", "reference-based multiple imputation", "delta-adjusted multiple imputation", "tipping point", "perturbation curve")
   g <- ifelse(kind == "deletion", "deletion",
        ifelse(family %in% stat | grepl("^estimator|^rank|randomi[sz]ation|permutation", family), "statistical",
        ifelse(family %in% data | grepl("imputation|tipping|population|data set|strategy", family), "data-handling", "other")))
@@ -39,8 +40,10 @@ decision_group <- function(family, kind) {
 #' coloured by the decision it varies (statistical: covariance, inference, covariate set, weighting, grid,
 #' estimator; data-handling: data set, population, intercurrent-event strategy, imputation), the counted deletions
 #' as a strip of small light dots beneath the axis, a vertical line at no difference, and an optional labelled
-#' reference line. Counted rows that return no estimate (rank tests) are not drawn; their number per row is in
-#' the `caption` attribute of the returned plot, with the counts of alternatives and deletions.
+#' reference line. Diagnostic refits (`kind = "diagnostic"`, such as the complete-case refit of the standard plan)
+#' are drawn as hollow dots in the colour of their decision group; they are not counted and do not enter the
+#' verdict. Counted rows that return no estimate (rank tests) are not drawn; their number per row is in
+#' the `caption` attribute of the returned plot, with the counts of alternatives, deletions and diagnostic refits.
 #'
 #' @param x A `stress_census`, a `stress_result` (from [run_plan()]), the `stress_results` list of [run_plans()],
 #'   or a list of censuses or results (one row each). List names, plan titles or census labels name the rows.
@@ -80,24 +83,26 @@ plot_swarm <- function(x, style = c("auto", "bubbles", "dots"), reference = NULL
   rows <- names(cens)
   pts <- list(); axes <- list(); caption <- character()
   for (k in seq_along(cens)) {
-    ce <- cens[[k]]; b <- attr(ce, "base"); d <- as.data.frame(ce)[ce$counted, , drop = FALSE]
-    no_est <- sum(is.na(d$estimate)); d <- d[!is.na(d$estimate), , drop = FALSE]
+    ce <- cens[[k]]; b <- attr(ce, "base"); d <- as.data.frame(ce)[ce$counted | (ce$kind == "diagnostic" & ce$converged), , drop = FALSE]
+    no_est <- sum(is.na(d$estimate) & d$counted); d <- d[!is.na(d$estimate), , drop = FALSE]
     d$group <- decision_group(d$family, d$kind)
-    alt <- d[d$kind != "deletion", , drop = FALSE]; del <- d[d$kind == "deletion", , drop = FALSE]
+    alt <- d[d$kind == "alternative", , drop = FALSE]; del <- d[d$kind == "deletion", , drop = FALSE]; dg <- d[d$kind == "diagnostic", , drop = FALSE]
     set.seed(1L)   # the vertical scatter is cosmetic; fixed so the figure is reproducible
-    if (nrow(alt)) pts[[length(pts) + 1]] <- data.frame(row = rows[k], x = alt$estimate, y = stats::runif(nrow(alt), 0.18, 0.55), group = alt$group, stringsAsFactors = FALSE)
-    if (nrow(del)) pts[[length(pts) + 1]] <- data.frame(row = rows[k], x = del$estimate, y = stats::runif(nrow(del), -0.5, -0.18), group = del$group, stringsAsFactors = FALSE)
+    if (nrow(alt)) pts[[length(pts) + 1]] <- data.frame(row = rows[k], x = alt$estimate, y = stats::runif(nrow(alt), 0.18, 0.55), group = alt$group, diagnostic = FALSE, stringsAsFactors = FALSE)
+    if (nrow(del)) pts[[length(pts) + 1]] <- data.frame(row = rows[k], x = del$estimate, y = stats::runif(nrow(del), -0.5, -0.18), group = del$group, diagnostic = FALSE, stringsAsFactors = FALSE)
+    if (nrow(dg)) pts[[length(pts) + 1]] <- data.frame(row = rows[k], x = dg$estimate, y = stats::runif(nrow(dg), 0.18, 0.55), group = dg$group, diagnostic = TRUE, stringsAsFactors = FALSE)
     axes[[k]] <- data.frame(row = rows[k], est = b$estimate, lcl = b$lcl, ucl = b$ucl, stringsAsFactors = FALSE)
-    caption[k] <- sprintf("%s: %d alternative analyses drawn, %d deletions drawn, %d counted rows without an estimate", rows[k], nrow(alt), nrow(del), no_est)
+    caption[k] <- sprintf("%s: %d alternative analyses drawn, %d deletions drawn, %d counted rows without an estimate, %d diagnostic refits drawn hollow and not counted", rows[k], nrow(alt), nrow(del), no_est, nrow(dg))
   }
-  P <- if (length(pts)) do.call(rbind, pts) else data.frame(row = character(), x = numeric(), y = numeric(), group = factor(character(), levels = levels(decision_group("a", "b"))))
+  P <- if (length(pts)) do.call(rbind, pts) else data.frame(row = character(), x = numeric(), y = numeric(), group = factor(character(), levels = levels(decision_group("a", "b"))), diagnostic = logical())
   A <- do.call(rbind, axes)
   P$row <- factor(P$row, levels = rows); A$row <- factor(A$row, levels = rows)
   cols <- c("Statistical decision varied" = PAL[["blue"]], "Data-handling decision varied" = PAL[["orange"]], "Other family" = PAL[["navy"]], "One unit removed" = PAL[["light"]])
   g <- ggplot2::ggplot() +
     ggplot2::geom_rect(data = A, ggplot2::aes(xmin = lcl, xmax = ucl, ymin = -0.62, ymax = 0.66), fill = PAL[["band"]]) +
     ggplot2::geom_vline(xintercept = 0, colour = PAL[["ink"]], linewidth = 0.8) +
-    ggplot2::geom_point(data = P, ggplot2::aes(x = x, y = y, colour = group), size = 1.8, alpha = 0.85) +
+    ggplot2::geom_point(data = P[!P$diagnostic, , drop = FALSE], ggplot2::aes(x = x, y = y, colour = group), size = 1.8, alpha = 0.85) +
+    ggplot2::geom_point(data = P[P$diagnostic, , drop = FALSE], ggplot2::aes(x = x, y = y, colour = group), shape = 21, fill = "white", size = 2.3, stroke = 1.1) +
     ggplot2::geom_segment(data = A, ggplot2::aes(x = lcl, xend = ucl, y = 0, yend = 0), colour = PAL[["navy"]], linewidth = 2.2, lineend = "round") +
     ggplot2::geom_point(data = A, ggplot2::aes(x = est, y = 0), shape = 23, fill = "white", colour = PAL[["navy"]], size = 3.6, stroke = 1.2) +
     ggplot2::geom_text(data = A, ggplot2::aes(x = est, y = -0.08, label = format(est, digits = 3)), colour = PAL[["navy"]], size = 3.1, fontface = "bold", vjust = 1) +

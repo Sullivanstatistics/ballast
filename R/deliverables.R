@@ -33,7 +33,7 @@ stress_tables <- function(result, dir, name = "stress", formats = c("csv", "docx
   fmt <- function(x, d = digits) ifelse(is.na(x), "", formatC(x, digits = d, format = "f"))
   fp <- function(p) ifelse(is.na(p), "", ifelse(p < 0.001, "<0.001", formatC(p, digits = 3, format = "f")))
   s <- as.data.frame(summary(cen))
-  t1 <- data.frame("Family" = s$family, "Kind" = s$kind, "Role" = s$role, "Analyses" = s$n, "Significant" = s$significant, "Crossed alpha" = s$crossed,
+  t1 <- data.frame("Family" = s$family, "Kind" = s$kind, "Role" = s$role, "Counted" = ifelse(s$counted, "yes", "no"), "Analyses" = s$n, "Significant" = s$significant, "Crossed alpha" = s$crossed,
                    "Outside CI" = s$outside_ci, "Reversed" = s$reversed, "% of pre-specified, range" = ifelse(is.na(s$pct_min), "", paste0(round(s$pct_min), " to ", round(s$pct_max))),
                    "Largest shift (SE)" = fmt(s$max_shift_se, 2), check.names = FALSE, stringsAsFactors = FALSE)
   x <- as.data.frame(cen)[cen$counted & !is.na(cen$estimate), , drop = FALSE]
@@ -50,7 +50,7 @@ stress_tables <- function(result, dir, name = "stress", formats = c("csv", "docx
   header <- sprintf("Pre-specified analysis: %s minus %s at %s: estimate %s (SE %s), 95%% CI %s to %s, p %s. Verdict: %s (sensitivity analyses: %s)%s.%s",
                     result$plan$spec$active, result$plan$spec$reference, result$plan$spec$contrast_visit, fmt(b$estimate), fmt(b$stderr), fmt(b$lcl), fmt(b$ucl), fp(b$p),
                     v$stability, v$stability_sensitivity, if (v$marginal) "; marginal" else "", if (v$n_failed > 0) sprintf(" %d of %d refits did not converge and are not counted.", v$n_failed, v$n_rows) else "")
-  footer <- "Counting rule: rows reproducing the pre-specified analysis and duplicate specifications are not counted; tipping-point grids are searches. Shift in SE: |estimate minus pre-specified| / pre-specified SE."
+  footer <- "Counting rule: rows reproducing the pre-specified analysis and duplicate specifications are not counted; tipping-point grids are searches; diagnostic refits (Counted = no) are fitted and shown but do not enter the verdict. Shift in SE: |estimate minus pre-specified| / pre-specified SE."
   paths <- character()
   if ("csv" %in% formats) {
     for (nm in c("summary", "crossings", "census", if (!is.null(t3)) "fragility")) {

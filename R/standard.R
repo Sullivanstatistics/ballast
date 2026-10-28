@@ -13,9 +13,11 @@
 #' 6. re-randomisation test: 2,000 permutations, within `strata` if given;
 #' 7. reference-based multiple imputation: MAR, J2R, CR, CIR, 25 imputations;
 #' 8. delta-adjusted multiple imputation over `deltas` if given;
-#' 9. estimator class: complete cases, GEE independence, ANCOVA, robust
-#'    ANCOVA, plus a random intercept for `site` and cLDA for `baseline` if
-#'    given;
+#' 9. estimator class: GEE independence, ANCOVA, robust ANCOVA, plus a
+#'    random intercept for `site` and cLDA for `baseline` if given; the
+#'    pre-specified MMRM on complete cases is also fitted, drawn and
+#'    tabulated, as a diagnostic that is not counted (it answers a different
+#'    question from the filed analysis, so it does not enter the verdict);
 #' 10. greedy deletion search for the loss of significance, up to 5 subjects;
 #' 11. intercurrent-event strategies if `ice` is given (treatment policy,
 #'     hypothetical, while on treatment).
@@ -43,7 +45,7 @@ standard_plan <- function(spec, site = NULL, strata = site, baseline = NULL, del
   check_spec(spec)
   loo <- list(list()); if (!is.null(site)) loo[[2]] <- list(by = site)
   est <- list(estimators = c("complete_cases", "gee_independence", "ancova", "robust_ancova", if (!is.null(site)) "random_intercept", if (!is.null(baseline)) "clda"),
-              random = site, baseline = baseline)
+              random = site, baseline = baseline, diagnostic = "complete_cases")
   est <- est[!vapply(est, is.null, TRUE)]
   plan <- stress_plan(spec, covariance = list(structures = c("us", "ar1h", "ar1", "cs", "csh", "toep", "toeph")), inference = list(),
                       covariates = list(), weights = TRUE, loo = loo, permute = c(list(n = n_perm), if (!is.null(strata)) list(strata = strata)),

@@ -1,3 +1,9 @@
+# ballast 0.7.3
+
+* `standard_plan()`: the complete-case refit of the estimator family is now a diagnostic. It is fitted, drawn on the swarm (as a hollow dot) and on the family plot (as a triangle), and listed in the census and the tables with `kind = "diagnostic"` and `counted = FALSE`; it does not enter the verdict, the crossing count, the outside-interval count or the reversal count. The plan text, `stress_sap()` and the installed SAP template say so. `stress_estimator()` gains `diagnostic`, the names of estimators to treat this way; called directly without it, it still counts every estimator, including complete cases.
+* `summary()` of a census gains a `counted` column and one line per diagnostic family, left out of the closing totals; `stress_verdict()` reports `n_diagnostic` and prints it; the family table of `stress_tables()` and `stress_report()` shows the counted status.
+* `plot_swarm()` lists every family name the package produces in its decision groups, so "Other family" can appear only for a user-defined family. A test runs the standard plan on `mmrm::fev_data` and checks the swarm legend and the diagnostic row.
+
 # ballast 0.7.2
 
 * `plot_swarm()`: the re-randomisation test row is coloured as a statistical decision; 0.7.1 placed it under "Other family". No computation changes.

@@ -60,9 +60,11 @@ sandwich with between-within df, jackknife sandwich;
 \item re-randomisation test: 2,000 permutations, within \code{strata} if given;
 \item reference-based multiple imputation: MAR, J2R, CR, CIR, 25 imputations;
 \item delta-adjusted multiple imputation over \code{deltas} if given;
-\item estimator class: complete cases, GEE independence, ANCOVA, robust
-ANCOVA, plus a random intercept for \code{site} and cLDA for \code{baseline} if
-given;
+\item estimator class: GEE independence, ANCOVA, robust ANCOVA, plus a
+random intercept for \code{site} and cLDA for \code{baseline} if given; the
+pre-specified MMRM on complete cases is also fitted, drawn and
+tabulated, as a diagnostic that is not counted (it answers a different
+question from the filed analysis, so it does not enter the verdict);
 \item greedy deletion search for the loss of significance, up to 5 subjects;
 \item intercurrent-event strategies if \code{ice} is given (treatment policy,
 hypothetical, while on treatment).

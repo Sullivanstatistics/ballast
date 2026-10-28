@@ -35,6 +35,11 @@
 #' @param baseline Name of the baseline column for `"clda"`; the response must
 #'   be change from that baseline.
 #' @param seed Seed for the robust regression's random initial estimate.
+#' @param diagnostic Names of estimators (from `estimators`) whose rows are
+#'   diagnostic: fitted, drawn and tabulated with `kind = "diagnostic"`, but
+#'   not counted by [stress_census()], so they do not enter the verdict or
+#'   its counts. `NULL` (the default) counts every estimator. The standard
+#'   plan ([standard_plan()]) makes the complete-case refit diagnostic.
 #' @return A `stress_rows` data frame, one row per estimator.
 #' @examples
 #' spec <- stress_spec(mmrm::fev_data, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO",
@@ -42,15 +47,19 @@
 #' stress_estimator(spec, c("complete_cases", "ancova"))
 #' @export
 stress_estimator <- function(spec, estimators = c("complete_cases", "gee_independence", "ancova", "robust_ancova", "random_intercept", "clda"),
-                             random = NULL, baseline = NULL, seed = 1, cores = 1L) {
+                             random = NULL, baseline = NULL, seed = 1, cores = 1L, diagnostic = NULL) {
   check_spec(spec); force_args()
   estimators <- match.arg(estimators, c("complete_cases", "gee_independence", "ancova", "robust_ancova", "random_intercept", "clda"), several.ok = TRUE)
+  if (!is.null(diagnostic)) diagnostic <- match.arg(diagnostic, c("complete_cases", "gee_independence", "ancova", "robust_ancova", "random_intercept", "clda"), several.ok = TRUE)
   if ("random_intercept" %in% estimators && is.null(random)) { estimators <- setdiff(estimators, "random_intercept"); message("random_intercept skipped: no `random` variable given") }
   if ("clda" %in% estimators && is.null(baseline)) { estimators <- setdiff(estimators, "clda"); message("clda skipped: no `baseline` variable given") }
   fam <- "estimator class"
-  bind_rows_(stress_map(estimators, function(e) switch(e,
-    complete_cases = est_complete(spec, fam), gee_independence = est_gee(spec, fam), ancova = est_ancova(spec, fam, robust = FALSE, seed = seed),
-    robust_ancova = est_ancova(spec, fam, robust = TRUE, seed = seed), random_intercept = est_random(spec, fam, random), clda = est_clda(spec, fam, baseline)), cores))
+  bind_rows_(stress_map(estimators, function(e) {
+    r <- switch(e,
+      complete_cases = est_complete(spec, fam), gee_independence = est_gee(spec, fam), ancova = est_ancova(spec, fam, robust = FALSE, seed = seed),
+      robust_ancova = est_ancova(spec, fam, robust = TRUE, seed = seed), random_intercept = est_random(spec, fam, random), clda = est_clda(spec, fam, baseline))
+    if (e %in% diagnostic) r$kind <- "diagnostic"   # fitted and shown, not counted
+    r }, cores))
 }
 
 # a finished row from an estimate, SE and df (NA df = normal theory)

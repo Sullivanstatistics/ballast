@@ -4,6 +4,8 @@
 #' estimate, filled by significance; the shaded band is the base confidence
 #' interval on the same axis and the vertical line is the base estimate.
 #' Deletions are drawn in a separate panel from alternative analyses.
+#' Diagnostic refits (`kind = "diagnostic"`), which are fitted but not
+#' counted, are drawn as triangles in the alternative-analyses panel.
 #'
 #' @param x A `stress_census`.
 #' @param ... Unused.
@@ -19,8 +21,9 @@
 plot.stress_census <- function(x, ...) {
   if (!requireNamespace("ggplot2", quietly = TRUE)) stop("ggplot2 is needed for plotting")
   b <- attr(x, "base")
-  d <- as.data.frame(x)[x$counted & !is.na(x$estimate), , drop = FALSE]
-  d$kind <- factor(d$kind, levels = c("alternative", "deletion"), labels = c("Alternative analyses", "Deletions"))
+  d <- as.data.frame(x)[(x$counted | (x$kind == "diagnostic" & x$converged)) & !is.na(x$estimate), , drop = FALSE]
+  d$shape <- ifelse(d$kind == "diagnostic", 24, 21)   # diagnostic refits: triangles, fitted but not counted
+  d$kind <- factor(ifelse(d$kind == "deletion", "deletion", "alternative"), levels = c("alternative", "deletion"), labels = c("Alternative analyses", "Deletions"))
   d$family <- factor(d$family, levels = rev(unique(d$family)))
   d$Significant <- ifelse(d$significant, "yes", "no")
   band <- data.frame(xmin = 100 * b$lcl / b$estimate, xmax = 100 * b$ucl / b$estimate)
@@ -29,7 +32,8 @@ plot.stress_census <- function(x, ...) {
                        inherit.aes = FALSE, fill = "grey85", alpha = 0.6) +
     ggplot2::geom_vline(xintercept = 100, colour = "grey30") +
     ggplot2::geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
-    ggplot2::geom_jitter(ggplot2::aes(fill = Significant), shape = 21, size = 2.2, height = 0.2, width = 0, alpha = 0.85) +
+    ggplot2::geom_jitter(ggplot2::aes(fill = Significant, shape = shape), size = 2.2, height = 0.2, width = 0, alpha = 0.85) +
+    ggplot2::scale_shape_identity() +
     ggplot2::scale_fill_manual(values = c(yes = "#1f5fa6", no = "#f2a541")) +
     ggplot2::facet_grid(rows = ggplot2::vars(kind), scales = "free_y", space = "free_y") +
     ggplot2::labs(x = "Estimate as % of the pre-specified estimate (band: its 95% CI)", y = NULL) +
@@ -37,4 +41,4 @@ plot.stress_census <- function(x, ...) {
     ggplot2::theme(legend.position = "bottom", panel.grid.minor = ggplot2::element_blank())
 }
 
-utils::globalVariables(c("pct_of_base", "family", "xmin", "xmax", "Significant", "kind"))
+utils::globalVariables(c("pct_of_base", "family", "xmin", "xmax", "Significant", "kind", "shape"))

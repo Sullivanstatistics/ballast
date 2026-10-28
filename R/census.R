@@ -5,8 +5,10 @@
 #' standard errors, whether the estimate lies inside the base confidence
 #' interval, keeps the base direction, is significant at `alpha`, and whether
 #' significance changed. Rows that reproduce the base (`is_base`), did not
-#' converge, are tipping-point searches, or duplicate an earlier row are not
-#' counted.
+#' converge, are tipping-point searches, are diagnostic refits (`kind =
+#' "diagnostic"`, such as the complete-case refit of the standard plan, which
+#' is fitted and shown but does not enter the verdict), or duplicate an
+#' earlier row are not counted.
 #'
 #' @param spec A [stress_spec()]; the base fit is `stress_fit(spec)`.
 #' @param ... `stress_rows` data frames from the family functions.
@@ -40,7 +42,7 @@ stress_census <- function(spec, ..., base = NULL) {
   # estimate, SE, df and observation count repeat an earlier counted row to 1e-9 are flagged duplicate and not counted
   key <- paste(signif(rows$estimate, 10), signif(rows$stderr, 10), signif(rows$df, 10), rows$n_obs, rows$kind)
   rows$duplicate <- !rows$is_base & rows$converged & duplicated(key)
-  rows$counted <- !rows$is_base & rows$converged & rows$kind != "search" & !rows$duplicate
+  rows$counted <- !rows$is_base & rows$converged & !rows$kind %in% c("search", "diagnostic") & !rows$duplicate
   structure(rows, class = c("stress_census", "data.frame"), base = b, alpha = alpha, treatment_levels = spec$treatment_levels, arms = c(spec$reference, spec$active), label = spec$label)
 }
 
@@ -51,21 +53,25 @@ stress_census <- function(spec, ..., base = NULL) {
 #' @return A data frame with one row per family, kind and role: counted analyses,
 #'   number significant, number that crossed `alpha`, number outside the base
 #'   confidence interval, number reversing direction, the range of percent of
-#'   base, and the largest shift in base standard errors. Closing rows total
-#'   the sensitivity analyses (same estimand) and all counted rows.
+#'   base, the largest shift in base standard errors, and `counted`. Diagnostic
+#'   refits (`kind = "diagnostic"`) get their own line with `counted = FALSE`
+#'   so a reader sees they were fitted; they are left out of the closing rows,
+#'   which total the sensitivity analyses (same estimand) and all counted rows.
 #' @export
 summary.stress_census <- function(object, ...) {
   x <- as.data.frame(object)[object$counted, , drop = FALSE]
-  one <- function(z, family, kind) data.frame(
+  dg <- as.data.frame(object)[object$kind == "diagnostic" & object$converged, , drop = FALSE]   # shown with its status, not totalled
+  one <- function(z, family, kind, counted = TRUE) data.frame(
     family = family, kind = kind, n = nrow(z), significant = sum(z$significant, na.rm = TRUE), crossed = sum(z$crossed, na.rm = TRUE),
     outside_ci = sum(!z$inside_ci, na.rm = TRUE), reversed = sum(!z$same_direction, na.rm = TRUE),
     pct_min = if (any(!is.na(z$pct_of_base))) min(z$pct_of_base, na.rm = TRUE) else NA_real_,
     pct_max = if (any(!is.na(z$pct_of_base))) max(z$pct_of_base, na.rm = TRUE) else NA_real_,
-    max_shift_se = if (any(!is.na(z$shift_se))) max(abs(z$shift_se), na.rm = TRUE) else NA_real_, stringsAsFactors = FALSE)
-  keys <- unique(x[, c("family", "kind", "role")])
+    max_shift_se = if (any(!is.na(z$shift_se))) max(abs(z$shift_se), na.rm = TRUE) else NA_real_, counted = counted, stringsAsFactors = FALSE)
+  xx <- rbind(x, dg)
+  keys <- unique(xx[, c("family", "kind", "role")])
   out <- do.call(rbind, lapply(seq_len(nrow(keys)), function(i) {
-    z <- x[x$family == keys$family[i] & x$kind == keys$kind[i] & x$role == keys$role[i], , drop = FALSE]
-    cbind(one(z, keys$family[i], keys$kind[i]), role = keys$role[i], stringsAsFactors = FALSE) }))
+    z <- xx[xx$family == keys$family[i] & xx$kind == keys$kind[i] & xx$role == keys$role[i], , drop = FALSE]
+    cbind(one(z, keys$family[i], keys$kind[i], counted = keys$kind[i] != "diagnostic"), role = keys$role[i], stringsAsFactors = FALSE) }))
   out <- rbind(out, cbind(one(x[x$role == "sensitivity", , drop = FALSE], "All sensitivity", "all"), role = "sensitivity", stringsAsFactors = FALSE),
                cbind(one(x, "All", "all"), role = "all", stringsAsFactors = FALSE))
   rownames(out) <- NULL
@@ -127,7 +133,7 @@ stress_verdict <- function(census, marginal_band = c(0.5, 2), rule = c("interval
   stability_sensitivity <- if (any(is_fragile(xs), na.rm = TRUE)) "fragile" else if (any(xs$crossed, na.rm = TRUE)) "sensitive" else "robust"
   marginal <- b$p >= alpha * marginal_band[1] & b$p <= alpha * marginal_band[2]
   structure(list(stability = stability, stability_sensitivity = stability_sensitivity, marginal = marginal, rule = rule, base = b, alpha = alpha,
-                 n_failed = sum(!census$converged), n_rows = nrow(census),
+                 n_failed = sum(!census$converged), n_rows = nrow(census), n_diagnostic = sum(census$kind == "diagnostic" & census$converged),
                  n_sensitivity = nrow(xs), n_supplementary = nrow(x) - nrow(xs),
                  n_alternatives = sum(x$kind == "alternative"), n_deletions = sum(x$kind == "deletion"),
                  n_significant = sum(x$significant, na.rm = TRUE), n_crossed = nrow(crossed_rows),
@@ -147,8 +153,9 @@ print.stress_verdict <- function(x, digits = 3, ...) {
   b <- x$base
   cat(sprintf("Base: estimate %s, 95%% CI %s to %s, p = %s (alpha %s)\n", format(b$estimate, digits = digits), format(b$lcl, digits = digits),
               format(b$ucl, digits = digits), format(b$p, digits = digits), format(x$alpha)))
-  cat(sprintf("Counted: %d alternative analyses, %d deletions; %d significant, %d crossed alpha%s\n", x$n_alternatives, x$n_deletions, x$n_significant, x$n_crossed,
-              if (isTRUE(x$n_failed > 0)) sprintf("; %d of %d refits did not converge and are not counted", x$n_failed, x$n_rows) else ""))
+  cat(sprintf("Counted: %d alternative analyses, %d deletions; %d significant, %d crossed alpha%s%s\n", x$n_alternatives, x$n_deletions, x$n_significant, x$n_crossed,
+              if (isTRUE(x$n_failed > 0)) sprintf("; %d of %d refits did not converge and are not counted", x$n_failed, x$n_rows) else "",
+              if (isTRUE(x$n_diagnostic > 0)) sprintf("; %d diagnostic refit%s fitted and shown, not counted", x$n_diagnostic, if (x$n_diagnostic == 1) "" else "s") else ""))
   cat(sprintf("Outside base CI: %d; direction reversed: %d; largest shift: %s base SE\n", x$n_outside_ci, x$n_reversed, format(x$max_shift_se, digits = digits)))
   rule <- if (is.null(x$rule)) "interval_or_direction" else x$rule
   cat(sprintf("Verdict (%s rule): %s over all counted rows; %s over the %d sensitivity analyses (same estimand; %d supplementary rows)%s\n", rule,

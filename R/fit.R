@@ -24,7 +24,8 @@ empty_row <- function(spec, label, family, kind, is_base, note, covariates, cova
 #'   fits the spec's own data.
 #' @param label,family,kind Labels for the output row. `kind` is one of
 #'   `"alternative"` (a counted alternative analysis), `"deletion"` (a
-#'   leave-one-out refit) or `"search"` (a point on a tipping-point grid).
+#'   leave-one-out refit), `"search"` (a point on a tipping-point grid) or
+#'   `"diagnostic"` (fitted and shown but not counted).
 #' @param is_base `TRUE` when the row reproduces the pre-specified analysis
 #'   exactly; such rows are not counted in a census.
 #' @param role `"sensitivity"` for an analysis that keeps the estimand and

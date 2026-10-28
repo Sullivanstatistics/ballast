@@ -75,6 +75,7 @@ plan_lines <- function(plan) {
     vapply(seq_along(f), function(i) {
       nm <- names(f)[i]; x <- f[[i]]
       if (nm == "loo" && length(x) && is.list(x[[1]])) sprintf("%d. %s: %s", i, desc[[nm]], paste(vapply(x, fmt, ""), collapse = " | "))
+      else if (nm == "estimator" && length(x$diagnostic)) sprintf("%d. %s: %s. The %s refit is fitted, drawn and tabulated as a diagnostic and is not counted.", i, desc[[nm]], fmt(x), paste(gsub("_", " ", x$diagnostic), collapse = " and "))
       else sprintf("%d. %s: %s", i, desc[[nm]], fmt(x)) }, ""))
 }
 
@@ -185,7 +186,8 @@ stress_report <- function(result, dir, name = "stress_report", width = 9, height
                                                       format(b$estimate, digits = 4), format(b$stderr, digits = 3), format(b$lcl, digits = 4), format(b$ucl, digits = 4), format(b$p, digits = 3), b$n_subj, b$n_obs), "",
              "## Verdict", "", sprintf("**%s** over all %d counted rows; **%s** over the %d sensitivity analyses (same estimand)%s.",
                                        toupper(v$stability), v$n_alternatives + v$n_deletions, toupper(v$stability_sensitivity), v$n_sensitivity, if (v$marginal) "; the pre-specified p-value is marginal" else ""),
-             sprintf("%d significant, %d crossed alpha, %d outside the pre-specified CI, %d reversed direction; largest shift %s pre-specified SEs.", v$n_significant, v$n_crossed, v$n_outside_ci, v$n_reversed, format(v$max_shift_se, digits = 3)), "",
+             sprintf("%d significant, %d crossed alpha, %d outside the pre-specified CI, %d reversed direction; largest shift %s pre-specified SEs.%s", v$n_significant, v$n_crossed, v$n_outside_ci, v$n_reversed, format(v$max_shift_se, digits = 3),
+                     if (isTRUE(v$n_diagnostic > 0)) sprintf(" %d diagnostic refit%s fitted and shown (counted = FALSE in the family table) and not counted.", v$n_diagnostic, if (v$n_diagnostic == 1) " was" else "s were") else ""), "",
              if (length(fr)) c(vapply(fr, function(a) sprintf("Smallest subject set that changes %s: %s (%s).", a$target, if (a$reached) sprintf("%d subject%s", a$k, if (a$k == 1) "" else "s") else sprintf("not found within %d removals", length(a$subjects)), paste(a$subjects, collapse = ", ")), ""), ""),
              "## Summary by family", "", md_table(as.data.frame(s)), "",
              if (length(figs)) c("## Figures", "", unlist(lapply(names(figs), function(k) c(sprintf("![%s](%s)", k, figs[[k]]), "")))),

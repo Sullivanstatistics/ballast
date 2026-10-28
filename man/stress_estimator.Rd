@@ -11,7 +11,8 @@ stress_estimator(
   random = NULL,
   baseline = NULL,
   seed = 1,
-  cores = 1L
+  cores = 1L,
+  diagnostic = NULL
 )
 }
 \arguments{
@@ -28,6 +29,12 @@ be change from that baseline.}
 \item{seed}{Seed for the robust regression's random initial estimate.}
 
 \item{cores}{Number of worker processes; \code{1} fits sequentially.}
+
+\item{diagnostic}{Names of estimators (from \code{estimators}) whose rows are
+diagnostic: fitted, drawn and tabulated with \code{kind = "diagnostic"}, but
+not counted by \code{\link[=stress_census]{stress_census()}}, so they do not enter the verdict or
+its counts. \code{NULL} (the default) counts every estimator. The standard
+plan (\code{\link[=standard_plan]{standard_plan()}}) makes the complete-case refit diagnostic.}
 }
 \value{
 A \code{stress_rows} data frame, one row per estimator.
