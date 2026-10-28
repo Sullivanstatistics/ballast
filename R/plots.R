@@ -55,7 +55,7 @@ plot_pcurve <- function(rows, alpha = NULL, xlab = "Perturbation", ylab = "p-val
 #' with nothing removed and the dashed line is alpha. Counts of deletions
 #' below alpha label each strip.
 #'
-#' @param x A `stress_census`, or a named list of them (one strip each).
+#' @param x A `stress_census`, a `stress_result`, or a list of them (one strip each).
 #' @param alpha Significance level; defaults to the census's own.
 #' @param log_p Draw the p-value axis on a log scale (spreads out the small
 #'   p-values; harder to read for most audiences).
@@ -72,8 +72,7 @@ plot_pcurve <- function(rows, alpha = NULL, xlab = "Perturbation", ylab = "p-val
 #' @export
 plot_pstrip <- function(x, alpha = NULL, log_p = FALSE, xmax = NULL, label_family = TRUE) {
   need_ggplot()
-  cens <- if (inherits(x, "stress_census")) list(x) else x
-  if (is.null(names(cens))) names(cens) <- vapply(seq_along(cens), function(i) { l <- attr(cens[[i]], "label"); if (is.null(l)) paste("Row", i) else l }, "")
+  cens <- as_census_list(x)
   d <- do.call(rbind, lapply(names(cens), function(nm) {
     ce <- cens[[nm]]; z <- as.data.frame(ce)[ce$counted & ce$kind == "deletion" & !is.na(ce$p), , drop = FALSE]
     if (!nrow(z)) return(NULL)
@@ -109,7 +108,7 @@ utils::globalVariables(c("param", "p", "crossing", "x", "y", "yend", "id", "sig"
 #'
 #' The refits are not independent, so the curve is a description, not a test.
 #'
-#' @param x A `stress_census`, or a named list of them.
+#' @param x A `stress_census`, a `stress_result`, the list from [run_plans()], or a list of censuses or results (one curve each).
 #' @param alpha Significance level; defaults to the census's own.
 #' @param pooled Draw the pooled curve over all censuses.
 #' @return A `ggplot` object.
@@ -122,8 +121,7 @@ utils::globalVariables(c("param", "p", "crossing", "x", "y", "yend", "id", "sig"
 #' @export
 plot_pcdf <- function(x, alpha = NULL, pooled = TRUE) {
   need_ggplot()
-  cens <- if (inherits(x, "stress_census")) list(x) else x
-  if (is.null(names(cens))) names(cens) <- vapply(seq_along(cens), function(i) { l <- attr(cens[[i]], "label"); if (is.null(l)) paste("Row", i) else l }, "")
+  cens <- as_census_list(x)
   d <- do.call(rbind, lapply(names(cens), function(nm) { ce <- cens[[nm]]; z <- as.data.frame(ce)[ce$counted & !is.na(ce$p), , drop = FALSE]
     data.frame(row = nm, p = z$p, a = attr(ce, "alpha"), stringsAsFactors = FALSE) }))
   if (is.null(alpha)) alpha <- d$a[1]

@@ -32,6 +32,7 @@ summary(cen)          # per-family table: counted, significant, crossed, outside
 stress_verdict(cen)   # robust / sensitive / fragile, with a marginal flag
 plot(cen)             # one row per family on the percent-of-base axis
 plot_swarm(cen)       # bubble swarm of distinct estimates against the no-difference line, deletions beneath
+plot_forest(cen)      # forest of the filed analysis and the supplementary rows (alternative data sets, populations)
 plot_pstrip(cen)      # leave-one-out p-values on a log axis, the base as a diamond
 tp <- stress_tipping(spec, deltas = seq(0, -10, -2))
 tipping_point(tp)     # interpolated crossing of alpha
@@ -41,6 +42,7 @@ plot_pcurve(tp)       # p-value curve over the shift, anchor and crossing marked
 # the recommended set, pre-specified, run and reported in one go
 plan <- standard_plan(spec, site = "SITE", strata = "SITE", baseline = "BASE", deltas = seq(0, -10, -2))
 res <- run_plan(plan, cores = 6)
+plot_swarm(list("FEV1 at visit 4" = res))   # several endpoint rows: one panel each, every refit against the filed interval
 stress_report(res, dir = "stress")    # Markdown + figures
 stress_tables(res, dir = "stress")    # CSV, Word, RTF
 stress_html(res, "stress/report.html") # interactive

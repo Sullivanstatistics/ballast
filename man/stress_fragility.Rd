@@ -6,7 +6,7 @@
 \usage{
 stress_fragility(
   spec,
-  target = c("significance", "ci", "mutual", "direction"),
+  target = c("significance", "ci", "direction"),
   max_k = 5,
   candidates = NULL,
   cores = 1L,
@@ -18,14 +18,8 @@ stress_fragility(
 
 \item{target}{What has to change: \code{"significance"} (the p-value crosses
 alpha in either direction, depending on the base result), \code{"ci"} (the
-estimate leaves the base confidence interval), \code{"mutual"} (the two
-results become incompatible: the refit estimate leaves the base interval
-or the base estimate leaves the refit interval) or \code{"direction"} (the
-estimate changes sign). \code{"mutual"} is the data axis of the
-margin-of-error definition: an outlying participant widens the base
-interval it would otherwise be judged by, so removing it can leave the
-base estimate outside the narrower refit interval without the refit
-estimate leaving the base one.}
+estimate leaves the base confidence interval) or \code{"direction"} (the
+estimate changes sign).}
 
 \item{max_k}{Maximum number of subjects to remove.}
 
@@ -57,9 +51,7 @@ refitted, and the subject whose removal moves the result furthest
 towards the target is dropped for good. About \code{k * n} refits.
 \item \code{method = "ranked"}: subjects are ranked once, by how far removing each
 alone moves the result towards the target (the leave-one-out refits),
-and the top 1, 2, ..., k are removed together, one refit per step. About
-\code{n + k} refits, so it is practical for large trials. It is the quantity
-that \code{\link[=deletion_benchmark]{deletion_benchmark()}} approximates: removing the k largest
+and the top 1, 2, ..., k are removed together, one refit per step. About refits, so it is practical for large trials.
 influences at once.
 }
 }
@@ -67,7 +59,7 @@ influences at once.
 small <- mmrm::fev_data[mmrm::fev_data$USUBJID \%in\% paste0("PT", 1:60), ]
 spec <- stress_spec(small, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL,
                     covariance = "cs", method = "Satterthwaite", vcov = "Asymptotic")
-fr <- stress_fragility(spec, max_k = 2)
+fr <- stress_fragility(spec, max_k = 1)
 attr(fr, "fragility")
-attr(stress_fragility(spec, "ci", max_k = 10, method = "ranked"), "fragility")$k
+\donttest{attr(stress_fragility(spec, "ci", max_k = 10, method = "ranked"), "fragility")$k}
 }

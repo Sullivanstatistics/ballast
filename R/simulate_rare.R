@@ -67,8 +67,7 @@
 #' head(d)
 #' spec <- stress_spec(d, "y", "id", "visit", "arm", "REF", covariates = ~ base + fast)
 #' stress_fit(spec)[, c("estimate", "stderr", "p")]
-#' @seealso [simulate_trial()]; [expected_crossing()] for the analytic
-#'   crossing rates the simulations check.
+#' @seealso [simulate_trial()] for the simpler generator.
 #' @export
 simulate_rare_trial <- function(n_per_arm = 25, delta = 0, n_visits = 4, sigma = 10, rho = 0.6, dropout = 0.03, baseline_beta = 0.5,
                                 population = c("homogeneous", "mixture", "heavy"), fast_frac = 0.35, fast_decline = 8, slope_sd = 4,

@@ -7,7 +7,7 @@
 plot_pcdf(x, alpha = NULL, pooled = TRUE)
 }
 \arguments{
-\item{x}{A \code{stress_census}, or a named list of them.}
+\item{x}{A \code{stress_census}, a \code{stress_result}, the list from \code{\link[=run_plans]{run_plans()}}, or a list of censuses or results (one curve each).}
 
 \item{alpha}{Significance level; defaults to the census's own.}
 

@@ -121,6 +121,5 @@ spec <- stress_spec(d, "y", "id", "visit", "arm", "REF", covariates = ~ base + f
 stress_fit(spec)[, c("estimate", "stderr", "p")]
 }
 \seealso{
-\code{\link[=simulate_trial]{simulate_trial()}}; \code{\link[=expected_crossing]{expected_crossing()}} for the analytic
-crossing rates the simulations check.
+\code{\link[=simulate_trial]{simulate_trial()}} for the simpler generator.
 }

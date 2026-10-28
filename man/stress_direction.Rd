@@ -4,18 +4,25 @@
 \alias{stress_direction}
 \title{Direction stability of a result that misses significance}
 \usage{
-stress_direction(spec, census = NULL, max_k = NULL, cores = 1L)
+stress_direction(
+  spec,
+  census = NULL,
+  max_k = 10L,
+  method = c("ranked", "greedy"),
+  cores = 1L
+)
 }
 \arguments{
 \item{spec}{A \code{\link[=stress_spec]{stress_spec()}}.}
 
 \item{census}{Optional \code{stress_census} over the pre-specified re-analyses.
-If given, its counted rows supply the reversal and margin-of-error
-counts; without it only the deletion count is computed.}
+If given, its counted rows supply the reversal and interval counts;
+without it only the deletion count is computed.}
 
-\item{max_k}{Most participants to remove in the ranked deletion search
-(\code{\link[=stress_fragility]{stress_fragility()}} with \code{target = "direction"}, \code{method = "ranked"}).
-The default is the reversal benchmark plus five, and at least ten.}
+\item{max_k}{Most participants to remove in the deletion search
+(\code{\link[=stress_fragility]{stress_fragility()}} with \code{target = "direction"}). The default is 10.}
+
+\item{method}{\code{"ranked"} (default) or \code{"greedy"}, as in \code{\link[=stress_fragility]{stress_fragility()}}.}
 
 \item{cores}{Passed to \code{\link[=stress_fragility]{stress_fragility()}}.}
 }
@@ -24,30 +31,16 @@ A list of class \code{stress_direction}: \code{base} (the pre-specified fit),
 \code{z}, \code{n}, \code{significant}, \code{alpha}; from the census \code{n_counted},
 \code{n_reversed}, \code{n_outside_ci} and \code{reversed_rows} (\code{NA} and \code{NULL} without
 one); from the search \code{k_rev} (participants removed to reverse, \code{NA} if
-not reached within \code{max_k}), \code{k_rev_reached}, \code{subjects}, \code{share_of_n},
-the \code{benchmark_rev} of \code{\link[=deletion_benchmark]{deletion_benchmark()}} and their ratio
-\code{removal_ratio_rev}; and \code{search}, the rows of the search.
+not reached within \code{max_k}), \code{k_rev_reached}, \code{subjects}, \code{share_of_n}
+and \code{search}, the rows of the search.
 }
 \description{
 A small trial can carry a real effect and still miss significance for want
-of power, as rare-disease trials often do. For such a result the useful
-questions are not "did it pass?" but how stable what was seen is: whether
-any pre-specified re-analysis reverses the direction of the estimate,
-whether any moves it outside its margin of error, and how many participants
-must be removed before the direction reverses, against the number a
-well-behaved trial of the same size and z would need (\code{\link[=deletion_benchmark]{deletion_benchmark()}}).
-}
-\details{
-The report describes the strength and stability of the evidence. It cannot
-say whether the effect is real: at the same z a chance finding and a real
-effect behave identically under every re-analysis that keeps the estimand
-(the methods paper's result T7), so reversal under re-analysis is a function
-of how far the estimate sits from zero in standard errors, whatever the
-truth. In the paper's simulations no pre-specified change reversed any
-result with p between 0.05 and 0.10, real effect or chance alike, and the
-median number of participants removed to reverse one was 8 against a
-benchmark of 10. The report is therefore always read beside the p-value,
-and its print method says so.
+of power. For such a result the stress test reports how stable what was
+seen is: how many pre-specified re-analyses reverse the direction of the
+estimate, and which; how many move it outside the filed confidence
+interval; and how many participants the greedy deletion search removes
+before the direction reverses.
 }
 \examples{
 small <- mmrm::fev_data[mmrm::fev_data$USUBJID \%in\% paste0("PT", 1:60), ]
@@ -57,7 +50,6 @@ cen <- stress_census(spec, stress_covariance(spec, c("cs", "ar1h")), stress_cova
 stress_direction(spec, cen, max_k = 6)
 }
 \seealso{
-\code{\link[=stress_verdict]{stress_verdict()}} for the margin-of-error verdict,
-\code{\link[=stress_fragility]{stress_fragility()}} and \code{\link[=deletion_benchmark]{deletion_benchmark()}} for the deletion count and
-its benchmark.
+\code{\link[=stress_verdict]{stress_verdict()}} for the summary label, \code{\link[=stress_fragility]{stress_fragility()}} for
+the deletion searches.
 }

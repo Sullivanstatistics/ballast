@@ -7,7 +7,7 @@
 plot_pstrip(x, alpha = NULL, log_p = FALSE, xmax = NULL, label_family = TRUE)
 }
 \arguments{
-\item{x}{A \code{stress_census}, or a named list of them (one strip each).}
+\item{x}{A \code{stress_census}, a \code{stress_result}, or a list of them (one strip each).}
 
 \item{alpha}{Significance level; defaults to the census's own.}
 

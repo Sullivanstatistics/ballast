@@ -34,9 +34,8 @@ with \code{j} (\code{NA} if not reached within \code{max_j}), \code{reached}, \c
 \code{assumption_dependent} and the base estimate and interval.
 }
 \description{
-The analytic axis of the margin-of-error definition: a greedy search for
-the fewest analytic changes, made together, that move the estimate outside
-the pre-specified 95\% confidence interval. At each step every change from
+A greedy search for the fewest analytic changes, made together, that move
+the estimate outside the pre-specified 95\% confidence interval. At each step every change from
 a family not yet used is tried on top of the changes already made, and the
 one that moves the estimate furthest in the search direction is kept. The
 search stops when the estimate leaves the interval or \code{max_j} changes have
@@ -46,9 +45,9 @@ with \code{direction = "both"}, also away from zero; \code{j} is the smaller cou
 \details{
 Changes combine: a reference-based or delta-adjusted imputation chosen at
 one step is kept, and later changes are evaluated under it. A path that
-leaves the interval through either is flagged \code{assumption_dependent}:
-the conclusion then rests on an untestable assumption about dropouts
-rather than on the observed data.
+leaves the interval through either is flagged \code{assumption_dependent}, so that
+the reader can see the path ran through a missing-data assumption rather
+than through the observed data alone.
 
 Because the search is greedy, \code{j} is an upper bound on the smallest
 combination; to first order the shifts of different families add, so the
@@ -70,5 +69,5 @@ attr(p, "path")$j
 }
 }
 \seealso{
-\code{\link[=deletion_benchmark]{deletion_benchmark()}} for the data axis.
+\code{\link[=stress_fragility]{stress_fragility()}} for the deletion searches.
 }

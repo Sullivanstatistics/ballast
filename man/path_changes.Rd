@@ -52,8 +52,7 @@ Lists the analytic changes \code{\link[=stress_path]{stress_path()}} may combine
 to a family (covariance structure, inference, covariate set, LS-mean
 weighting, reference-based imputation, analysis data set), and a path
 changes each family at most once. Participant and site deletions are not
-analytic changes; they are the data axis of the definition and are measured
-separately by \code{\link[=stress_fragility]{stress_fragility()}} and \code{\link[=deletion_benchmark]{deletion_benchmark()}}.
+analytic changes; they are measured separately by \code{\link[=stress_fragility]{stress_fragility()}}.
 }
 \examples{
 spec <- stress_spec(mmrm::fev_data, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO",

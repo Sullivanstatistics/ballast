@@ -4,8 +4,7 @@
 #' to a family (covariance structure, inference, covariate set, LS-mean
 #' weighting, reference-based imputation, analysis data set), and a path
 #' changes each family at most once. Participant and site deletions are not
-#' analytic changes; they are the data axis of the definition and are measured
-#' separately by [stress_fragility()] and [deletion_benchmark()].
+#' analytic changes; they are measured separately by [stress_fragility()].
 #'
 #' @param spec A [stress_spec()].
 #' @param covariance Alternative covariance structures.
@@ -61,9 +60,8 @@ path_changes <- function(spec, covariance = c("us", "ar1h", "cs"),
 
 #' Smallest combination of analytic changes that leaves the confidence interval
 #'
-#' The analytic axis of the margin-of-error definition: a greedy search for
-#' the fewest analytic changes, made together, that move the estimate outside
-#' the pre-specified 95% confidence interval. At each step every change from
+#' A greedy search for the fewest analytic changes, made together, that move
+#' the estimate outside the pre-specified 95% confidence interval. At each step every change from
 #' a family not yet used is tried on top of the changes already made, and the
 #' one that moves the estimate furthest in the search direction is kept. The
 #' search stops when the estimate leaves the interval or `max_j` changes have
@@ -72,9 +70,9 @@ path_changes <- function(spec, covariance = c("us", "ar1h", "cs"),
 #'
 #' Changes combine: a reference-based or delta-adjusted imputation chosen at
 #' one step is kept, and later changes are evaluated under it. A path that
-#' leaves the interval through either is flagged `assumption_dependent`:
-#' the conclusion then rests on an untestable assumption about dropouts
-#' rather than on the observed data.
+#' leaves the interval through either is flagged `assumption_dependent`, so that
+#' the reader can see the path ran through a missing-data assumption rather
+#' than through the observed data alone.
 #'
 #' Because the search is greedy, `j` is an upper bound on the smallest
 #' combination; to first order the shifts of different families add, so the
@@ -105,7 +103,7 @@ path_changes <- function(spec, covariance = c("us", "ar1h", "cs"),
 #' p <- stress_path(spec, path_changes(spec, reference = "J2R", m = 5), max_j = 3)
 #' attr(p, "path")$j
 #' }
-#' @seealso [deletion_benchmark()] for the data axis.
+#' @seealso [stress_fragility()] for the deletion searches.
 #' @export
 stress_path <- function(spec, changes = path_changes(spec), max_j = 3, direction = c("both", "toward_zero", "away_from_zero"),
                         seed = 1, cores = 1L) {
@@ -193,50 +191,3 @@ data_key <- function(sp) {
 }
 imputation_key <- function(sp) paste(data_key(sp), paste(sp$cov_vars, collapse = ","), sp$active)
 spec_key <- function(sp) paste(imputation_key(sp), sp$covariance, sp$weights, sp$method, sp$vcov, paste(sp$covariates, collapse = "+"), sp$contrast_visit, sp$alpha)
-
-#' Deletions a well-behaved trial would need to change its conclusion
-#'
-#' The data axis of the margin-of-error definition compares the number of
-#' participants whose removal moves the estimate outside the pre-specified
-#' interval (`k_ci`, from `stress_fragility(spec, "ci", method = "ranked")`, or the mutual count from
-#' `target = "mutual"`) with the number a
-#' trial of the same size with normally distributed influences would need.
-#'
-#' Removing participant *i* moves the estimate by about \eqn{-\psi_i / n}, which
-#' is \eqn{\psi_i / (\sigma_\psi \sqrt{n})} pre-specified standard errors.
-#' Removing the k most influential moves it by about \eqn{S_k / \sqrt{n}}, where
-#' for standard-normal influences \eqn{S_k = n \phi(\Phi^{-1}(1 - k/n))} is the
-#' expected sum of the k largest. The benchmark for leaving the interval is the
-#' smallest k with \eqn{S_k \ge c \sqrt{n}}; it does not depend on the effect.
-#' The benchmarks for losing significance (\eqn{(|z| - c)\sqrt{n}}) and for
-#' reversing the direction (\eqn{|z|\sqrt{n}}) do, which is why a deletion
-#' count aimed at significance largely restates the p-value. The
-#' approximation needs k small relative to n and is least reliable below
-#' about 30 participants; below about 24 no k reaches the interval benchmark.
-#'
-#' @param n Number of participants in the analysis.
-#' @param z Pre-specified z-statistic (estimate / SE); needed for the
-#'   significance and reversal benchmarks.
-#' @param level Confidence level of the pre-specified interval.
-#' @return `deletion_benchmark()`: a named integer vector with `ci` and, if
-#'   `z` is given, `significance` (`NA` when the result is not significant)
-#'   and `reversal`. `removal_ratio()`: `k_ci` divided by the `ci` benchmark.
-#' @examples
-#' deletion_benchmark(105, z = 2.18)
-#' removal_ratio(9, 105)
-#' sapply(c(30, 50, 100, 200, 500), function(n) deletion_benchmark(n)[["ci"]])
-#' @export
-deletion_benchmark <- function(n, z = NULL, level = 0.95) {
-  if (length(n) != 1L || n < 4) stop("n must be a single number of at least 4")
-  crit <- stats::qnorm(1 - (1 - level) / 2); k <- seq_len(n - 1L)
-  s_k <- n * stats::dnorm(stats::qnorm(1 - k / n))
-  first <- function(target) { hit <- which(s_k >= target); if (length(hit)) as.integer(k[hit[1]]) else NA_integer_ }
-  out <- c(ci = first(crit * sqrt(n)))
-  if (!is.null(z)) out <- c(out, significance = if (abs(z) > crit) first((abs(z) - crit) * sqrt(n)) else NA_integer_, reversal = first(abs(z) * sqrt(n)))
-  out
-}
-
-#' @rdname deletion_benchmark
-#' @param k_ci Observed deletions to leave the interval (`NA` if not reached).
-#' @export
-removal_ratio <- function(k_ci, n, level = 0.95) unname(k_ci / deletion_benchmark(n, level = level)[["ci"]])

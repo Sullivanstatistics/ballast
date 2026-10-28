@@ -44,3 +44,39 @@ test_that("plot_pcdf draws the p-value distribution for one or several censuses"
   cen <- stress_census(cs_small, stress_covariance(cs_small, c("cs", "ar1h")), stress_loo(cs_small, by = "RACE"))
   expect_s3_class(plot_pcdf(cen), "ggplot"); expect_s3_class(plot_pcdf(list(A = cen, B = cen)), "ggplot")
 })
+
+test_that("plot_swarm draws the multi-row dots form from censuses and results, with a caption and a reference line", {
+  skip_if_not_installed("ggplot2")
+  cen <- stress_census(cs_small, stress_covariance(cs_small, c("us", "cs", "ar1h")), stress_covariates(cs_small), stress_loo(cs_small, by = "RACE"))
+  res <- structure(list(census = cen, plan = list(title = "Small plan")), class = "stress_result")
+  g <- plot_swarm(list("Row A" = cen, "Row B" = res), reference = 1, reference_label = "1 unit")
+  expect_s3_class(g, "ggplot")
+  cap <- attr(g, "caption"); expect_length(cap, 2); expect_match(cap[1], "^Row A: [0-9]+ alternative analyses drawn, [0-9]+ deletions drawn, 0 counted rows without an estimate")
+  expect_s3_class(plot_swarm(res), "ggplot")                       # one result: dots (not a census, so not the bubble default)
+  expect_s3_class(plot_swarm(cen, style = "dots"), "ggplot")
+  expect_s3_class(plot_swarm(list(A = cen, B = cen), style = "bubbles", scale = "estimate"), "ggplot")   # the old list form is still reachable
+  expect_equal(unname(ballast:::as_census_list(res)) |> length(), 1L); expect_equal(names(ballast:::as_census_list(res)), "Small plan")
+  expect_error(plot_swarm(list(1, 2)), "stress_census")
+  grp <- ballast:::decision_group(c("covariance structure", "data handling", "leave-one-out: subject", "my family"), c("alternative", "alternative", "deletion", "alternative"))
+  expect_equal(as.character(grp), c("Statistical decision varied", "Data-handling decision varied", "One unit removed", "Other family"))
+})
+
+test_that("plot_forest draws the filed row and the supplementary rows, side by side for several objects", {
+  skip_if_not_installed("ggplot2")
+  d <- cs_small$data
+  cen <- stress_census(cs_small, stress_covariance(cs_small, "ar1h"),
+                       stress_data(cs_small, list("Female only" = d[d$SEX == "Female", ], "Black and White only" = d[d$RACE != "Asian", ])))
+  g <- plot_forest(cen); expect_s3_class(g, "ggplot")
+  expect_equal(levels(g$data$label), rev(c("As filed", "Female only", "Black and White only")))
+  g2 <- plot_forest("Trial alone" = cen, "Pooled" = cen, rows = "Black and White only"); expect_s3_class(g2, "ggplot")
+  expect_equal(nlevels(g2$data$object), 2L); expect_equal(nrow(g2$data), 4L)
+  expect_error(plot_forest(stress_census(cs_small, stress_covariance(cs_small, "ar1h"))), "no supplementary rows")
+})
+
+test_that("plot_pcdf and plot_pstrip accept results as well as censuses", {
+  skip_if_not_installed("ggplot2")
+  cen <- stress_census(cs_small, stress_covariance(cs_small, c("cs", "ar1h")), stress_loo(cs_small, by = "RACE"))
+  res <- structure(list(census = cen, plan = list(title = "Small plan")), class = "stress_result")
+  expect_s3_class(plot_pcdf(res), "ggplot"); expect_s3_class(plot_pcdf(list(cen, res)), "ggplot")
+  expect_s3_class(plot_pstrip(res), "ggplot")
+})

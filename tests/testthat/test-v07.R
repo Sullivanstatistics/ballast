@@ -54,16 +54,6 @@ test_that("simulate_rare_trial is reproducible, restores the RNG and plants its 
   expect_error(simulate_rare_trial(10, fast_frac = 0.7, fast_effect = 1.6), "below 1")
 })
 
-test_that("expected_crossing and expected_exit behave as the analytic section says", {
-  expect_equal(expected_crossing(0.05, tau = 0.3), 0.5, tolerance = 1e-3)
-  x <- expected_crossing(c(1e-4, 0.001, 0.01, 0.03), tau = 0.3)
-  expect_true(all(diff(x) > 0)); expect_lt(x[1], 1e-6)
-  expect_gt(expected_crossing(0.029, 0.3), 0.15); expect_lt(expected_crossing(0.029, 0.3), 0.35)
-  expect_lt(expected_crossing(0.9, 0.3), 1e-6)
-  expect_lt(expected_exit(0.3), 1e-9); expect_gt(expected_exit(1), 0.04)
-  expect_error(expected_crossing(0, 0.3)); expect_error(expected_exit(-1))
-})
-
 test_that("path_changes lists one entry per alternative and skips the pre-specified choice", {
   ch <- path_changes(spec_small, reference = character())
   fam <- vapply(ch, `[[`, "", "family"); lab <- vapply(ch, `[[`, "", "label")
@@ -89,16 +79,6 @@ test_that("stress_path changes each family at most once and reports j", {
   expect_equal(attr(p2, "path")$j, 1L); expect_equal(attr(p2, "path")$changes, "shifted")
 })
 
-test_that("deletion_benchmark gives the T5 counts", {
-  b <- deletion_benchmark(105, z = 2.18)
-  expect_equal(unname(b), c(12L, 1L, 14L)); expect_named(b, c("ci", "significance", "reversal"))
-  expect_equal(removal_ratio(9, 105), 0.75)
-  expect_true(is.na(deletion_benchmark(105, z = 1.5)[["significance"]]))
-  expect_true(is.na(deletion_benchmark(20)[["ci"]]))
-  expect_true(all(diff(sapply(c(30, 100, 500), function(n) deletion_benchmark(n)[["ci"]])) >= 0))
-  expect_error(deletion_benchmark(c(10, 20)))
-})
-
 test_that("ranked and greedy deletion searches start from the same participant", {
   d <- simulate_rare_trial(20, delta = 0, defect = "outlier", outlier_size = 6, dropout = 0.001, seed = 8)
   sp <- stress_spec(d, "y", "id", "visit", "arm", "REF", covariates = ~ base, method = "Satterthwaite", vcov = "Asymptotic")
@@ -109,22 +89,6 @@ test_that("ranked and greedy deletion searches start from the same participant",
   expect_equal(attr(r, "fragility")$subjects[1], attr(g, "fragility")$subjects[1])
   expect_equal(r$estimate[1], g$estimate[1])
   expect_true(all(r$family == "ranked deletion search")); expect_true(all(r$kind == "search"))
-})
-
-test_that("ranked removal on clean data needs about the benchmark number of deletions", {
-  d <- simulate_rare_trial(100, delta = 4, dropout = 0, site_sd = 0, seed = 21)
-  sp <- stress_spec(d, "y", "id", "visit", "arm", "REF", covariates = ~ base, method = "Satterthwaite", vcov = "Asymptotic")
-  k <- attr(stress_fragility(sp, "ci", max_k = 40, method = "ranked"), "fragility")$k
-  expect_true(!is.na(k)); expect_gt(removal_ratio(k, 200), 0.5); expect_lt(removal_ratio(k, 200), 1.5)
-})
-
-test_that("the mutual target catches an outlier that the CI target cannot", {
-  d <- simulate_rare_trial(50, delta = 0, defect = "outlier", outlier_size = 30, dropout = 0.001, seed = 8)
-  sp <- stress_spec(d, "y", "id", "visit", "arm", "REF", covariates = ~ base, method = "Satterthwaite", vcov = "Asymptotic")
-  ci <- attr(stress_fragility(sp, "ci", max_k = 1, method = "ranked"), "fragility")
-  mu <- attr(stress_fragility(sp, "mutual", max_k = 1, method = "ranked"), "fragility")
-  expect_false(ci$reached)                    # one gross error widens the base CI, so its removal stays inside it (T4b)
-  expect_true(mu$reached); expect_equal(mu$k, 1L)
 })
 
 test_that("a seed gives the same trial whatever the caller's generator kind, and the kind is restored", {
@@ -193,7 +157,8 @@ test_that("the cached path search gives the standalone fits, and the direction c
   expect_equal(a$j, best$j); expect_equal(a$changes, best$changes); expect_equal(a$direction, best$direction)
 })
 
-test_that("stress_direction reports reversal under re-analysis and the deletions to reverse, against the benchmark", {
+
+test_that("stress_direction reports reversals under re-analysis and the deletions to reverse", {
   d <- simulate_rare_trial(15, delta = 5, population = "mixture", seed = 11)
   sp <- stress_spec(d, "y", "id", "visit", "arm", "REF", covariates = ~ base + fast, method = "Satterthwaite", vcov = "Asymptotic")
   cen <- stress_census(sp, stress_covariance(sp, c("us", "cs")), stress_covariates(sp))
@@ -203,19 +168,20 @@ test_that("stress_direction reports reversal under re-analysis and the deletions
   expect_equal(dr$z, dr$base$estimate / dr$base$stderr)
   expect_equal(dr$n_counted, sum(cen$counted & !is.na(cen$estimate)))
   expect_equal(dr$n_reversed, sum(!cen$same_direction[cen$counted & !is.na(cen$estimate)]))
-  expect_equal(dr$benchmark_rev, unname(deletion_benchmark(30, z = dr$z)[["reversal"]]))
+  expect_equal(dr$n_outside_ci, sum(!cen$inside_ci[cen$counted & !is.na(cen$estimate)]))
   if (dr$k_rev_reached) {
     expect_equal(dr$k_rev, attr(dr$search, "fragility")$k)
     expect_equal(dr$share_of_n, dr$k_rev / 30)
-    expect_equal(dr$removal_ratio_rev, dr$k_rev / dr$benchmark_rev)
   } else {
     expect_true(is.na(dr$k_rev)); expect_true(is.na(dr$share_of_n))
   }
-  expect_output(print(dr), "Direction stability")
-  expect_output(print(dr), "does not show that the effect is real")
+  out <- paste(capture.output(print(dr)), collapse = "\n")
+  expect_match(out, "Direction stability")
+  expect_false(grepl("benchmark|well-behaved|chance finding|ratio", out))
   # without a census only the search is reported
   dr2 <- stress_direction(sp, max_k = 3)
   expect_true(is.na(dr2$n_counted)); expect_null(dr2$reversed_rows)
   expect_output(print(dr2), "Participants removed to reverse")
   expect_error(stress_direction(sp, census = cen$estimate), "stress_census")
+  expect_error(stress_fragility(sp, "mutual"), "arg")
 })
