@@ -1,3 +1,7 @@
+# ballast 0.7.2
+
+* `plot_swarm()`: the re-randomisation test row is coloured as a statistical decision; 0.7.1 placed it under "Other family". No computation changes.
+
 # ballast 0.7.1
 
 The package's surface now matches the methods paper: a stress test that refits one pre-specified MMRM under families of perturbations and displays every refit against the filed result. Nothing is calibrated and no benchmark is computed.

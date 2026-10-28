@@ -22,10 +22,10 @@ as_census_list <- function(x) {
 # decisions change what is analysed (data set, population, intercurrent-event strategy, imputation). Deletions are their
 # own group. Anything unknown is "other", so a user family is drawn, not dropped.
 decision_group <- function(family, kind) {
-  stat <- c("covariance structure", "inference", "covariate set", "LS-mean weighting", "specification grid", "estimator", "rank test", "contrast visit")
+  stat <- c("covariance structure", "inference", "covariate set", "LS-mean weighting", "specification grid", "estimator", "rank test", "contrast visit", "re-randomisation test")
   data <- c("data handling", "analysis population", "intercurrent-event strategy", "reference-based multiple imputation", "delta-adjusted imputation", "tipping point", "perturbation curve")
   g <- ifelse(kind == "deletion", "deletion",
-       ifelse(family %in% stat | grepl("^estimator|^rank", family), "statistical",
+       ifelse(family %in% stat | grepl("^estimator|^rank|randomi[sz]ation|permutation", family), "statistical",
        ifelse(family %in% data | grepl("imputation|tipping|population|data set|strategy", family), "data-handling", "other")))
   factor(g, levels = c("statistical", "data-handling", "other", "deletion"), labels = c("Statistical decision varied", "Data-handling decision varied", "Other family", "One unit removed"))
 }

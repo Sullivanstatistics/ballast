@@ -57,8 +57,8 @@ test_that("plot_swarm draws the multi-row dots form from censuses and results, w
   expect_s3_class(plot_swarm(list(A = cen, B = cen), style = "bubbles", scale = "estimate"), "ggplot")   # the old list form is still reachable
   expect_equal(unname(ballast:::as_census_list(res)) |> length(), 1L); expect_equal(names(ballast:::as_census_list(res)), "Small plan")
   expect_error(plot_swarm(list(1, 2)), "stress_census")
-  grp <- ballast:::decision_group(c("covariance structure", "data handling", "leave-one-out: subject", "my family"), c("alternative", "alternative", "deletion", "alternative"))
-  expect_equal(as.character(grp), c("Statistical decision varied", "Data-handling decision varied", "One unit removed", "Other family"))
+  grp <- ballast:::decision_group(c("covariance structure", "data handling", "leave-one-out: subject", "my family", "re-randomisation test"), c("alternative", "alternative", "deletion", "alternative", "alternative"))
+  expect_equal(as.character(grp), c("Statistical decision varied", "Data-handling decision varied", "One unit removed", "Other family", "Statistical decision varied"))
 })
 
 test_that("plot_forest draws the filed row and the supplementary rows, side by side for several objects", {
