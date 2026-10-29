@@ -51,6 +51,6 @@ Suggests:
     rmarkdown
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-URL: https://github.com/Sullivanstatistics/ballast
+URL: https://github.com/Sullivanstatistics/ballast, https://sullivanstatistics.github.io/ballast/
 BugReports: https://github.com/Sullivanstatistics/ballast/issues
 Config/roxygen2/version: 8.0.0

@@ -7,6 +7,7 @@
 
 # ballast 0.7.2
 
+* Documentation site: `stress_direction()` is listed in the pkgdown reference index and `DESCRIPTION` gives the site URL; without them the site build failed for the 0.7.1 and 0.7.3 releases. No code changes. The `v0.7.3` tag now points to the commit with this entry.
 * `plot_swarm()`: the re-randomisation test row is coloured as a statistical decision; 0.7.1 placed it under "Other family". No computation changes.
 
 # ballast 0.7.1
