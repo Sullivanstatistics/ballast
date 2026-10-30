@@ -33,7 +33,10 @@
 #'   arm's is used for the reference-based draws.
 #' @param max_tries Bootstrap refits attempted per imputation before giving up.
 #' @details Imputation `i` uses seed `seed + i` on whichever worker draws it, so
-#'   the result is the same for any number of `cores`. Within an imputation
+#'   the result is the same for any number of `cores`. Two seeds less than `m`
+#'   apart therefore share imputations (seeds 1 and 2 share 24 of 25 when
+#'   `m = 25`); to estimate Monte Carlo error by repeating the analysis, use
+#'   seeds at least `m` apart, such as 1000, 2000, 3000. Within an imputation
 #'   the methods share the bootstrap refit and the standard-normal draws
 #'   (common random numbers), so they differ only through the means they
 #'   impute from: a method gives the same rows whether it is requested alone

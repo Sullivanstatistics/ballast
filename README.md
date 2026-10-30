@@ -1,11 +1,20 @@
 # ballast <img src="man/figures/logo.png" align="right" height="139" alt="ballast hex sticker" />
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23427834.svg)](https://doi.org/10.5281/zenodo.23427834)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23427833.svg)](https://doi.org/10.5281/zenodo.23427833)
 [![R-CMD-check](https://github.com/Sullivanstatistics/ballast/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Sullivanstatistics/ballast/actions/workflows/R-CMD-check.yaml)
+[![CRAN status](https://www.r-pkg.org/badges/version/ballast)](https://CRAN.R-project.org/package=ballast)
 
 ballast keeps a result steady under load. It stress-tests a pre-specified mixed model for repeated measures (MMRM):
 the model is refitted under families of data and analytic perturbations, and every refit is judged against the
 pre-specified estimate, confidence interval and p-value.
+
+## Installation
+
+```r
+install.packages("ballast")                                # released version, from CRAN
+# install.packages("remotes")
+remotes::install_github("Sullivanstatistics/ballast")     # development version
+```
 
 ```r
 library(ballast)
@@ -107,7 +116,7 @@ method, `MNAR ADJUST` applied at every draw) and PROC MIANALYZE.
 
 ## Status and validation
 
-Version 0.6.1. The engine is a generic rewrite of a program-by-program validated R port of a SAS robustness package and
+Version 0.7.4. The engine is a generic rewrite of a program-by-program validated R port of a SAS robustness package and
 reproduces that package cell by cell (seven validation gates, about 1,250 cells including the full submitted census, deterministic quantities to 1e-6, Monte
 Carlo quantities within Monte Carlo error); reference-based imputation agrees with rbmi on its public antidepressant
 data. See the validation vignette. `R CMD check --as-cran` runs on Windows, macOS and Linux on every push.
@@ -121,5 +130,5 @@ SAS reference analysis on about 1,250 cells and against rbmi (see the validation
 
 ## Citation
 
-Sullivan AJ (2026). ballast: Stress-Test a Pre-Specified Mixed Model for Repeated Measures. R package version 0.6.1.
-doi:10.5281/zenodo.23427834. `citation("ballast")` gives the BibTeX entry.
+Sullivan AJ (2026). ballast: Stress-Test a Pre-Specified Mixed Model for Repeated Measures. R package version 0.7.4.
+doi:10.5281/zenodo.23427833. `citation("ballast")` gives the BibTeX entry.

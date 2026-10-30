@@ -144,8 +144,8 @@ stress_verdict <- function(census, marginal_band = c(0.5, 2), rule = c("interval
 
 ## Plain-language statement of a classification rule, shared by the plan, the SAP text and the report.
 rule_text <- function(rule = "interval") switch(rule,
-  interval = "fragile if any counted alternative lands outside the pre-specified 95% confidence interval",
-  interval_or_direction = "fragile if any counted alternative reverses the direction of the estimate or lands outside the pre-specified 95% confidence interval",
+  interval = "fragile if any counted refit (an alternative analysis or a deletion) lands outside the pre-specified 95% confidence interval",
+  interval_or_direction = "fragile if any counted refit (an alternative analysis or a deletion) reverses the direction of the estimate or lands outside the pre-specified 95% confidence interval",
   stop("unknown rule: ", rule))
 
 #' @export

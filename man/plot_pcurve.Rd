@@ -9,18 +9,21 @@ plot_pcurve(
   alpha = NULL,
   xlab = "Perturbation",
   ylab = "p-value",
-  log_p = FALSE
+  log_p = FALSE,
+  ncol = 1
 )
 }
 \arguments{
-\item{rows}{A \code{stress_rows} data frame or \code{stress_census}; rows without a
-\code{param} are ignored.}
+\item{rows}{A \code{stress_rows} data frame, a \code{stress_census} or a \code{stress_result};
+or a named list of these, one panel each. Rows without a \code{param} are ignored.}
 
 \item{alpha}{Significance level; defaults to the rows' own \code{alpha}.}
 
 \item{xlab, ylab}{Axis labels.}
 
 \item{log_p}{Draw the p-value axis on a log scale.}
+
+\item{ncol}{Number of columns of panels when \code{rows} is a list.}
 }
 \value{
 A \code{ggplot} object.
@@ -32,9 +35,19 @@ line per family, the alpha reference line, the anchor point (the row of
 \code{kind = "alternative"}, usually the unshifted analysis) emphasised, and a
 dotted vertical line at each interpolated crossing with its value.
 }
+\details{
+Given a named list (one element per endpoint-metric row, say), it draws one
+panel per element, with the crossings found within each panel.
+}
 \examples{
 small <- mmrm::fev_data[mmrm::fev_data$USUBJID \%in\% paste0("PT", 1:80), ]
 spec <- stress_spec(small, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL)
 tp <- stress_tipping(spec, deltas = c(0, -4, -8), m = 3)
 if (requireNamespace("ggplot2", quietly = TRUE)) plot_pcurve(tp)
+\donttest{
+tp4 <- stress_tipping(spec, deltas = c(0, -4, -8), m = 3, shift_visits = "VIS4")
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  plot_pcurve(list("Every visit" = tp, "Visit 4 only" = tp4))
+}
+}
 }

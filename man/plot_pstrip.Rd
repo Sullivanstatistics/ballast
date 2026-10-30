@@ -4,7 +4,15 @@
 \alias{plot_pstrip}
 \title{Strip plot of p-values after each deletion}
 \usage{
-plot_pstrip(x, alpha = NULL, log_p = FALSE, xmax = NULL, label_family = TRUE)
+plot_pstrip(
+  x,
+  alpha = NULL,
+  log_p = FALSE,
+  xmax = NULL,
+  label_family = TRUE,
+  highlight = NULL,
+  seed = 1L
+)
 }
 \arguments{
 \item{x}{A \code{stress_census}, a \code{stress_result}, or a list of them (one strip each).}
@@ -18,6 +26,14 @@ p-values; harder to read for most audiences).}
 
 \item{label_family}{Include the deletion family in each strip label; set
 \code{FALSE} when every census contributes one family (subjects only, say).}
+
+\item{highlight}{Optional labels of deletion rows (the removed unit, as in the
+census \code{label} column) to ring and label, for example the participant whose
+removal crosses alpha. Use \code{\link[=mask_ids]{mask_ids()}} first if identifiers must not appear.}
+
+\item{seed}{Seed of the vertical scatter within each strip, so the figure is
+the same every time it is drawn; the caller's random-number state is
+restored on exit.}
 }
 \value{
 A \code{ggplot} object.
@@ -33,5 +49,8 @@ small <- mmrm::fev_data[mmrm::fev_data$USUBJID \%in\% paste0("PT", 1:60), ]
 spec <- stress_spec(small, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL,
                     covariance = "cs", method = "Satterthwaite", vcov = "Asymptotic")
 cen <- stress_census(spec, stress_loo(spec, by = "RACE"), stress_loo(spec, by = "SEX"))
-if (requireNamespace("ggplot2", quietly = TRUE)) plot_pstrip(cen)
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  plot_pstrip(cen)
+  plot_pstrip(cen, highlight = "Asian")
+}
 }

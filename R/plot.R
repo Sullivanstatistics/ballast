@@ -32,7 +32,7 @@ plot.stress_census <- function(x, ...) {
                        inherit.aes = FALSE, fill = "grey85", alpha = 0.6) +
     ggplot2::geom_vline(xintercept = 100, colour = "grey30") +
     ggplot2::geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
-    ggplot2::geom_jitter(ggplot2::aes(fill = Significant, shape = shape), size = 2.2, height = 0.2, width = 0, alpha = 0.85) +
+    ggplot2::geom_point(ggplot2::aes(fill = Significant, shape = shape), size = 2.2, alpha = 0.85, position = ggplot2::position_jitter(width = 0, height = 0.2, seed = 1L)) +
     ggplot2::scale_shape_identity() +
     ggplot2::scale_fill_manual(values = c(yes = "#1f5fa6", no = "#f2a541")) +
     ggplot2::facet_grid(rows = ggplot2::vars(kind), scales = "free_y", space = "free_y") +

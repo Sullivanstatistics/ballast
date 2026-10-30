@@ -33,6 +33,7 @@ stress_html <- function(result, file, digits = 2, mask_ids = TRUE) {
   d <- as.data.frame(cen)[cen$counted & !is.na(cen$estimate), , drop = FALSE]
   alt <- d[d$kind == "alternative", , drop = FALSE]; del <- d[d$kind == "deletion", , drop = FALSE]
   pct <- function(e) 100 * e / b$estimate
+  old_rng <- rng_state(); on.exit(rng_restore(old_rng), add = TRUE); seed_rng(1L)   # cosmetic scatter of the deletion strips: reproducible, caller's stream restored
   # swarm: distinct values, packed
   val <- round(alt$estimate, digits)
   agg <- stats::aggregate(list(n = rep(1, nrow(alt))), list(val = val), sum)

@@ -118,7 +118,9 @@ mi_row <- function(spec, fits, label, family, kind, role, note_prefix, m, n_subj
 #' @param deltas Shifts added to the imputed values of the active arm, in
 #'   response units.
 #' @param m Number of imputations.
-#' @param seed Random seed (the same seed is used for every delta).
+#' @param seed Random seed (the same seed is used for every delta). The `m`
+#'   imputations are drawn in turn from one stream started at `seed`, so
+#'   different seeds give unrelated imputations.
 #' @param arm Treatment level receiving the shift; defaults to the active arm.
 #' @param shift_visits Visit levels whose imputed values are shifted; `NULL`
 #'   shifts every visit.

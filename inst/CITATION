@@ -7,7 +7,7 @@ bibentry(
   year    = "2026",
   note    = paste("R package version", meta$Version),
   url     = "https://github.com/Sullivanstatistics/ballast",
-  doi     = "10.5281/zenodo.23427834",
+  doi     = "10.5281/zenodo.23427833",
   textVersion = paste0("Sullivan AJ (2026). ballast: Stress-Test a Pre-Specified Mixed Model for Repeated Measures. R package version ",
-                       meta$Version, ". doi:10.5281/zenodo.23427834. https://github.com/Sullivanstatistics/ballast")
+                       meta$Version, ". doi:10.5281/zenodo.23427833. https://github.com/Sullivanstatistics/ballast")
 )

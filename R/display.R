@@ -39,8 +39,9 @@ decision_group <- function(family, kind) {
 #' panel with the filed value labelled, every counted alternative analysis as a dot placed by its estimate and
 #' coloured by the decision it varies (statistical: covariance, inference, covariate set, weighting, grid,
 #' estimator; data-handling: data set, population, intercurrent-event strategy, imputation), the counted deletions
-#' as a strip of small light dots beneath the axis, a vertical line at no difference, and an optional labelled
-#' reference line. Diagnostic refits (`kind = "diagnostic"`, such as the complete-case refit of the standard plan)
+#' as a strip of small light dots beneath the axis, a vertical line at no difference, and optional labelled
+#' reference lines, one value for every panel or one per panel. Each panel labels its own filed estimate and
+#' interval ends to three significant digits. Diagnostic refits (`kind = "diagnostic"`, such as the complete-case refit of the standard plan)
 #' are drawn as hollow dots in the colour of their decision group; they are not counted and do not enter the
 #' verdict. Counted rows that return no estimate (rank tests) are not drawn; their number per row is in
 #' the `caption` attribute of the returned plot, with the counts of alternatives, deletions and diagnostic refits.
@@ -48,8 +49,12 @@ decision_group <- function(family, kind) {
 #' @param x A `stress_census`, a `stress_result` (from [run_plan()]), the `stress_results` list of [run_plans()],
 #'   or a list of censuses or results (one row each). List names, plan titles or census labels name the rows.
 #' @param style `"bubbles"` or `"dots"`; `"auto"` chooses bubbles for one census and dots for a list.
-#' @param reference Optional x position of a reference line (a clinically meaningful difference, say).
-#' @param reference_label Text printed at the reference line.
+#' @param reference Optional x position of a reference line (a clinically meaningful difference, say). In the
+#'   dots form either one value, drawn in every panel, or one value per row: a vector named by row, or unnamed
+#'   in row order. `NA` leaves a panel without a line. Rows on different scales (points and percent change,
+#'   say) need their own values.
+#' @param reference_label Text printed at the reference line: one string, or one per row in the same form as
+#'   `reference`.
 #' @param scale,digits,r0,favours,xlab,xlim Settings of the bubble form (see the earlier documentation): axis
 #'   scale, rounding for "the same value", bubble radius, side labels, axis label and limits.
 #' @return A `ggplot` object. In the dots form the attribute `caption` is a character vector, one entry per
@@ -68,6 +73,9 @@ decision_group <- function(family, kind) {
 #'   g <- plot_swarm(list("FEV1 at visit 4" = cen, "FEV1 at visit 3" = cen2), reference = 1,
 #'                   reference_label = "1 unit")
 #'   attr(g, "caption")
+#'   plot_swarm(list("FEV1 at visit 4" = cen, "FEV1 at visit 3" = cen2),     # one line per panel
+#'              reference = c("FEV1 at visit 4" = 1, "FEV1 at visit 3" = 2),
+#'              reference_label = c("1 unit", "2 units"))
 #' }
 #' @export
 plot_swarm <- function(x, style = c("auto", "bubbles", "dots"), reference = NULL, reference_label = NULL,
@@ -81,17 +89,20 @@ plot_swarm <- function(x, style = c("auto", "bubbles", "dots"), reference = NULL
   }
   cens <- as_census_list(x)
   rows <- names(cens)
+  refs <- per_row(reference, rows, "reference"); ref_labs <- per_row(reference_label, rows, "reference_label")
   pts <- list(); axes <- list(); caption <- character()
+  old_rng <- rng_state(); on.exit(rng_restore(old_rng), add = TRUE)
   for (k in seq_along(cens)) {
     ce <- cens[[k]]; b <- attr(ce, "base"); d <- as.data.frame(ce)[ce$counted | (ce$kind == "diagnostic" & ce$converged), , drop = FALSE]
     no_est <- sum(is.na(d$estimate) & d$counted); d <- d[!is.na(d$estimate), , drop = FALSE]
     d$group <- decision_group(d$family, d$kind)
     alt <- d[d$kind == "alternative", , drop = FALSE]; del <- d[d$kind == "deletion", , drop = FALSE]; dg <- d[d$kind == "diagnostic", , drop = FALSE]
-    set.seed(1L)   # the vertical scatter is cosmetic; fixed so the figure is reproducible
+    seed_rng(1L)   # the vertical scatter is cosmetic; fixed so the figure is reproducible, and the caller's stream is restored on exit
     if (nrow(alt)) pts[[length(pts) + 1]] <- data.frame(row = rows[k], x = alt$estimate, y = stats::runif(nrow(alt), 0.18, 0.55), group = alt$group, diagnostic = FALSE, stringsAsFactors = FALSE)
     if (nrow(del)) pts[[length(pts) + 1]] <- data.frame(row = rows[k], x = del$estimate, y = stats::runif(nrow(del), -0.5, -0.18), group = del$group, diagnostic = FALSE, stringsAsFactors = FALSE)
     if (nrow(dg)) pts[[length(pts) + 1]] <- data.frame(row = rows[k], x = dg$estimate, y = stats::runif(nrow(dg), 0.18, 0.55), group = dg$group, diagnostic = TRUE, stringsAsFactors = FALSE)
-    axes[[k]] <- data.frame(row = rows[k], est = b$estimate, lcl = b$lcl, ucl = b$ucl, stringsAsFactors = FALSE)
+    axes[[k]] <- data.frame(row = rows[k], est = b$estimate, lcl = b$lcl, ucl = b$ucl,
+                            est_lab = format(b$estimate, digits = 3), lcl_lab = format(b$lcl, digits = 3), ucl_lab = format(b$ucl, digits = 3), stringsAsFactors = FALSE)
     caption[k] <- sprintf("%s: %d alternative analyses drawn, %d deletions drawn, %d counted rows without an estimate, %d diagnostic refits drawn hollow and not counted", rows[k], nrow(alt), nrow(del), no_est, nrow(dg))
   }
   P <- if (length(pts)) do.call(rbind, pts) else data.frame(row = character(), x = numeric(), y = numeric(), group = factor(character(), levels = levels(decision_group("a", "b"))), diagnostic = logical())
@@ -105,9 +116,9 @@ plot_swarm <- function(x, style = c("auto", "bubbles", "dots"), reference = NULL
     ggplot2::geom_point(data = P[P$diagnostic, , drop = FALSE], ggplot2::aes(x = x, y = y, colour = group), shape = 21, fill = "white", size = 2.3, stroke = 1.1, show.legend = FALSE) +
     ggplot2::geom_segment(data = A, ggplot2::aes(x = lcl, xend = ucl, y = 0, yend = 0), colour = PAL[["navy"]], linewidth = 2.2, lineend = "round") +
     ggplot2::geom_point(data = A, ggplot2::aes(x = est, y = 0), shape = 23, fill = "white", colour = PAL[["navy"]], size = 3.6, stroke = 1.2) +
-    ggplot2::geom_text(data = A, ggplot2::aes(x = est, y = -0.08, label = format(est, digits = 3)), colour = PAL[["navy"]], size = 3.1, fontface = "bold", vjust = 1) +
-    ggplot2::geom_text(data = A, ggplot2::aes(x = lcl, y = 0.07, label = format(lcl, digits = 3)), colour = PAL[["navy"]], size = 2.6, vjust = 0, hjust = 0.3) +
-    ggplot2::geom_text(data = A, ggplot2::aes(x = ucl, y = 0.07, label = format(ucl, digits = 3)), colour = PAL[["navy"]], size = 2.6, vjust = 0, hjust = 0.7) +
+    ggplot2::geom_text(data = A, ggplot2::aes(x = est, y = -0.08, label = est_lab), colour = PAL[["navy"]], size = 3.1, fontface = "bold", vjust = 1) +
+    ggplot2::geom_text(data = A, ggplot2::aes(x = lcl, y = 0.07, label = lcl_lab), colour = PAL[["navy"]], size = 2.6, vjust = 0, hjust = 0.3) +
+    ggplot2::geom_text(data = A, ggplot2::aes(x = ucl, y = 0.07, label = ucl_lab), colour = PAL[["navy"]], size = 2.6, vjust = 0, hjust = 0.7) +
     ggplot2::scale_colour_manual(values = cols, drop = TRUE, name = NULL) +
     ggplot2::scale_y_continuous(limits = c(-0.66, 0.7), breaks = NULL) +
     ggplot2::facet_wrap(~ row, ncol = 1, scales = "free_x") +
@@ -116,12 +127,28 @@ plot_swarm <- function(x, style = c("auto", "bubbles", "dots"), reference = NULL
     ggplot2::theme(panel.grid = ggplot2::element_blank(), strip.text = ggplot2::element_text(hjust = 0, face = "bold"), legend.position = "bottom",
                    axis.line.x = ggplot2::element_line(colour = PAL[["light"]]), plot.background = ggplot2::element_rect(fill = "white", colour = NA)) +
     ggplot2::guides(colour = ggplot2::guide_legend(override.aes = list(size = 3, alpha = 1)))
-  if (!is.null(reference)) {
-    g <- g + ggplot2::geom_vline(xintercept = reference, colour = "#1baf7a", linewidth = 0.9, linetype = "22")
-    if (!is.null(reference_label)) g <- g + ggplot2::annotate("text", x = reference, y = 0.66, label = reference_label, colour = "#1baf7a", size = 3, hjust = -0.05, vjust = 1)
+  if (!is.null(refs)) {
+    RL <- data.frame(row = factor(rows, levels = rows), ref = as.numeric(refs), lab = if (is.null(ref_labs)) NA_character_ else as.character(ref_labs), stringsAsFactors = FALSE)
+    RL <- RL[!is.na(RL$ref), , drop = FALSE]
+    if (nrow(RL)) g <- g + ggplot2::geom_vline(data = RL, ggplot2::aes(xintercept = ref), colour = "#1baf7a", linewidth = 0.9, linetype = "22")
+    RL <- RL[!is.na(RL$lab), , drop = FALSE]
+    if (nrow(RL)) g <- g + ggplot2::geom_text(data = RL, ggplot2::aes(x = ref, y = 0.66, label = lab), colour = "#1baf7a", size = 3, hjust = -0.05, vjust = 1)
   }
   attr(g, "caption") <- caption
   g
+}
+
+# One value per row from NULL, a single value (every row), a vector named by row, or an unnamed vector in row order.
+per_row <- function(v, rows, arg) {
+  if (is.null(v)) return(NULL)
+  if (!is.null(names(v)) && all(nzchar(names(v)))) {
+    bad <- setdiff(names(v), rows)
+    if (length(bad)) stop(sprintf("`%s` names rows that are not in x: %s", arg, paste(bad, collapse = ", ")))
+    out <- v[rows]; names(out) <- rows; return(out)
+  }
+  if (length(v) == 1L) return(stats::setNames(rep(v, length(rows)), rows))
+  if (length(v) != length(rows)) stop(sprintf("`%s` must have one value, or one per row (%d)", arg, length(rows)))
+  stats::setNames(v, rows)
 }
 
 #' Forest plot of the filed analysis and the supplementary rows
@@ -184,4 +211,4 @@ plot_forest <- function(..., rows = NULL, xlab = "Treatment difference (95% inte
   g
 }
 
-utils::globalVariables(c("group", "lcl", "ucl", "est", "lo", "hi", "object", "panel"))
+utils::globalVariables(c("group", "lcl", "ucl", "est", "lo", "hi", "object", "panel", "est_lab", "lcl_lab", "ucl_lab", "ref"))

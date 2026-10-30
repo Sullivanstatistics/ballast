@@ -23,9 +23,13 @@ or a list of censuses or results (one row each). List names, plan titles or cens
 
 \item{style}{\code{"bubbles"} or \code{"dots"}; \code{"auto"} chooses bubbles for one census and dots for a list.}
 
-\item{reference}{Optional x position of a reference line (a clinically meaningful difference, say).}
+\item{reference}{Optional x position of a reference line (a clinically meaningful difference, say). In the
+dots form either one value, drawn in every panel, or one value per row: a vector named by row, or unnamed
+in row order. \code{NA} leaves a panel without a line. Rows on different scales (points and percent change,
+say) need their own values.}
 
-\item{reference_label}{Text printed at the reference line.}
+\item{reference_label}{Text printed at the reference line: one string, or one per row in the same form as
+\code{reference}.}
 
 \item{scale, digits, r0, favours, xlab, xlim}{Settings of the bubble form (see the earlier documentation): axis
 scale, rounding for "the same value", bubble radius, side labels, axis label and limits.}
@@ -41,8 +45,9 @@ list): one panel per endpoint-metric row, the filed estimate and its 95\% interv
 panel with the filed value labelled, every counted alternative analysis as a dot placed by its estimate and
 coloured by the decision it varies (statistical: covariance, inference, covariate set, weighting, grid,
 estimator; data-handling: data set, population, intercurrent-event strategy, imputation), the counted deletions
-as a strip of small light dots beneath the axis, a vertical line at no difference, and an optional labelled
-reference line. Diagnostic refits (\code{kind = "diagnostic"}, such as the complete-case refit of the standard plan)
+as a strip of small light dots beneath the axis, a vertical line at no difference, and optional labelled
+reference lines, one value for every panel or one per panel. Each panel labels its own filed estimate and
+interval ends to three significant digits. Diagnostic refits (\code{kind = "diagnostic"}, such as the complete-case refit of the standard plan)
 are drawn as hollow dots in the colour of their decision group; they are not counted and do not enter the
 verdict. Counted rows that return no estimate (rank tests) are not drawn; their number per row is in
 the \code{caption} attribute of the returned plot, with the counts of alternatives, deletions and diagnostic refits.
@@ -61,5 +66,8 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
   g <- plot_swarm(list("FEV1 at visit 4" = cen, "FEV1 at visit 3" = cen2), reference = 1,
                   reference_label = "1 unit")
   attr(g, "caption")
+  plot_swarm(list("FEV1 at visit 4" = cen, "FEV1 at visit 3" = cen2),     # one line per panel
+             reference = c("FEV1 at visit 4" = 1, "FEV1 at visit 3" = 2),
+             reference_label = c("1 unit", "2 units"))
 }
 }

@@ -25,7 +25,9 @@ response units.}
 
 \item{m}{Number of imputations.}
 
-\item{seed}{Random seed (the same seed is used for every delta).}
+\item{seed}{Random seed (the same seed is used for every delta). The \code{m}
+imputations are drawn in turn from one stream started at \code{seed}, so
+different seeds give unrelated imputations.}
 
 \item{arm}{Treatment level receiving the shift; defaults to the active arm.}
 

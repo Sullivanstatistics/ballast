@@ -49,6 +49,7 @@ swarm_bubbles <- function(x, scale = c("percent", "estimate"), digits = 2, r0 = 
   }
   polys <- list(); rings <- list(); labs <- list(); dels <- list(); bands <- list(); notes <- list(); titles <- list(); segs <- list(); id <- 0
   y0 <- 0
+  old_rng <- rng_state(); on.exit(rng_restore(old_rng), add = TRUE); seed_rng(1L)   # cosmetic scatter of the deletion strip: reproducible, caller's stream restored
   for (k in rev(seq_along(prep))) {
     p <- prep[[k]]; agg <- p$agg
     if (k < length(prep)) y0 <- y0 + prep[[k + 1]]$above + p$below + 0.5 * LH

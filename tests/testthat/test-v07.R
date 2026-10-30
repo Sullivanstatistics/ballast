@@ -27,7 +27,7 @@ test_that("plans carry the rule into run_plan, the plan text and the SAP text", 
   expect_true(any(grepl("outside the pre-specified 95% confidence interval", plan_lines(p))))
   expect_false(any(grepl("reverses", plan_lines(p))))
   expect_equal(run_plan(p)$verdict$rule, "interval")
-  expect_true(any(grepl("\\*fragile\\* if any counted alternative lands outside", stress_sap(p))))
+  expect_true(any(grepl("\\*fragile\\* if any counted refit \\(an alternative analysis or a deletion\\) lands outside", stress_sap(p))))
   p_old <- stress_plan(spec_small, covariance = list(structures = c("us", "cs")), inference = NULL, covariates = NULL, weights = FALSE,
                        loo = NULL, permute = NULL, reference = NULL, estimator = NULL, fragility = NULL, rule = "interval_or_direction")
   expect_true(any(grepl("reverses", plan_lines(p_old))))

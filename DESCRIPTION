@@ -1,6 +1,6 @@
 Package: ballast
 Title: Stress-Test a Pre-Specified Mixed Model for Repeated Measures
-Version: 0.7.3
+Version: 0.7.4
 Authors@R: c(
     person("Adam", "Sullivan", email = "asullivan@capricor.com",
            role = c("aut", "cre", "cph"),

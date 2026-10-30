@@ -1,13 +1,26 @@
+# ballast 0.7.4
+
+First update after the CRAN release of 0.6.1; the entries for 0.7.0 to 0.7.3 below list everything else that changed since then. No computation changes: every estimate, interval, p-value and verdict is the same as in 0.7.3.
+
+* `plot_swarm()` no longer changes the caller's random-number state: the multi-row form called `set.seed()` for its cosmetic vertical scatter. It, the bubble swarm, `plot_pstrip()`, `plot()` of a census and the deletion strips of `stress_html()` drew their scatter from the caller's stream; all now seed a stream of their own and restore the caller's state, so each figure is also the same every time it is drawn.
+* `plot_swarm()`, multi-row form: each panel labels its own filed estimate and interval ends to three significant digits. Before, the labels were formatted over all panels at once, so a panel took the digits of the longest number in the figure (0.473 printed as 0.47338).
+* `plot_swarm()`: `reference` and `reference_label` take one value per row (named by row, or in row order; `NA` for none) as well as one value for every panel, so rows on different scales, such as points and percent change, can each carry their own reference line.
+* `plot_pstrip()` gains `highlight`, the labels of deletion rows to ring and label (the participant whose removal crosses alpha, say), and `seed` for the vertical scatter. The scatter is now computed by the package, so a ring falls on the dot it marks.
+* `plot_pcurve()` takes a named list of rows, censuses or results and draws one panel per element, with the crossings found within each panel; before, crossings were found by family over all the rows given, so a faceted figure repeated them in every panel. Several crossing labels in one panel are stacked rather than overprinted. Gains `ncol`.
+* The classification rule is worded as `stress_verdict()` applies it. The plan text, `stress_sap()`, the SAP template and the interpreting vignette said "any counted alternative"; the verdict has always judged every counted refit, deletions included. They now say "any counted refit (an alternative analysis or a deletion)", for both the fragile and the sensitive label.
+* `stress_reference()` documents that imputation `i` is seeded with `seed + i`, so seeds less than `m` apart share imputations, and that a Monte Carlo check by repeating the analysis needs seeds at least `m` apart. `stress_tipping()` documents that its imputations come from one stream, so any two seeds give unrelated imputations.
+* `NEWS.md`: the pkgdown entry of the 0.7.3 tag is moved from the 0.7.2 heading to 0.7.3. README: installation from CRAN, and the citation uses the Zenodo concept DOI, which resolves to the latest version.
+
 # ballast 0.7.3
 
 * `standard_plan()`: the complete-case refit of the estimator family is now a diagnostic. It is fitted, drawn on the swarm (as a hollow dot) and on the family plot (as a triangle), and listed in the census and the tables with `kind = "diagnostic"` and `counted = FALSE`; it does not enter the verdict, the crossing count, the outside-interval count or the reversal count. The plan text, `stress_sap()` and the installed SAP template say so. `stress_estimator()` gains `diagnostic`, the names of estimators to treat this way; called directly without it, it still counts every estimator, including complete cases.
 * `summary()` of a census gains a `counted` column and one line per diagnostic family, left out of the closing totals; `stress_verdict()` reports `n_diagnostic` and prints it; the family table of `stress_tables()` and `stress_report()` shows the counted status.
 * `plot_swarm()` lists every family name the package produces in its decision groups, so "Other family" can appear only for a user-defined family. A test runs the standard plan on `mmrm::fev_data` and checks the swarm legend and the diagnostic row.
 * `plot_swarm()`: the hollow diagnostic layer is kept out of the legend, so the colour keys show filled dots again; 0.7.3 as first tagged (e607489) drew a ring over every key. No computation changes. The `v0.7.3` tag now points to the commit with this entry, which contains the code that produced the methods-paper simulations (28be8fb).
+* Documentation site: `stress_direction()` is listed in the pkgdown reference index and `DESCRIPTION` gives the site URL; without them the site build failed for the 0.7.1 and 0.7.3 releases. No code changes. The `v0.7.3` tag now points to the commit with this entry. (Until 0.7.4 this entry stood under 0.7.2 by mistake.)
 
 # ballast 0.7.2
 
-* Documentation site: `stress_direction()` is listed in the pkgdown reference index and `DESCRIPTION` gives the site URL; without them the site build failed for the 0.7.1 and 0.7.3 releases. No code changes. The `v0.7.3` tag now points to the commit with this entry.
 * `plot_swarm()`: the re-randomisation test row is coloured as a statistical decision; 0.7.1 placed it under "Other family". No computation changes.
 
 # ballast 0.7.1
