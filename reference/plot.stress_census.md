@@ -4,7 +4,9 @@ Each counted analysis is a point at its estimate as a percent of the
 base estimate, filled by significance; the shaded band is the base
 confidence interval on the same axis and the vertical line is the base
 estimate. Deletions are drawn in a separate panel from alternative
-analyses.
+analyses. Diagnostic refits (`kind = "diagnostic"`), which are fitted
+but not counted, are drawn as triangles in the alternative-analyses
+panel.
 
 ## Usage
 

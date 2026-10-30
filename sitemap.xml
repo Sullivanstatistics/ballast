@@ -14,14 +14,17 @@
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/default_inference.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/index.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/mask_ids.html</loc></url>
+<url><loc>https://sullivanstatistics.github.io/ballast/reference/path_changes.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/plot.stress_census.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/plot.stress_design.html</loc></url>
+<url><loc>https://sullivanstatistics.github.io/ballast/reference/plot_forest.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/plot_pcdf.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/plot_pcurve.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/plot_pstrip.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/plot_swarm.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/run_plan.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/run_plans.html</loc></url>
+<url><loc>https://sullivanstatistics.github.io/ballast/reference/simulate_rare_trial.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/simulate_trial.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/spec_update.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/standard_plan.html</loc></url>
@@ -32,6 +35,7 @@
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_curve.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_data.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_design.html</loc></url>
+<url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_direction.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_estimand.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_estimator.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_explain.html</loc></url>
@@ -42,6 +46,7 @@
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_inference.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_log.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_loo.html</loc></url>
+<url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_path.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_permute.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_plan.html</loc></url>
 <url><loc>https://sullivanstatistics.github.io/ballast/reference/stress_population.html</loc></url>

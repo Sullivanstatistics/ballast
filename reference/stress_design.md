@@ -42,7 +42,8 @@ stress_design(
   mnar = 0,
   interaction = 0,
   cores = 1L,
-  seed = 1
+  seed = 1,
+  rule = c("interval", "interval_or_direction")
 )
 
 # S3 method for class 'stress_design'
@@ -159,6 +160,11 @@ print(x, target = 0.8, ...)
 - seed:
 
   Base seed; every trial's seed is derived from it.
+
+- rule:
+
+  Classification rule for
+  [`stress_verdict()`](https://sullivanstatistics.github.io/ballast/reference/stress_verdict.md).
 
 - x:
 

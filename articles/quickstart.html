@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ballast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -140,18 +140,18 @@ see the reference index.</p>
 <span><span class="co">#&gt;   leave-one-out: RACE    deletion  3           0       0          0        0</span></span>
 <span><span class="co">#&gt;       All sensitivity         all 14           3       3          0        0</span></span>
 <span><span class="co">#&gt;                   All         all 14           3       3          0        0</span></span>
-<span><span class="co">#&gt;  pct_min pct_max max_shift_se        role</span></span>
-<span><span class="co">#&gt;       88      91         0.23 sensitivity</span></span>
-<span><span class="co">#&gt;      100     100         0.00 sensitivity</span></span>
-<span><span class="co">#&gt;       99     125         0.46 sensitivity</span></span>
-<span><span class="co">#&gt;       90     109         0.19 sensitivity</span></span>
-<span><span class="co">#&gt;       88     125         0.46 sensitivity</span></span>
-<span><span class="co">#&gt;       88     125         0.46         all</span></span>
+<span><span class="co">#&gt;  pct_min pct_max max_shift_se counted        role</span></span>
+<span><span class="co">#&gt;       88      91         0.23    TRUE sensitivity</span></span>
+<span><span class="co">#&gt;      100     100         0.00    TRUE sensitivity</span></span>
+<span><span class="co">#&gt;       99     125         0.46    TRUE sensitivity</span></span>
+<span><span class="co">#&gt;       90     109         0.19    TRUE sensitivity</span></span>
+<span><span class="co">#&gt;       88     125         0.46    TRUE sensitivity</span></span>
+<span><span class="co">#&gt;       88     125         0.46    TRUE         all</span></span>
 <span><span class="fu"><a href="../reference/stress_verdict.html">stress_verdict</a></span><span class="op">(</span><span class="va">cen</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Base: estimate 3.87, 95% CI -0.255 to 8, p = 0.0655 (alpha 0.05)</span></span>
 <span><span class="co">#&gt; Counted: 11 alternative analyses, 3 deletions; 3 significant, 3 crossed alpha</span></span>
 <span><span class="co">#&gt; Outside base CI: 0; direction reversed: 0; largest shift: 0.463 base SE</span></span>
-<span><span class="co">#&gt; Verdict: SENSITIVE over all counted rows; SENSITIVE over the 14 sensitivity analyses (same estimand; 0 supplementary rows); marginal: base p near alpha</span></span>
+<span><span class="co">#&gt; Verdict (interval rule): SENSITIVE over all counted rows; SENSITIVE over the 14 sensitivity analyses (same estimand; 0 supplementary rows); marginal: base p near alpha</span></span>
 <span><span class="co">#&gt; Rows that crossed alpha:</span></span>
 <span><span class="co">#&gt;                family         label estimate      p</span></span>
 <span><span class="co">#&gt;  covariance structure            cs     3.53 0.0187</span></span>
@@ -177,9 +177,10 @@ printing it gives the text a statistical analysis plan can carry.
 <span><span class="co">#&gt; Pre-specified analysis: FEV1 ~ RACE + SEX + FEV1_BL + ARMCD + AVISIT + ARMCD:AVISIT + us(AVISIT | USUBJID); contrast TRT minus PBO at VIS4; Satterthwaite df, Asymptotic variance; alpha 0.05; equal LS-mean weights.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Perturbation families, run after unblinding exactly as listed; every refit is judged against the pre-specified estimate,</span></span>
-<span><span class="co">#&gt; its 95% confidence interval and alpha. Classification: fragile if any counted alternative reverses direction or leaves the</span></span>
-<span><span class="co">#&gt; pre-specified confidence interval; otherwise sensitive if any crosses alpha; otherwise robust. Specifications reached by two</span></span>
-<span><span class="co">#&gt; families are counted once; tipping-point grids are searches and are not counted; deletions are counted separately.</span></span>
+<span><span class="co">#&gt; its 95% confidence interval and alpha.</span></span>
+<span><span class="co">#&gt; Classification: fragile if any counted refit (an alternative analysis or a deletion) lands outside the pre-specified 95% confidence interval; otherwise sensitive if any crosses alpha; otherwise robust.</span></span>
+<span><span class="co">#&gt; Specifications reached by two families are counted once; tipping-point grids are searches and are not counted; deletions are</span></span>
+<span><span class="co">#&gt; counted separately.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 1. Within-subject covariance structure: structures = us, cs, ar1h</span></span>
 <span><span class="co">#&gt; 2. Degrees-of-freedom method and variance estimator: defaults</span></span>
@@ -192,11 +193,11 @@ printing it gives the text a statistical analysis plan can carry.
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_plan.html">run_plan</a></span><span class="op">(</span><span class="va">plan</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">res</span></span>
 <span><span class="co">#&gt; Pre-specified stress test</span></span>
-<span><span class="co">#&gt; 8 families, 22 rows, 17 counted; 0.2 min</span></span>
+<span><span class="co">#&gt; 8 families, 22 rows, 17 counted; 0.1 min</span></span>
 <span><span class="co">#&gt; Base: estimate 3.87, 95% CI -0.255 to 8, p = 0.0655 (alpha 0.05)</span></span>
 <span><span class="co">#&gt; Counted: 14 alternative analyses, 3 deletions; 4 significant, 4 crossed alpha</span></span>
 <span><span class="co">#&gt; Outside base CI: 0; direction reversed: 0; largest shift: 1.74 base SE</span></span>
-<span><span class="co">#&gt; Verdict: SENSITIVE over all counted rows; SENSITIVE over the 17 sensitivity analyses (same estimand; 0 supplementary rows); marginal: base p near alpha</span></span>
+<span><span class="co">#&gt; Verdict (interval rule): SENSITIVE over all counted rows; SENSITIVE over the 17 sensitivity analyses (same estimand; 0 supplementary rows); marginal: base p near alpha</span></span>
 <span><span class="co">#&gt; Rows that crossed alpha:</span></span>
 <span><span class="co">#&gt;                 family           label estimate      p</span></span>
 <span><span class="co">#&gt;   covariance structure              cs     3.53 0.0187</span></span>

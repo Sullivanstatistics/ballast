@@ -16,14 +16,14 @@ Source:
 [`inst/CITATION`](https://github.com/Sullivanstatistics/ballast/blob/main/inst/CITATION)
 
 Sullivan AJ (2026). ballast: Stress-Test a Pre-Specified Mixed Model for
-Repeated Measures. R package version 0.6.1. doi:10.5281/zenodo.23427834.
+Repeated Measures. R package version 0.7.4. doi:10.5281/zenodo.23427833.
 https://github.com/Sullivanstatistics/ballast
 
     @Manual{,
       title = {ballast: Stress-Test a Pre-Specified Mixed Model for Repeated Measures},
       author = {Adam J. Sullivan},
       year = {2026},
-      note = {R package version 0.6.1},
+      note = {R package version 0.7.4},
       url = {https://github.com/Sullivanstatistics/ballast},
-      doi = {10.5281/zenodo.23427834},
+      doi = {10.5281/zenodo.23427833},
     }

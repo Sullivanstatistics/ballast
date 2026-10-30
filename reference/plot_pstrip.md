@@ -8,14 +8,23 @@ dashed line is alpha. Counts of deletions below alpha label each strip.
 ## Usage
 
 ``` r
-plot_pstrip(x, alpha = NULL, log_p = FALSE, xmax = NULL, label_family = TRUE)
+plot_pstrip(
+  x,
+  alpha = NULL,
+  log_p = FALSE,
+  xmax = NULL,
+  label_family = TRUE,
+  highlight = NULL,
+  seed = 1L
+)
 ```
 
 ## Arguments
 
 - x:
 
-  A `stress_census`, or a named list of them (one strip each).
+  A `stress_census`, a `stress_result`, or a list of them (one strip
+  each).
 
 - alpha:
 
@@ -35,6 +44,20 @@ plot_pstrip(x, alpha = NULL, log_p = FALSE, xmax = NULL, label_family = TRUE)
   Include the deletion family in each strip label; set `FALSE` when
   every census contributes one family (subjects only, say).
 
+- highlight:
+
+  Optional labels of deletion rows (the removed unit, as in the census
+  `label` column) to ring and label, for example the participant whose
+  removal crosses alpha. Use
+  [`mask_ids()`](https://sullivanstatistics.github.io/ballast/reference/mask_ids.md)
+  first if identifiers must not appear.
+
+- seed:
+
+  Seed of the vertical scatter within each strip, so the figure is the
+  same every time it is drawn; the caller's random-number state is
+  restored on exit.
+
 ## Value
 
 A `ggplot` object.
@@ -46,5 +69,8 @@ small <- mmrm::fev_data[mmrm::fev_data$USUBJID %in% paste0("PT", 1:60), ]
 spec <- stress_spec(small, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL,
                     covariance = "cs", method = "Satterthwaite", vcov = "Asymptotic")
 cen <- stress_census(spec, stress_loo(spec, by = "RACE"), stress_loo(spec, by = "SEX"))
-if (requireNamespace("ggplot2", quietly = TRUE)) plot_pstrip(cen)
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  plot_pstrip(cen)
+  plot_pstrip(cen, highlight = "Asian")
+}
 ```

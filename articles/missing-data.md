@@ -33,14 +33,14 @@ ref <- stress_reference(spec, m = 5, seed = 1)
 ref[, c("label", "estimate", "stderr", "p", "note")]
 #>   label estimate   stderr          p
 #> 1   MAR 4.589312 2.132649 0.03504009
-#> 2   J2R 3.642409 1.933720 0.06151019
-#> 3    CR 3.742395 1.951151 0.05660463
-#> 4   CIR 4.158507 2.121805 0.05546734
+#> 2   J2R 3.665788 1.914941 0.05591481
+#> 3    CR 4.129863 1.866885 0.02699013
+#> 4   CIR 4.627874 1.931630 0.01693088
 #>                                                                                                      note
 #> 1 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.431
-#> 2 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.317
-#> 3 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.303
-#> 4 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.458
+#> 2 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.205
+#> 3  reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.12
+#> 4 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 5 of 5 converged; MC SE of estimate 0.233
 ```
 
 The package’s implementation was checked against rbmi on the

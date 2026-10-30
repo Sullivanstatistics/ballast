@@ -30,7 +30,8 @@ stress_plan(
   curve = NULL,
   estimand = NULL,
   visits = NULL,
-  title = "Pre-specified stress test"
+  title = "Pre-specified stress test",
+  rule = c("interval", "interval_or_direction")
 )
 ```
 
@@ -133,6 +134,12 @@ stress_plan(
 
   A title for the plan.
 
+- rule:
+
+  Classification rule passed to
+  [`stress_verdict()`](https://sullivanstatistics.github.io/ballast/reference/stress_verdict.md):
+  `"interval"` (default) or `"interval_or_direction"`.
+
 ## Value
 
 An object of class `stress_plan`.
@@ -152,9 +159,10 @@ plan
 #> Pre-specified analysis: FEV1 ~ RACE + SEX + FEV1_BL + ARMCD + AVISIT + ARMCD:AVISIT + us(AVISIT | USUBJID); contrast TRT minus PBO at VIS4; Kenward-Roger df, Kenward-Roger-Linear variance; alpha 0.05; equal LS-mean weights.
 #> 
 #> Perturbation families, run after unblinding exactly as listed; every refit is judged against the pre-specified estimate,
-#> its 95% confidence interval and alpha. Classification: fragile if any counted alternative reverses direction or leaves the
-#> pre-specified confidence interval; otherwise sensitive if any crosses alpha; otherwise robust. Specifications reached by two
-#> families are counted once; tipping-point grids are searches and are not counted; deletions are counted separately.
+#> its 95% confidence interval and alpha.
+#> Classification: fragile if any counted refit (an alternative analysis or a deletion) lands outside the pre-specified 95% confidence interval; otherwise sensitive if any crosses alpha; otherwise robust.
+#> Specifications reached by two families are counted once; tipping-point grids are searches and are not counted; deletions are
+#> counted separately.
 #> 
 #> 1. Within-subject covariance structure: structures = us, cs, ar1h
 #> 2. Degrees-of-freedom method and variance estimator: defaults

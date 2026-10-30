@@ -89,18 +89,18 @@ summary(cen)
 #>   leave-one-out: RACE    deletion  3           0       0          0        0
 #>       All sensitivity         all 14           3       3          0        0
 #>                   All         all 14           3       3          0        0
-#>  pct_min pct_max max_shift_se        role
-#>       88      91         0.23 sensitivity
-#>      100     100         0.00 sensitivity
-#>       99     125         0.46 sensitivity
-#>       90     109         0.19 sensitivity
-#>       88     125         0.46 sensitivity
-#>       88     125         0.46         all
+#>  pct_min pct_max max_shift_se counted        role
+#>       88      91         0.23    TRUE sensitivity
+#>      100     100         0.00    TRUE sensitivity
+#>       99     125         0.46    TRUE sensitivity
+#>       90     109         0.19    TRUE sensitivity
+#>       88     125         0.46    TRUE sensitivity
+#>       88     125         0.46    TRUE         all
 stress_verdict(cen)
 #> Base: estimate 3.87, 95% CI -0.255 to 8, p = 0.0655 (alpha 0.05)
 #> Counted: 11 alternative analyses, 3 deletions; 3 significant, 3 crossed alpha
 #> Outside base CI: 0; direction reversed: 0; largest shift: 0.463 base SE
-#> Verdict: SENSITIVE over all counted rows; SENSITIVE over the 14 sensitivity analyses (same estimand; 0 supplementary rows); marginal: base p near alpha
+#> Verdict (interval rule): SENSITIVE over all counted rows; SENSITIVE over the 14 sensitivity analyses (same estimand; 0 supplementary rows); marginal: base p near alpha
 #> Rows that crossed alpha:
 #>                family         label estimate      p
 #>  covariance structure            cs     3.53 0.0187
@@ -130,9 +130,10 @@ plan
 #> Pre-specified analysis: FEV1 ~ RACE + SEX + FEV1_BL + ARMCD + AVISIT + ARMCD:AVISIT + us(AVISIT | USUBJID); contrast TRT minus PBO at VIS4; Satterthwaite df, Asymptotic variance; alpha 0.05; equal LS-mean weights.
 #> 
 #> Perturbation families, run after unblinding exactly as listed; every refit is judged against the pre-specified estimate,
-#> its 95% confidence interval and alpha. Classification: fragile if any counted alternative reverses direction or leaves the
-#> pre-specified confidence interval; otherwise sensitive if any crosses alpha; otherwise robust. Specifications reached by two
-#> families are counted once; tipping-point grids are searches and are not counted; deletions are counted separately.
+#> its 95% confidence interval and alpha.
+#> Classification: fragile if any counted refit (an alternative analysis or a deletion) lands outside the pre-specified 95% confidence interval; otherwise sensitive if any crosses alpha; otherwise robust.
+#> Specifications reached by two families are counted once; tipping-point grids are searches and are not counted; deletions are
+#> counted separately.
 #> 
 #> 1. Within-subject covariance structure: structures = us, cs, ar1h
 #> 2. Degrees-of-freedom method and variance estimator: defaults
@@ -145,11 +146,11 @@ plan
 res <- run_plan(plan, seed = 1)
 res
 #> Pre-specified stress test
-#> 8 families, 22 rows, 17 counted; 0.2 min
+#> 8 families, 22 rows, 17 counted; 0.1 min
 #> Base: estimate 3.87, 95% CI -0.255 to 8, p = 0.0655 (alpha 0.05)
 #> Counted: 14 alternative analyses, 3 deletions; 4 significant, 4 crossed alpha
 #> Outside base CI: 0; direction reversed: 0; largest shift: 1.74 base SE
-#> Verdict: SENSITIVE over all counted rows; SENSITIVE over the 17 sensitivity analyses (same estimand; 0 supplementary rows); marginal: base p near alpha
+#> Verdict (interval rule): SENSITIVE over all counted rows; SENSITIVE over the 17 sensitivity analyses (same estimand; 0 supplementary rows); marginal: base p near alpha
 #> Rows that crossed alpha:
 #>                 family           label estimate      p
 #>   covariance structure              cs     3.53 0.0187

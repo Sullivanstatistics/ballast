@@ -17,7 +17,9 @@ plot_pcdf(x, alpha = NULL, pooled = TRUE)
 
 - x:
 
-  A `stress_census`, or a named list of them.
+  A `stress_census`, a `stress_result`, the list from
+  [`run_plans()`](https://sullivanstatistics.github.io/ballast/reference/run_plans.md),
+  or a list of censuses or results (one curve each).
 
 - alpha:
 

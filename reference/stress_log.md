@@ -43,13 +43,13 @@ plan <- stress_plan(spec, covariance = list(structures = c("cs", "ar1h")), infer
 str(stress_log(run_plan(plan)))
 #> List of 15
 #>  $ title      : chr "Pre-specified stress test"
-#>  $ plan_md5   : chr "1671098149238ded950d00f439f2509a"
-#>  $ plan       : chr [1:10] "Pre-specified stress test" "" "Pre-specified analysis: FEV1 ~ FEV1_BL + ARMCD + AVISIT + ARMCD:AVISIT + cs(AVISIT | USUBJID); contrast TRT min"| __truncated__ "" ...
-#>  $ run_time   : chr "2026-10-19 17:40:06 UTC"
+#>  $ plan_md5   : chr "a7bf0072dc5e14c76f6ef8c430322add"
+#>  $ plan       : chr [1:11] "Pre-specified stress test" "" "Pre-specified analysis: FEV1 ~ FEV1_BL + ARMCD + AVISIT + ARMCD:AVISIT + cs(AVISIT | USUBJID); contrast TRT min"| __truncated__ "" ...
+#>  $ run_time   : chr "2026-10-30 17:02:21 UTC"
 #>  $ seed       : num 1
 #>  $ elapsed_min: num 0
-#>  $ r_version  : chr "R version 4.6.1 (2026-06-24)"
-#>  $ ballast    : chr "0.6.1"
+#>  $ r_version  : chr "R version 4.6.2 (2026-10-29)"
+#>  $ ballast    : chr "0.7.4"
 #>  $ mmrm       : chr "0.3.19"
 #>  $ platform   : chr "x86_64-pc-linux-gnu"
 #>  $ data       :List of 4

@@ -41,7 +41,9 @@ stress_reference(
 
 - seed:
 
-  Random seed (the same seed is used for every delta).
+  Random seed (the same seed is used for every delta). The `m`
+  imputations are drawn in turn from one stream started at `seed`, so
+  different seeds give unrelated imputations.
 
 - delta:
 
@@ -102,7 +104,14 @@ the conditional normal distribution given the subject's observed values.
 An optional `delta` is added to every imputed value of the active arm.
 
 Imputation `i` uses seed `seed + i` on whichever worker draws it, so the
-result is the same for any number of `cores`.
+result is the same for any number of `cores`. Two seeds less than `m`
+apart therefore share imputations (seeds 1 and 2 share 24 of 25 when
+`m = 25`); to estimate Monte Carlo error by repeating the analysis, use
+seeds at least `m` apart, such as 1000, 2000, 3000. Within an imputation
+the methods share the bootstrap refit and the standard-normal draws
+(common random numbers), so they differ only through the means they
+impute from: a method gives the same rows whether it is requested alone
+or with others, and `delta` is exactly a shift of the imputed values.
 
 ## References
 
@@ -126,10 +135,10 @@ stress_reference(spec, methods = c("MAR", "J2R"), m = 3)
 #> 2      TRUE
 #>                                                                                                      note
 #> 1 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 3 of 3 converged; MC SE of estimate 0.669
-#> 2 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 3 of 3 converged; MC SE of estimate 0.523
+#> 2 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 3 of 3 converged; MC SE of estimate 0.355
 #>   estimate   stderr        df       lcl      ucl          p n_subj n_obs aicc
 #> 1 4.793579 1.907971  8.257192 0.4175297 9.169627 0.03537227    100   400   NA
-#> 2 3.757438 1.700744 13.967595 0.1089108 7.405965 0.04436303    100   400   NA
+#> 2 3.756516 1.543304 44.872676 0.6478990 6.865133 0.01897400    100   400   NA
 #>   param covariance        method       vcov covariates alpha
 #> 1    NA         cs Satterthwaite Asymptotic    FEV1_BL  0.05
 #> 2    NA         cs Satterthwaite Asymptotic    FEV1_BL  0.05

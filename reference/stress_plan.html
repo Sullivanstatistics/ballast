@@ -17,7 +17,7 @@ statistical analysis plan can carry."><meta property="og:image" content="https:/
 
     <a class="navbar-brand me-2" href="../index.html">ballast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,8 @@ statistical analysis plan can carry.</p>
 <span>  curve <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimand <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  visits <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  title <span class="op">=</span> <span class="st">"Pre-specified stress test"</span></span>
+<span>  title <span class="op">=</span> <span class="st">"Pre-specified stress test"</span>,</span>
+<span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"interval"</span>, <span class="st">"interval_or_direction"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -152,6 +153,11 @@ times (subjects and a site variable, say).</p></dd>
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
 <dd><p>A title for the plan.</p></dd>
 
+
+<dt id="arg-rule">rule<a class="anchor" aria-label="anchor" href="#arg-rule"></a></dt>
+<dd><p>Classification rule passed to <code><a href="stress_verdict.html">stress_verdict()</a></code>: <code>"interval"</code>
+(default) or <code>"interval_or_direction"</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -172,9 +178,10 @@ times (subjects and a site variable, say).</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Pre-specified analysis: FEV1 ~ RACE + SEX + FEV1_BL + ARMCD + AVISIT + ARMCD:AVISIT + us(AVISIT | USUBJID); contrast TRT minus PBO at VIS4; Kenward-Roger df, Kenward-Roger-Linear variance; alpha 0.05; equal LS-mean weights.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Perturbation families, run after unblinding exactly as listed; every refit is judged against the pre-specified estimate,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> its 95% confidence interval and alpha. Classification: fragile if any counted alternative reverses direction or leaves the</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pre-specified confidence interval; otherwise sensitive if any crosses alpha; otherwise robust. Specifications reached by two</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> families are counted once; tipping-point grids are searches and are not counted; deletions are counted separately.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> its 95% confidence interval and alpha.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Classification: fragile if any counted refit (an alternative analysis or a deletion) lands outside the pre-specified 95% confidence interval; otherwise sensitive if any crosses alpha; otherwise robust.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Specifications reached by two families are counted once; tipping-point grids are searches and are not counted; deletions are</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> counted separately.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1. Within-subject covariance structure: structures = us, cs, ar1h</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2. Degrees-of-freedom method and variance estimator: defaults</span>

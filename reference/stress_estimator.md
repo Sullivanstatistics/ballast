@@ -12,7 +12,8 @@ stress_estimator(
   random = NULL,
   baseline = NULL,
   seed = 1,
-  cores = 1L
+  cores = 1L,
+  diagnostic = NULL
 )
 ```
 
@@ -44,6 +45,17 @@ stress_estimator(
 - cores:
 
   Number of worker processes; `1` fits sequentially.
+
+- diagnostic:
+
+  Names of estimators (from `estimators`) whose rows are diagnostic:
+  fitted, drawn and tabulated with `kind = "diagnostic"`, but not
+  counted by
+  [`stress_census()`](https://sullivanstatistics.github.io/ballast/reference/stress_census.md),
+  so they do not enter the verdict or its counts. `NULL` (the default)
+  counts every estimator. The standard plan
+  ([`standard_plan()`](https://sullivanstatistics.github.io/ballast/reference/standard_plan.md))
+  makes the complete-case refit diagnostic.
 
 ## Value
 

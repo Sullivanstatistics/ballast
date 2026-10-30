@@ -1,19 +1,34 @@
-# Bubble-swarm plot of a census against the no-difference line
+# Swarm of every re-analysis against the filed result
 
-One row per census. Each bubble is one distinct estimate among the
-counted alternative analyses (rounded to `digits`), with area
-proportional to the number of analyses giving that value and shade by
-the share of those analyses that are significant; bubbles holding five
-or more analyses are numbered. A ring marks the pre-specified estimate,
-the shaded band holds the central 95% of the distinct values, the heavy
-vertical line is no difference, and the least favourable alternative is
-labelled. Deletions are a strip of small light dots beneath the swarm.
+Two forms. **Single census** (`style = "bubbles"`, the default for one
+census): the bubble swarm of earlier versions, one row per census on a
+percent-of-filed axis. **Several rows** (`style = "dots"`, the default
+for a list): one panel per endpoint-metric row, the filed estimate and
+its 95% interval drawn as the axis of the panel with the filed value
+labelled, every counted alternative analysis as a dot placed by its
+estimate and coloured by the decision it varies (statistical:
+covariance, inference, covariate set, weighting, grid, estimator;
+data-handling: data set, population, intercurrent-event strategy,
+imputation), the counted deletions as a strip of small light dots
+beneath the axis, a vertical line at no difference, and optional
+labelled reference lines, one value for every panel or one per panel.
+Each panel labels its own filed estimate and interval ends to three
+significant digits. Diagnostic refits (`kind = "diagnostic"`, such as
+the complete-case refit of the standard plan) are drawn as hollow dots
+in the colour of their decision group; they are not counted and do not
+enter the verdict. Counted rows that return no estimate (rank tests) are
+not drawn; their number per row is in the `caption` attribute of the
+returned plot, with the counts of alternatives, deletions and diagnostic
+refits.
 
 ## Usage
 
 ``` r
 plot_swarm(
   x,
+  style = c("auto", "bubbles", "dots"),
+  reference = NULL,
+  reference_label = NULL,
   scale = c("percent", "estimate"),
   digits = 2,
   r0 = 0.004,
@@ -27,47 +42,61 @@ plot_swarm(
 
 - x:
 
-  A `stress_census`, or a named list of them (one row each, drawn on a
-  shared axis; the first is drawn at the top).
+  A `stress_census`, a `stress_result` (from
+  [`run_plan()`](https://sullivanstatistics.github.io/ballast/reference/run_plan.md)),
+  the `stress_results` list of
+  [`run_plans()`](https://sullivanstatistics.github.io/ballast/reference/run_plans.md),
+  or a list of censuses or results (one row each). List names, plan
+  titles or census labels name the rows.
 
-- scale:
+- style:
 
-  `"percent"` draws estimates as a percent of the pre-specified
-  estimate, so several endpoints share an axis; `"estimate"` uses the
-  response units (only sensible for one census or censuses on one
-  scale).
+  `"bubbles"` or `"dots"`; `"auto"` chooses bubbles for one census and
+  dots for a list.
 
-- digits:
+- reference:
 
-  Rounding used to decide which estimates are "the same value".
+  Optional x position of a reference line (a clinically meaningful
+  difference, say). In the dots form either one value, drawn in every
+  panel, or one value per row: a vector named by row, or unnamed in row
+  order. `NA` leaves a panel without a line. Rows on different scales
+  (points and percent change, say) need their own values.
 
-- r0:
+- reference_label:
 
-  Radius of a count-one bubble as a fraction of the x-axis range.
+  Text printed at the reference line: one string, or one per row in the
+  same form as `reference`.
 
-- favours:
+- scale, digits, r0, favours, xlab, xlim:
 
-  Labels for the two sides of no difference, in the order (reference
-  arm, active arm). Defaults to the treatment level names.
-
-- xlab:
-
-  Axis label; `NULL` for a default.
-
-- xlim:
-
-  Axis limits; `NULL` for automatic limits that include zero.
+  Settings of the bubble form (see the earlier documentation): axis
+  scale, rounding for "the same value", bubble radius, side labels, axis
+  label and limits.
 
 ## Value
 
-A `ggplot` object (uses a fixed aspect ratio so bubbles are round).
+A `ggplot` object. In the dots form the attribute `caption` is a
+character vector, one entry per row, with the counts of alternatives
+drawn, deletions drawn and rows without an estimate.
 
 ## Examples
 
 ``` r
 spec <- stress_spec(mmrm::fev_data, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO",
                     covariates = ~ RACE + SEX + FEV1_BL)
-cen <- stress_census(spec, stress_covariance(spec, c("us", "cs", "ar1h", "toep")),
+cen <- stress_census(spec, stress_covariance(spec, c("us", "cs", "ar1h")),
                      stress_covariates(spec), stress_loo(spec, by = "RACE"))
-if (requireNamespace("ggplot2", quietly = TRUE)) plot_swarm(cen)
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  plot_swarm(cen)                                           # one census: bubbles
+  spec2 <- stress_spec(mmrm::fev_data, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO",
+                       covariates = ~ FEV1_BL, contrast_visit = "VIS3")
+  cen2 <- stress_census(spec2, stress_covariance(spec2, c("us", "cs")),
+                        stress_loo(spec2, by = "SEX"))
+  g <- plot_swarm(list("FEV1 at visit 4" = cen, "FEV1 at visit 3" = cen2), reference = 1,
+                  reference_label = "1 unit")
+  attr(g, "caption")
+  plot_swarm(list("FEV1 at visit 4" = cen, "FEV1 at visit 3" = cen2),     # one line per panel
+             reference = c("FEV1 at visit 4" = 1, "FEV1 at visit 3" = 2),
+             reference_label = c("1 unit", "2 units"))
+}
 ```

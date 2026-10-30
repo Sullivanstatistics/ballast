@@ -17,7 +17,8 @@ plot_pcurve(
   alpha = NULL,
   xlab = "Perturbation",
   ylab = "p-value",
-  log_p = FALSE
+  log_p = FALSE,
+  ncol = 1
 )
 ```
 
@@ -25,8 +26,9 @@ plot_pcurve(
 
 - rows:
 
-  A `stress_rows` data frame or `stress_census`; rows without a `param`
-  are ignored.
+  A `stress_rows` data frame, a `stress_census` or a `stress_result`; or
+  a named list of these, one panel each. Rows without a `param` are
+  ignored.
 
 - alpha:
 
@@ -40,9 +42,18 @@ plot_pcurve(
 
   Draw the p-value axis on a log scale.
 
+- ncol:
+
+  Number of columns of panels when `rows` is a list.
+
 ## Value
 
 A `ggplot` object.
+
+## Details
+
+Given a named list (one element per endpoint-metric row, say), it draws
+one panel per element, with the crossings found within each panel.
 
 ## Examples
 
@@ -51,4 +62,12 @@ small <- mmrm::fev_data[mmrm::fev_data$USUBJID %in% paste0("PT", 1:80), ]
 spec <- stress_spec(small, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL)
 tp <- stress_tipping(spec, deltas = c(0, -4, -8), m = 3)
 if (requireNamespace("ggplot2", quietly = TRUE)) plot_pcurve(tp)
+
+# \donttest{
+tp4 <- stress_tipping(spec, deltas = c(0, -4, -8), m = 3, shift_visits = "VIS4")
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  plot_pcurve(list("Every visit" = tp, "Visit 4 only" = tp4))
+}
+
+# }
 ```

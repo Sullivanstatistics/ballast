@@ -26,7 +26,8 @@ stress_calibrate(
   interaction = 0,
   fragility = FALSE,
   cores = 1L,
-  seed = 1
+  seed = 1,
+  rule = c("interval", "interval_or_direction")
 )
 ```
 
@@ -83,6 +84,11 @@ stress_calibrate(
 
   Base seed.
 
+- rule:
+
+  Classification rule for
+  [`stress_verdict()`](https://sullivanstatistics.github.io/ballast/reference/stress_verdict.md).
+
 ## Value
 
 A data frame of class `stress_calibration` with one row per power: the
@@ -96,7 +102,7 @@ verdict, the marginal flag, and (if run) a one-subject fragility;
 stress_calibrate(n_per_arm = 20, power = c(0, 0.8), n_trials = 2)
 #> Stress-test calibration: 20 per arm, 4 visits, SD 10, AR(1) 0.6, dropout 0.08 per visit
 #>  power_target delta trials power_observed marginal robust sensitive fragile
-#>           0.0  0.00      2            0.0        0      0         0       1
+#>           0.0  0.00      2            0.0        0      1         0       0
 #>           0.8  8.98      2            0.5        0      1         0       0
 #>  sensitive_given_sig fragile_k1_given_sig
 #>                   NA                   NA

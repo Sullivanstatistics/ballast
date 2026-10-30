@@ -44,7 +44,9 @@ stress_tipping(
 
 - seed:
 
-  Random seed (the same seed is used for every delta).
+  Random seed (the same seed is used for every delta). The `m`
+  imputations are drawn in turn from one stream started at `seed`, so
+  different seeds give unrelated imputations.
 
 - arm:
 

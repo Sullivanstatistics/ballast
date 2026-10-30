@@ -13,11 +13,14 @@ Every counted refit is scored against the pre-specified result:
 
 The verdict then reads:
 
-- **fragile**: some counted alternative reverses the direction or lands
-  outside the pre-specified interval;
-- **sensitive**: no alternative does that, but some alternative crosses
-  alpha;
-- **robust**: no alternative crosses alpha.
+- **fragile**: some counted refit, an alternative analysis or a
+  deletion, lands outside the pre-specified interval (for a significant
+  result this includes any reversal of direction, since that interval
+  excludes zero; `rule = "interval_or_direction"` restores the 0.6 rule,
+  under which any reversal is fragile);
+- **sensitive**: no counted refit does that, but some counted refit
+  crosses alpha;
+- **robust**: no counted refit crosses alpha.
 
 **Marginal** is a separate flag on the pre-specified p-value: it is set
 when p lies within a band around alpha (the default band is alpha/2 to 2

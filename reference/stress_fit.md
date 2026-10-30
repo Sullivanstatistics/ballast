@@ -42,8 +42,9 @@ stress_fit(
 - label, family, kind:
 
   Labels for the output row. `kind` is one of `"alternative"` (a counted
-  alternative analysis), `"deletion"` (a leave-one-out refit) or
-  `"search"` (a point on a tipping-point grid).
+  alternative analysis), `"deletion"` (a leave-one-out refit),
+  `"search"` (a point on a tipping-point grid) or `"diagnostic"` (fitted
+  and shown but not counted).
 
 - is_base:
 

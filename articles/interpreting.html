@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ballast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,13 +76,16 @@ that <strong>differs</strong> from the pre-specified analysis.</li>
 <p>The verdict then reads:</p>
 <ul>
 <li>
-<strong>fragile</strong>: some counted alternative reverses the
-direction or lands outside the pre-specified interval;</li>
+<strong>fragile</strong>: some counted refit, an alternative
+analysis or a deletion, lands outside the pre-specified interval (for a
+significant result this includes any reversal of direction, since that
+interval excludes zero; <code>rule = "interval_or_direction"</code>
+restores the 0.6 rule, under which any reversal is fragile);</li>
 <li>
-<strong>sensitive</strong>: no alternative does that, but some
-alternative crosses alpha;</li>
+<strong>sensitive</strong>: no counted refit does that, but some
+counted refit crosses alpha;</li>
 <li>
-<strong>robust</strong>: no alternative crosses alpha.</li>
+<strong>robust</strong>: no counted refit crosses alpha.</li>
 </ul>
 <p><strong>Marginal</strong> is a separate flag on the pre-specified
 p-value: it is set when p lies within a band around alpha (the default

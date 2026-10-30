@@ -47,5 +47,5 @@ res
 #> Base: estimate 3.48, 95% CI -0.796 to 7.75, p = 0.11 (alpha 0.05)
 #> Counted: 3 alternative analyses, 3 deletions; 0 significant, 0 crossed alpha
 #> Outside base CI: 0; direction reversed: 0; largest shift: 0.474 base SE
-#> Verdict: ROBUST over all counted rows; ROBUST over the 6 sensitivity analyses (same estimand; 0 supplementary rows)
+#> Verdict (interval rule): ROBUST over all counted rows; ROBUST over the 6 sensitivity analyses (same estimand; 0 supplementary rows)
 ```

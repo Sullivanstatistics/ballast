@@ -1,12 +1,8 @@
 # Smallest set of subjects whose removal changes the conclusion
 
-A greedy forward search: at each step every remaining subject is removed
-in turn from the current data, the pre-specified model is refitted, and
-the subject whose removal moves the result furthest towards the target
-is dropped for good. The search stops when the target is reached or
-after `max_k` steps. The number of steps needed is a continuous-outcome
-analogue of the fragility index; because the search is greedy it is an
-upper bound on the true minimum.
+Two searches for the fewest subjects whose removal moves the result to
+the target. The number needed is a continuous-outcome analogue of the
+fragility index; both searches give an upper bound on the true minimum.
 
 ## Usage
 
@@ -16,7 +12,8 @@ stress_fragility(
   target = c("significance", "ci", "direction"),
   max_k = 5,
   candidates = NULL,
-  cores = 1L
+  cores = 1L,
+  method = c("greedy", "ranked")
 )
 ```
 
@@ -47,14 +44,31 @@ stress_fragility(
 
   Number of worker processes; `1` fits sequentially.
 
+- method:
+
+  `"greedy"` or `"ranked"`.
+
 ## Value
 
 A `stress_rows` data frame with one row per step (`kind = "search"`, so
 the rows are not counted in a census, since the search crosses the
 target by construction; `param` = number removed, `label` = the subjects
-removed so far). `attr(, "fragility")` is a list with `target`, `k` (the
-step at which the target was reached, `NA` if never), `subjects` and
-`reached`.
+removed so far). `attr(, "fragility")` is a list with `target`,
+`method`, `k` (the step at which the target was reached, `NA` if never),
+`subjects` and `reached`.
+
+## Details
+
+- `method = "greedy"` (default): at each step every remaining subject is
+  removed in turn from the current data, the pre-specified model is
+  refitted, and the subject whose removal moves the result furthest
+  towards the target is dropped for good. About `k * n` refits.
+
+- `method = "ranked"`: subjects are ranked once, by how far removing
+  each alone moves the result towards the target (the leave-one-out
+  refits), and the top 1, 2, ..., k are removed together, one refit per
+  step. About refits, so it is practical for large trials. influences at
+  once.
 
 ## Examples
 
@@ -62,10 +76,13 @@ step at which the target was reached, `NA` if never), `subjects` and
 small <- mmrm::fev_data[mmrm::fev_data$USUBJID %in% paste0("PT", 1:60), ]
 spec <- stress_spec(small, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO", covariates = ~ FEV1_BL,
                     covariance = "cs", method = "Satterthwaite", vcov = "Asymptotic")
-fr <- stress_fragility(spec, max_k = 2)
+fr <- stress_fragility(spec, max_k = 1)
 attr(fr, "fragility")
 #> $target
 #> [1] "significance"
+#> 
+#> $method
+#> [1] "greedy"
 #> 
 #> $k
 #> [1] 1
@@ -82,4 +99,6 @@ attr(fr, "fragility")
 #> $base_estimate
 #> [1] 3.478182
 #> 
+attr(stress_fragility(spec, "ci", max_k = 10, method = "ranked"), "fragility")$k
+#> [1] 7
 ```

@@ -82,10 +82,17 @@
   : Summarise a census by family
 - [`stress_verdict()`](https://sullivanstatistics.github.io/ballast/reference/stress_verdict.md)
   : Classify the census: robust, sensitive or fragile, and marginal
+- [`stress_path()`](https://sullivanstatistics.github.io/ballast/reference/stress_path.md)
+  : Smallest combination of analytic changes that leaves the confidence
+  interval
+- [`path_changes()`](https://sullivanstatistics.github.io/ballast/reference/path_changes.md)
+  : Candidate analytic changes for the path search
 - [`tipping_point()`](https://sullivanstatistics.github.io/ballast/reference/tipping_point.md)
   : Find where a p-value curve crosses alpha
 - [`stress_explain()`](https://sullivanstatistics.github.io/ballast/reference/stress_explain.md)
   : Explain why an alternative analysis moved
+- [`stress_direction()`](https://sullivanstatistics.github.io/ballast/reference/stress_direction.md)
+  : Direction stability of a result that misses significance
 
 ## Pre-specify, run, report
 
@@ -115,7 +122,9 @@
 - [`plot(`*`<stress_census>`*`)`](https://sullivanstatistics.github.io/ballast/reference/plot.stress_census.md)
   : Plot a census: one row per family on the percent-of-base axis
 - [`plot_swarm()`](https://sullivanstatistics.github.io/ballast/reference/plot_swarm.md)
-  : Bubble-swarm plot of a census against the no-difference line
+  : Swarm of every re-analysis against the filed result
+- [`plot_forest()`](https://sullivanstatistics.github.io/ballast/reference/plot_forest.md)
+  : Forest plot of the filed analysis and the supplementary rows
 - [`plot_pcurve()`](https://sullivanstatistics.github.io/ballast/reference/plot_pcurve.md)
   : Plot p-value curves over a continuous perturbation
 - [`plot_pstrip()`](https://sullivanstatistics.github.io/ballast/reference/plot_pstrip.md)
@@ -123,7 +132,7 @@
 - [`plot_pcdf()`](https://sullivanstatistics.github.io/ballast/reference/plot_pcdf.md)
   : Empirical distribution of the p-values across a census
 
-## Design and calibration
+## Design and simulation
 
 - [`stress_design()`](https://sullivanstatistics.github.io/ballast/reference/stress_design.md)
   [`print(`*`<stress_design>`*`)`](https://sullivanstatistics.github.io/ballast/reference/stress_design.md)
@@ -132,5 +141,7 @@
   : Plot power and robustness power against the sample size
 - [`simulate_trial()`](https://sullivanstatistics.github.io/ballast/reference/simulate_trial.md)
   : Simulate a two-arm longitudinal trial
+- [`simulate_rare_trial()`](https://sullivanstatistics.github.io/ballast/reference/simulate_rare_trial.md)
+  : Simulate a small trial with rare-disease features
 - [`stress_calibrate()`](https://sullivanstatistics.github.io/ballast/reference/stress_calibrate.md)
   : Pre-trial calibration of the stress test

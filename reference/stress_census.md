@@ -5,8 +5,10 @@ the pre-specified (base) fit: percent of the base estimate, shift in
 base standard errors, whether the estimate lies inside the base
 confidence interval, keeps the base direction, is significant at
 `alpha`, and whether significance changed. Rows that reproduce the base
-(`is_base`), did not converge, are tipping-point searches, or duplicate
-an earlier row are not counted.
+(`is_base`), did not converge, are tipping-point searches, are
+diagnostic refits (`kind = "diagnostic"`, such as the complete-case
+refit of the standard plan, which is fitted and shown but does not enter
+the verdict), or duplicate an earlier row are not counted.
 
 ## Usage
 
@@ -52,14 +54,14 @@ summary(cen)
 #>         covariate set alternative 4           4       0          0        0
 #>       All sensitivity         all 6           6       0          0        0
 #>                   All         all 6           6       0          0        0
-#>  pct_min pct_max max_shift_se        role
-#>       95      96         0.13 sensitivity
-#>      100     114         0.36 sensitivity
-#>       95     114         0.36 sensitivity
-#>       95     114         0.36         all
+#>  pct_min pct_max max_shift_se counted        role
+#>       95      96         0.13    TRUE sensitivity
+#>      100     114         0.36    TRUE sensitivity
+#>       95     114         0.36    TRUE sensitivity
+#>       95     114         0.36    TRUE         all
 stress_verdict(cen)
 #> Base: estimate 4.4, 95% CI 1.09 to 7.71, p = 0.00948 (alpha 0.05)
 #> Counted: 6 alternative analyses, 0 deletions; 6 significant, 0 crossed alpha
 #> Outside base CI: 0; direction reversed: 0; largest shift: 0.364 base SE
-#> Verdict: ROBUST over all counted rows; ROBUST over the 6 sensitivity analyses (same estimand; 0 supplementary rows)
+#> Verdict (interval rule): ROBUST over all counted rows; ROBUST over the 6 sensitivity analyses (same estimand; 0 supplementary rows)
 ```

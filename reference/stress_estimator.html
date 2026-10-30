@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ballast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +46,8 @@
 <span>  random <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  baseline <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  cores <span class="op">=</span> <span class="fl">1L</span></span>
+<span>  cores <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  diagnostic <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -78,6 +79,14 @@ be change from that baseline.</p></dd>
 
 <dt id="arg-cores">cores<a class="anchor" aria-label="anchor" href="#arg-cores"></a></dt>
 <dd><p>Number of worker processes; <code>1</code> fits sequentially.</p></dd>
+
+
+<dt id="arg-diagnostic">diagnostic<a class="anchor" aria-label="anchor" href="#arg-diagnostic"></a></dt>
+<dd><p>Names of estimators (from <code>estimators</code>) whose rows are
+diagnostic: fitted, drawn and tabulated with <code>kind = "diagnostic"</code>, but
+not counted by <code><a href="stress_census.html">stress_census()</a></code>, so they do not enter the verdict or
+its counts. <code>NULL</code> (the default) counts every estimator. The standard
+plan (<code><a href="standard_plan.html">standard_plan()</a></code>) makes the complete-case refit diagnostic.</p></dd>
 
 </dl></div>
     <div class="section level2">

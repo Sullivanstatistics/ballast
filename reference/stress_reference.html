@@ -17,7 +17,7 @@ rules:"><meta property="og:image" content="https://sullivanstatistics.github.io/
 
     <a class="navbar-brand me-2" href="../index.html">ballast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,9 @@ rules:</p>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
-<dd><p>Random seed (the same seed is used for every delta).</p></dd>
+<dd><p>Random seed (the same seed is used for every delta). The <code>m</code>
+imputations are drawn in turn from one stream started at <code>seed</code>, so
+different seeds give unrelated imputations.</p></dd>
 
 
 <dt id="arg-delta">delta<a class="anchor" aria-label="anchor" href="#arg-delta"></a></dt>
@@ -143,7 +145,14 @@ fixed effects and covariance are used to draw the missing values from the
 conditional normal distribution given the subject's observed values.
 An optional <code>delta</code> is added to every imputed value of the active arm.</p>
 <p>Imputation <code>i</code> uses seed <code>seed + i</code> on whichever worker draws it, so
-the result is the same for any number of <code>cores</code>.</p>
+the result is the same for any number of <code>cores</code>. Two seeds less than <code>m</code>
+apart therefore share imputations (seeds 1 and 2 share 24 of 25 when
+<code>m = 25</code>); to estimate Monte Carlo error by repeating the analysis, use
+seeds at least <code>m</code> apart, such as 1000, 2000, 3000. Within an imputation
+the methods share the bootstrap refit and the standard-normal draws
+(common random numbers), so they differ only through the means they
+impute from: a method gives the same rows whether it is requested alone
+or with others, and <code>delta</code> is exactly a shift of the imputed values.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -167,10 +176,10 @@ Biopharmaceutical Statistics 23, 1352-1371.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2      TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                      note</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 3 of 3 converged; MC SE of estimate 0.669</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 3 of 3 converged; MC SE of estimate 0.523</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 reference PBO, shift 0 on TRT, common covariance, seed 1; m = 3 of 3 converged; MC SE of estimate 0.355</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   estimate   stderr        df       lcl      ucl          p n_subj n_obs aicc</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 4.793579 1.907971  8.257192 0.4175297 9.169627 0.03537227    100   400   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 3.757438 1.700744 13.967595 0.1089108 7.405965 0.04436303    100   400   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 3.756516 1.543304 44.872676 0.6478990 6.865133 0.01897400    100   400   NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   param covariance        method       vcov covariates alpha</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1    NA         cs Satterthwaite Asymptotic    FEV1_BL  0.05</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2    NA         cs Satterthwaite Asymptotic    FEV1_BL  0.05</span>

@@ -93,9 +93,12 @@ A `stress_plan`.
 
 8.  delta-adjusted multiple imputation over `deltas` if given;
 
-9.  estimator class: complete cases, GEE independence, ANCOVA, robust
-    ANCOVA, plus a random intercept for `site` and cLDA for `baseline`
-    if given;
+9.  estimator class: GEE independence, ANCOVA, robust ANCOVA, plus a
+    random intercept for `site` and cLDA for `baseline` if given; the
+    pre-specified MMRM on complete cases is also fitted, drawn and
+    tabulated, as a diagnostic that is not counted (it answers a
+    different question from the filed analysis, so it does not enter the
+    verdict);
 
 10. greedy deletion search for the loss of significance, up to 5
     subjects;
@@ -109,14 +112,15 @@ A `stress_plan`.
 spec <- stress_spec(mmrm::fev_data, "FEV1", "USUBJID", "AVISIT", "ARMCD", "PBO",
                     covariates = ~ RACE + SEX + FEV1_BL)
 standard_plan(spec, site = "RACE", baseline = "FEV1_BL")
-#> Standard stress test (ballast 0.6.1)
+#> Standard stress test (ballast 0.7.4)
 #> 
 #> Pre-specified analysis: FEV1 ~ RACE + SEX + FEV1_BL + ARMCD + AVISIT + ARMCD:AVISIT + us(AVISIT | USUBJID); contrast TRT minus PBO at VIS4; Kenward-Roger df, Kenward-Roger-Linear variance; alpha 0.05; equal LS-mean weights.
 #> 
 #> Perturbation families, run after unblinding exactly as listed; every refit is judged against the pre-specified estimate,
-#> its 95% confidence interval and alpha. Classification: fragile if any counted alternative reverses direction or leaves the
-#> pre-specified confidence interval; otherwise sensitive if any crosses alpha; otherwise robust. Specifications reached by two
-#> families are counted once; tipping-point grids are searches and are not counted; deletions are counted separately.
+#> its 95% confidence interval and alpha.
+#> Classification: fragile if any counted refit (an alternative analysis or a deletion) lands outside the pre-specified 95% confidence interval; otherwise sensitive if any crosses alpha; otherwise robust.
+#> Specifications reached by two families are counted once; tipping-point grids are searches and are not counted; deletions are
+#> counted separately.
 #> 
 #> 1. Within-subject covariance structure: structures = us, ar1h, ar1, cs, csh, toep, toeph
 #> 2. Degrees-of-freedom method and variance estimator: defaults
@@ -125,6 +129,6 @@ standard_plan(spec, site = "RACE", baseline = "FEV1_BL")
 #> 5. Leave-one-out deletions: defaults | by = RACE
 #> 6. Re-randomisation test: n = 2000; strata = RACE
 #> 7. Reference-based multiple imputation (MAR, J2R, CR, CIR): m = 25
-#> 8. Estimator class: estimators = complete_cases, gee_independence, ancova, robust_ancova, random_intercept, clda; random = RACE; baseline = FEV1_BL
+#> 8. Estimator class: estimators = complete_cases, gee_independence, ancova, robust_ancova, random_intercept, clda; random = RACE; baseline = FEV1_BL; diagnostic = complete_cases. The complete cases refit is fitted, drawn and tabulated as a diagnostic and is not counted.
 #> 9. Smallest set of subjects that changes the conclusion: target = significance; max_k = 5
 ```
