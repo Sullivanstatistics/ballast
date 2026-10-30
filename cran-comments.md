@@ -14,6 +14,8 @@ fixes. No exported function was removed or renamed.
 ## Test environments
 
 * local Windows 11, R 4.5.3 (`--as-cran`, examples with `--run-donttest`): 0 errors | 0 warnings | 0 notes
+* win-builder, R-devel (Windows x86_64): 0 errors | 0 warnings | 1 note, the documentation-site URL in
+  DESCRIPTION returning 404 because GitHub Pages had not been switched on; the site now serves it
 * GitHub Actions: windows-latest (release), macos-latest (release), ubuntu-latest (release, devel)
 
 ## R CMD check results
