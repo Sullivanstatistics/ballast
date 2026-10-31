@@ -2,6 +2,8 @@
 
 ## ballast 0.7.4
 
+CRAN release: 2026-10-31
+
 First update after the CRAN release of 0.6.1; the entries for 0.7.0 to
 0.7.3 below list everything else that changed since then. No computation
 changes: every estimate, interval, p-value and verdict is the same as in

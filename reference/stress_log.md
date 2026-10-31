@@ -45,7 +45,7 @@ str(stress_log(run_plan(plan)))
 #>  $ title      : chr "Pre-specified stress test"
 #>  $ plan_md5   : chr "a7bf0072dc5e14c76f6ef8c430322add"
 #>  $ plan       : chr [1:11] "Pre-specified stress test" "" "Pre-specified analysis: FEV1 ~ FEV1_BL + ARMCD + AVISIT + ARMCD:AVISIT + cs(AVISIT | USUBJID); contrast TRT min"| __truncated__ "" ...
-#>  $ run_time   : chr "2026-10-30 17:32:29 UTC"
+#>  $ run_time   : chr "2026-10-31 16:53:45 UTC"
 #>  $ seed       : num 1
 #>  $ elapsed_min: num 0
 #>  $ r_version  : chr "R version 4.6.2 (2026-10-29)"

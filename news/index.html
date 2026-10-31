@@ -29,11 +29,11 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/Sullivanstatistics/ballast/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/Sullivanstatistics/ballast/blob/v0.7.4/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.7.4" id="ballast-074">ballast 0.7.4<a class="anchor" aria-label="anchor" href="#ballast-074"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.7.4" id="ballast-074">ballast 0.7.4<a class="anchor" aria-label="anchor" href="#ballast-074"></a></h2><p class="text-muted">CRAN release: 2026-10-31</p>
 <p>First update after the CRAN release of 0.6.1; the entries for 0.7.0 to 0.7.3 below list everything else that changed since then. No computation changes: every estimate, interval, p-value and verdict is the same as in 0.7.3.</p>
 <ul><li>
 <code><a href="../reference/plot_swarm.html">plot_swarm()</a></code> no longer changes the caller’s random-number state: the multi-row form called <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> for its cosmetic vertical scatter. It, the bubble swarm, <code><a href="../reference/plot_pstrip.html">plot_pstrip()</a></code>, <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> of a census and the deletion strips of <code><a href="../reference/stress_html.html">stress_html()</a></code> drew their scatter from the caller’s stream; all now seed a stream of their own and restore the caller’s state, so each figure is also the same every time it is drawn.</li>

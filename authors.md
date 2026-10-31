@@ -13,7 +13,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/Sullivanstatistics/ballast/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/Sullivanstatistics/ballast/blob/v0.7.4/inst/CITATION)
 
 Sullivan AJ (2026). ballast: Stress-Test a Pre-Specified Mixed Model for
 Repeated Measures. R package version 0.7.4. doi:10.5281/zenodo.23427833.
